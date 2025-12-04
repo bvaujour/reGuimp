@@ -1,0 +1,14 @@
+prefix=/home/injah/Downloads/freetype-2.14.1/build
+exec_prefix=/home/injah/Downloads/freetype-2.14.1/build
+libdir=/home/injah/Downloads/freetype-2.14.1/build/lib
+includedir=/home/injah/Downloads/freetype-2.14.1/build/include
+
+Name: FreeType 2
+URL: https://freetype.org
+Description: A free, high-quality, and portable font engine.
+Version: 26.4.20
+Requires: zlib, bzip2, libpng, harfbuzz >= 2.0.0, libbrotlidec
+Requires.private: 
+Libs: -L/home/injah/Downloads/freetype-2.14.1/build/lib -lfreetype 
+Libs.private: 
+Cflags: -I${includedir}/freetype2
