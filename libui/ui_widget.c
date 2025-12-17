@@ -5,53 +5,74 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/18 15:28:16 by injah             #+#    #+#             */
-/*   Updated: 2025/11/18 16:31:28 by injah            ###   ########.fr       */
+/*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
+/*   Updated: 2025/12/17 05:18:05 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libui.h"
+#include "libui_int.h"
 
-void	ui_destroy_widgets(t_widget **widgets)
+int	ui_widget_add_child(t_widget *parent, t_widget *child)
 {
-	int	i;
+	if (child == parent)
+		return (0);
+	child->parent = parent;
+	child->core = parent->core;
+	parent->childs[parent->nb_childs] = child;
+	parent->nb_childs++;
+	return (0);
+}
 
-	i = 0;
-	if (widgets == NULL)
-		return ;
-	while (widgets[i])
+void	ui_widget_common_update(t_widget *widget)
+{
+	t_core			*core;
+
+	core = widget->core;
+	if (ui_point_in_widget(widget, core->mouse.position))
+		core->focused_widget = widget;
+	else
+		widget->state = UI_NORMAL_STATE;
+}
+
+void	ui_widget_clear(t_widget *widget)
+{
+	SDL_Color	color;
+
+	color = widget->colors[widget->state];
+	SDL_FillRect(widget->surface, NULL, SDL_MapRGBA(widget->surface->format, color.r, color.g, color.b, color.a));
+}
+
+void	ui_widget_manage_state_and_click(t_widget *widget)
+{
+	t_core	*core;
+	
+	core = widget->core;
+	if (core->mouse.mouse_buttons[SDL_BUTTON_LEFT] == true)
+		widget->state = UI_CLICKED_STATE;
+	else
 	{
-		if (widgets[i]->destroy)
-			widgets[i]->destroy(widgets[i]);
-		i++;
+		if (widget->state == UI_CLICKED_STATE)
+		{
+			if (widget->onclick)
+				widget->onclick(widget, widget->core->mouse.last_click, widget->onclick_param);
+		}
+		widget->state = UI_HOVERED_STATE;
 	}
-	free(widgets);
 }
 
-static void	ui_init_widget(t_widget *widget)
+t_widget	*ui_init_widget(t_core *core, int x, int y, int width, int height)
 {
-	widget->build = NULL;
-	widget->childs = NULL;
-	widget->destroy = NULL;
-	widget->parent = NULL;
-	widget->update = NULL;
-	widget->render = NULL;
-	widget->widget_data = NULL;
-}
-
-t_widget	*ui_new_widget(size_t widget_data_alloc_size)
-{
-	t_widget		*widget;
+	t_widget *widget;
 
 	widget = malloc(sizeof(t_widget));
-	if (widget == NULL)
+	if (!widget)
 		return (NULL);
-	ui_init_widget(widget);
-	widget->widget_data = malloc(widget_data_alloc_size);
-	if (widget->widget_data == NULL)
-	{
-		free(widget);
-		return (NULL);
-	}
+	*widget = (t_widget){0};
+	widget->core = core;
+	widget->rect.x = x;
+	widget->rect.y = y;
+	widget->rect.w = width;
+	widget->rect.h = height;
+	ui_widget_add_child(core->canvas, widget);
 	return (widget);
 }

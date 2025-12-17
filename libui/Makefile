@@ -6,7 +6,7 @@
 #    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/03 16:48:10 by bvaujour          #+#    #+#              #
-#    Updated: 2025/11/20 12:37:04 by injah            ###   ########.fr        #
+#    Updated: 2025/12/16 22:48:46 by injah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,13 +15,19 @@ NAME = libui.a
 OBJ_DIR = obj
 
 SRC =	ui_core.c						\
-		ui_window.c						\
+		ui_engine.c						\
+		ui_binding.c					\
+		ui_widget_user.c				\
 		ui_widget.c						\
-		ui_event.c						\
+		ui_canvas.c						\
+		ui_button.c						\
+		ui_utils.c						\
+		ui_drawable.c					\
+		ui_slider.c						\
 
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 
-CFLAGS = -Wall -Wextra -Werror -g -ISDL/include/SDL2 -ISDL_ttf/include/SDL2 -ISDL_image/include/SDL2
+CFLAGS = -Wall -Wextra -Werror -g -Ilibft
 
 CC = cc
 
@@ -32,7 +38,7 @@ $(OBJ_DIR)/%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJ)
-	ar -rcs $(NAME) $(OBJ)
+	ar -rcs  $(NAME) $(OBJ)
 
 clean:
 	rm -rf $(OBJ_DIR)

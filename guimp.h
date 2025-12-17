@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 10:25:14 by injah             #+#    #+#             */
-/*   Updated: 2025/11/18 14:18:00 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/17 06:13:42 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,28 @@
 # include "libui/libui.h"
 # include <unistd.h>
 # include <stdio.h>
+# include <stdlib.h>
 
+enum	e_color
+{
+	RED,
+	GREEN,
+	BLUE,
+	ALPHA,
+	NUM_COLOR
+};
 
 typedef struct	s_data
 {
-	t_core		core;
+	t_core		*core;
+	int			test;
+	t_widget	*tool_window;
+	t_widget	*render_window;
+	t_widget	*drawable;
+	t_widget	*button;
+	t_widget	*button2;
+	t_widget	*color_slider[NUM_COLOR];
+	char		color_values[NUM_COLOR];
 }				t_data;
 
 

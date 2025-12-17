@@ -6,79 +6,62 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:23:08 by injah             #+#    #+#             */
-/*   Updated: 2025/12/04 16:56:48 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/17 13:40:58 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libui.h"
+#include "libui_int.h"
 
-int	ui_init(t_core *core)
+t_core	*ui_init(int width, int height)
 {
-	int img_flags;
-	
+	int 	img_flags;
+	t_core	*core;
+
+	core = malloc(sizeof(t_core));
+	if (core == NULL)
+		return (NULL);
+	*core = (t_core){0};
 	img_flags = IMG_INIT_PNG | IMG_INIT_JPG;
-	if (SDL_Init(SDL_INIT_VIDEO) != 0)
-	{
-		fprintf(stderr, "SDL_Init error: %s\n", SDL_GetError());
-        return (1);
-    }
-	if (TTF_Init() != 0)
-	{
-		fprintf(stderr, "TTF_Init error: %s\n", TTF_GetError());
-		return (2);
-	}
-	if ((IMG_Init(img_flags) & img_flags) != img_flags)
-	{
-		fprintf(stderr, "IMG_Init error: %s\n", IMG_GetError());
-		return (3);
-	}
+	if (SDL_Init(SDL_INIT_VIDEO) != 0 || TTF_Init() != 0 || (IMG_Init(img_flags) & img_flags) != img_flags)
+		return (ui_destroy(core), NULL);
+	core->window = SDL_CreateWindow("LIBUI", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN);
+	if (!core->window)
+		return (ui_destroy(core), NULL);
+	core->renderer = SDL_CreateRenderer(core->window, -1, SDL_RENDERER_ACCELERATED);
+	if (!core->renderer)
+		return (ui_destroy(core), NULL);
+	core->canvas = ui_create_canvas(core, width, height);
+	core->mouse.arrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+	core->mouse.hand = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+	core->mouse.crosshair = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-	core->widgets = NULL;
-	return (0);
+	return (core);
 }
 
-static void	ui_update(t_core *core)
+void	ui_quit(t_core *core)
 {
-	int	i;
+	core->is_running = false;
+}
 
-	i = 0;
-	while (core->widgets[i])
+void	ui_set_cursor(t_core *core, SDL_Cursor *cursor)
+{
+	if (cursor != core->mouse.current_cursor)
 	{
-		if (core->widgets[i]->update)
-			core->widgets[i]->update(core->widgets[i]);
-		i++;
+		SDL_SetCursor(cursor);
+		core->mouse.current_cursor = cursor;
 	}
 }
 
-static void	ui_render(t_core *core)
+void	ui_destroy(t_core *core)
 {
-	int	i;
-
-	i = 0;
-	while (core->widgets[i])
-	{
-		if (core->widgets[i]->render)
-			core->widgets[i]->render(core->widgets[i]);
-		i++;
-	}
-}
-
-static void	ui_destroy(t_core *core)
-{
-	ui_destroy_widgets(core->widgets);
+	ui_destroy_widget_and_childs(core->canvas);
+	SDL_FreeCursor(core->mouse.arrow);
+	SDL_FreeCursor(core->mouse.hand);
+	SDL_FreeCursor(core->mouse.crosshair);
+	SDL_DestroyRenderer(core->renderer);
+	SDL_DestroyWindow(core->window);
+	free(core);
 	IMG_Quit();
 	TTF_Quit();
 	SDL_Quit();
-}
-
-void	ui_run(t_core *core)
-{
-	core->is_running = true;
-	while (core->is_running)
-	{
-		ui_event(core);
-		ui_update(core);
-		ui_render(core);
-	}
-	ui_destroy(core);
 }

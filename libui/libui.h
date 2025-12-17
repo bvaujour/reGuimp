@@ -6,64 +6,70 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2025/12/04 16:58:41 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/17 06:17:33 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef	LIBUI_H
 # define LIBUI_H
 
-# include <stdio.h>
-# include <stdbool.h>
-# include "SDL/include/SDL2/SDL.h"
-# include "SDL_ttf/include/SDL2/SDL_ttf.h"
-# include "SDL_image/include/SDL2/SDL_image.h"
+# define UIKEY_ESCAPE	27
 
-# define	UI_BLUE							(SDL_Color){0, 150, 200, 255}
-# define	UI_LIGHT_GREY					(SDL_Color){150, 150, 150, 255}
-# define	UI_DARK_GREY					(SDL_Color){70, 70, 70, 255}
-# define	UI_BLACK 						(SDL_Color){0, 0, 0, 255}
-# define	UI_WHITE 						(SDL_Color){255, 255, 255, 255}
+typedef struct	s_core		t_core;
+typedef struct	s_widget	t_widget;
+// typedef struct	s_ui_color
+// {
+// 	unsigned char	red;
+// 	unsigned char	green;
+// 	unsigned char	blue;
+// 	unsigned char	alpha;
+// }				t_ui_color;
+// typedef	struct	s_window_user_data
+// {
+// 	t_ui_color	background_color;
+// }				t_window;
 
-# define	UI_THEME1_BOX_COLOR				(SDL_Color){60, 60, 60, 255}
-# define	UI_THEME1_WINDOW_COLOR			(SDL_Color){90, 90, 90, 255}
-# define	UI_THEME1_BUTTON_DEFAULT_COLOR	(SDL_Color){150, 150, 150, 255}
-# define	UI_THEME1_BUTTON_HOVERED_COLOR	(SDL_Color){130, 130, 130, 255}
-# define	UI_THEME1_BUTTON_CLICKED_COLOR	(SDL_Color){100, 100, 100, 255}
-# define	UI_THEME1_FONT					"libui/fonts/Roboto/Roboto_Condensed-Black.ttf"
-
-typedef struct	s_window_data
-{
-	SDL_Renderer	*renderer;
-	SDL_Window		*window;
-}				t_window_data;
-
-typedef struct	s_widget
-{
-	struct s_widget		**childs;
-	struct s_widget		*parent;
-	void				*widget_data;
-	void				(*build)(struct s_widget *widget);
-	void				(*update)(struct s_widget *widget);
-	void				(*render)(struct s_widget *widget);
-	void				(*destroy)(struct s_widget *widget);
-}				t_widget;
-
-typedef struct	s_core
-{
-	t_widget	**widgets;
-	bool		is_running;
-}				t_core;
-
-void		ui_destroy_widgets(t_widget **widgets);
-t_widget	*ui_new_widget(size_t widget_data_alloc_size);
+// typedef	struct	s_button_user_data
+// {
+// 	t_ui_color	background_color;
+// }				t_button;
 
 
-void		ui_window_destroy(t_widget *window);
-int			ui_init(t_core *core);
+t_core	*ui_init(int width, int height);
+
 void		ui_run(t_core *core);
-t_widget	*ui_new_window(t_core *core, const char *title, int x, int y, int w, int h);
-void		ui_event(t_core *core);
+void		ui_quit(t_core *core);
+
+//BUTTON
+t_widget	*ui_create_button(t_core *core, int x, int y, int width, int height);
+
+//WIDGET
+void		ui_set_widget_position(t_widget *widget, int x, int y);
+void		ui_set_widget_size(t_widget *widget, int width, int height);
+void		ui_set_widget_position_and_size(t_widget *widget, int x, int y, int width, int height);
+
+
+t_widget	*ui_create_drawable(t_core *core, int x, int y, int width, int height);
+void		ui_drawable_export_jpg(t_widget *edit_img, const char *file, int quality);
+void		ui_drawable_export_png(t_widget *edit_img, const char *file);
+void		ui_drawable_set_brush_size(t_widget *drawable, int size);
+void		ui_drawable_set_brush_color(t_widget *drawable, char red, char green, char blue, char alpha);
+
+
+t_widget	*ui_create_slider(t_core *core, int x, int y, int width, int height);
+
+//BINDINGS
+/*prototype should be:
+void void	on_key_pressed(int key_pressed, void *param(cast to your type))*/
+void		ui_bind_onkeypress(t_core *core, void (*f)(int, void *), void *param);
+/*prototype should be:
+void on_widget_clicked(t_widget *clicked_widget, int mouse_button_clicked, void *param(cast to your type))*/
+void		ui_bind_widget_onclick(t_widget *widget, void (*f)(struct s_widget *, int, void *), void *param);
+/*prototype should be:
+void on_slider_value_change(t_widget *changed_slider, float value, void *param(cast to your type))*/
+void		ui_bind_slider_onvaluechange(t_widget *slider, void (*f)(struct s_widget *, float, void *), void *param);
+
+
 
 
 

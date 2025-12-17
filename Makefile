@@ -3,51 +3,54 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+         #
+#    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/20 09:45:35 by injah             #+#    #+#              #
-#    Updated: 2025/10/07 10:47:51 by bvaujour         ###   ########.fr        #
+#    Updated: 2025/12/16 12:47:23 by injah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = guimp
 
 SRC = main.c
-
 OBJ = $(SRC:.c=.o)
-
-CFLAGS = -Wall -Werror -Wextra -g		\
-         -Ilibui						\
-         -Ilibui/SDL/include/SDL2		\
-         -Ilibui/SDL_ttf/include/SDL2	\
-		 -Ilibui/SDL_ttf/freetype/include
-
-LIBUI = -Llibui -lui 					\
-        -Llibui/SDL/lib -lSDL2			\
-        -Llibui/SDL_ttf/lib -lSDL2_ttf	\
-		-Llibui/lib -lfreetype 			\
-        -Llibui/SDL_image/lib -lSDL2_image	\
-        -lm
 
 CC = cc
 
+# Flags de compilation
+CFLAGS = -Wall -Wextra -Werror -g
+
+# SDL via pkg-config (flags automatiques)
+SDL_CFLAGS  = $(shell pkg-config --cflags sdl2 SDL2_image SDL2_ttf)
+SDL_LDFLAGS = $(shell pkg-config --libs   sdl2 SDL2_image SDL2_ttf)
+
+# Libs du projet
+LIBUI_DIR = libui
+LIBUI_LIB = -L$(LIBUI_DIR) -lui
+LIBFT_LIB = -L$(LIBUI_DIR)/libft -lft
+
+# Flags de linkage finaux
+LDFLAGS = $(LIBUI_LIB) $(LIBFT_LIB) $(SDL_LDFLAGS) -lm
+
+# Règle de compilation
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(SDL_CFLAGS) -c $< -o $@
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	make -C libui
-	$(CC) $(CFLAGS) $(OBJ) $(LIBUI) -o $(NAME)
+	make -C $(LIBUI_DIR)
+	$(CC) $(CFLAGS) $(OBJ) $(LDFLAGS) -o $(NAME)
 
 clean:
-	make clean -C libui
+	make clean -C $(LIBUI_DIR)
 	rm -f $(OBJ)
 
 fclean: clean
-	make fclean -C libui
+	make fclean -C $(LIBUI_DIR)
 	rm -f $(NAME)
 
 re: fclean all
 
 .PHONY: all clean fclean re
+
