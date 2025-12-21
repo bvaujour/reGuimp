@@ -6,13 +6,13 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:23:08 by injah             #+#    #+#             */
-/*   Updated: 2025/12/17 13:40:58 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/20 06:21:59 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libui_int.h"
 
-t_core	*ui_init(int width, int height)
+t_core	*ui_init()
 {
 	int 	img_flags;
 	t_core	*core;
@@ -24,17 +24,21 @@ t_core	*ui_init(int width, int height)
 	img_flags = IMG_INIT_PNG | IMG_INIT_JPG;
 	if (SDL_Init(SDL_INIT_VIDEO) != 0 || TTF_Init() != 0 || (IMG_Init(img_flags) & img_flags) != img_flags)
 		return (ui_destroy(core), NULL);
-	core->window = SDL_CreateWindow("LIBUI", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN);
-	if (!core->window)
-		return (ui_destroy(core), NULL);
-	core->renderer = SDL_CreateRenderer(core->window, -1, SDL_RENDERER_ACCELERATED);
-	if (!core->renderer)
-		return (ui_destroy(core), NULL);
-	core->canvas = ui_create_canvas(core, width, height);
+	core->windows = ui_new_widget_tab(UI_MAX_WINDOWS);
+	if (!core->windows)
+	{
+		free (core);
+		return (NULL);
+	}
+	// SDL_SYSTEM_CURSOR_SIZEALL
 	core->mouse.arrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
 	core->mouse.hand = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-	core->mouse.crosshair = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
+	core->mouse.crosshair = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+	core->font = TTF_OpenFont("libui/assets/fonts/Roboto/Roboto-Black.ttf", 150);
+	if (!core->font)
+		printf("font not open\n");
+	printf("sizeof(SDL_Rect) = %zu\n", sizeof(SDL_Rect));
 	return (core);
 }
 
@@ -54,12 +58,11 @@ void	ui_set_cursor(t_core *core, SDL_Cursor *cursor)
 
 void	ui_destroy(t_core *core)
 {
-	ui_destroy_widget_and_childs(core->canvas);
 	SDL_FreeCursor(core->mouse.arrow);
 	SDL_FreeCursor(core->mouse.hand);
 	SDL_FreeCursor(core->mouse.crosshair);
-	SDL_DestroyRenderer(core->renderer);
-	SDL_DestroyWindow(core->window);
+	TTF_CloseFont(core->font);
+	ui_destroy_widgets(core->windows);
 	free(core);
 	IMG_Quit();
 	TTF_Quit();

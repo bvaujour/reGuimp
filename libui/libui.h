@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2025/12/17 06:17:33 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/20 06:56:30 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,46 +17,45 @@
 
 typedef struct	s_core		t_core;
 typedef struct	s_widget	t_widget;
-// typedef struct	s_ui_color
-// {
-// 	unsigned char	red;
-// 	unsigned char	green;
-// 	unsigned char	blue;
-// 	unsigned char	alpha;
-// }				t_ui_color;
-// typedef	struct	s_window_user_data
-// {
-// 	t_ui_color	background_color;
-// }				t_window;
-
-// typedef	struct	s_button_user_data
-// {
-// 	t_ui_color	background_color;
-// }				t_button;
 
 
-t_core	*ui_init(int width, int height);
+t_core	*ui_init();
 
 void		ui_run(t_core *core);
 void		ui_quit(t_core *core);
 
 //BUTTON
-t_widget	*ui_create_button(t_core *core, int x, int y, int width, int height);
+t_widget	*ui_create_button(t_widget *parent, int x, int y, int width, int height);
+
 
 //WIDGET
 void		ui_set_widget_position(t_widget *widget, int x, int y);
 void		ui_set_widget_size(t_widget *widget, int width, int height);
 void		ui_set_widget_position_and_size(t_widget *widget, int x, int y, int width, int height);
+int			ui_set_widget_background(t_widget *widget, const char *path);
+void		ui_set_widget_colors(t_widget *widget, unsigned int normal, unsigned int hovered, unsigned int clicked, unsigned int released);
+void		ui_set_widget_visibility(t_widget *widget, int new_visibility);
+int			ui_get_widget_visibility(t_widget *widget);
+void		ui_toggle_widget_visibility(t_widget *widget);
 
 
-t_widget	*ui_create_drawable(t_core *core, int x, int y, int width, int height);
-void		ui_drawable_export_jpg(t_widget *edit_img, const char *file, int quality);
-void		ui_drawable_export_png(t_widget *edit_img, const char *file);
+
+
+
+
+t_widget	*ui_create_drawable(t_widget *parent, int x, int y, int width, int height);
+// void		ui_drawable_export_jpg(t_widget *edit_img, const char *file, int quality);
+void		ui_drawable_export_png(t_widget *drawable, const char *file);
 void		ui_drawable_set_brush_size(t_widget *drawable, int size);
 void		ui_drawable_set_brush_color(t_widget *drawable, char red, char green, char blue, char alpha);
 
 
-t_widget	*ui_create_slider(t_core *core, int x, int y, int width, int height);
+t_widget	*ui_create_slider(t_widget *parent, int x, int y, int width, int height);
+
+t_widget 	*ui_create_window(t_core *core, int x, int y, int width, int height);
+t_widget	*ui_create_box(t_widget *parent, int x, int y, int width, int height);
+t_widget	*ui_create_dragbox(t_widget *parent, int x, int y, int width, int height);
+
 
 //BINDINGS
 /*prototype should be:

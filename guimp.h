@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 10:25:14 by injah             #+#    #+#             */
-/*   Updated: 2025/12/17 06:13:42 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/20 06:56:30 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,15 +29,17 @@ enum	e_color
 
 typedef struct	s_data
 {
-	t_core		*core;
-	int			test;
-	t_widget	*tool_window;
-	t_widget	*render_window;
-	t_widget	*drawable;
-	t_widget	*button;
-	t_widget	*button2;
-	t_widget	*color_slider[NUM_COLOR];
-	char		color_values[NUM_COLOR];
+	t_core			*core;
+	int				test;
+	t_widget		*tool_window;
+	t_widget		*render_window;
+	t_widget		*drawable;
+	t_widget		*button;
+	t_widget		*button2;
+	t_widget		*box;
+	t_widget		*dragbox;
+	t_widget		*color_slider[NUM_COLOR];
+	unsigned char	color_values[NUM_COLOR];
 }				t_data;
 
 

@@ -6,56 +6,113 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 16:31:56 by injah             #+#    #+#             */
-/*   Updated: 2025/12/17 13:54:17 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/20 07:08:37 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libui_int.h"
 
 
-void	ui_destroy_widget_and_childs(t_widget *widget)
+// void	ui_destroy_widget_and_childs(t_widget *widget)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (i < widget->nb_childs)
+// 	{
+// 		ui_destroy_widget_and_childs(widget->childs[i]);
+// 		i++;
+// 	}
+// 	if (widget->destroy)
+// 		widget->destroy(widget);
+// 	free(widget->childs);
+// 	free(widget->data);
+// 	free(widget);
+// }
+
+// // trouve le focused widget
+// static void	ui_update_widget_and_childs(t_widget *widget)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	ui_widget_common_update(widget);
+// 	while (i < widget->nb_childs)
+// 	{
+// 		ui_update_widget_and_childs(widget->childs[i]);
+// 		i++;
+// 	}
+// }
+
+// static void	ui_render_widget_and_childs(t_widget *widget)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	if (widget->render)
+// 		widget->render(widget);
+// 	while (i < widget->nb_childs)
+// 	{
+// 		ui_render_widget_and_childs(widget->childs[i]);
+// 		i++;
+// 	}
+	
+// }
+
+void	ui_destroy_widgets(t_widget **widgets)
 {
 	int	i;
 
+	if (widgets == NULL)
+		return ;
 	i = 0;
-	while (i < widget->nb_childs)
+	while (widgets[i])
 	{
-		ui_destroy_widget_and_childs(widget->childs[i]);
+		ui_destroy_widgets(widgets[i]->childs);
+		if (widgets[i]->destroy)
+			widgets[i]->destroy(widgets[i]);
+		free(widgets[i]->data);
+		free(widgets[i]);
 		i++;
 	}
-	if (widget->destroy)
-		widget->destroy(widget);
-	free(widget->childs);
-	free(widget->data);
-	free(widget);
+	free(widgets);
 }
 
-// trouve le focused widget
-static void	ui_update_widget_and_childs(t_widget *widget)
+void	ui_update_widgets(t_widget **widgets)
 {
 	int	i;
 
+	if (widgets == NULL)
+		return ;
 	i = 0;
-	ui_widget_common_update(widget);
-	while (i < widget->nb_childs)
+	while (widgets[i])
 	{
-		ui_update_widget_and_childs(widget->childs[i]);
+		if (widgets[i]->is_visible)
+		{
+			ui_widget_common_update(widgets[i]);
+			ui_update_widgets(widgets[i]->childs);
+		}
 		i++;
 	}
 }
 
-static void	ui_render_widget_and_childs(t_widget *widget)
+void	ui_render_widgets(t_widget **widgets)
 {
 	int	i;
 
+	if (widgets == NULL)
+		return ;
 	i = 0;
-	while (i < widget->nb_childs)
+	while (widgets[i])
 	{
-		ui_render_widget_and_childs(widget->childs[i]);
+		if (widgets[i]->is_visible)
+		{
+			if (widgets[i]->render)
+				widgets[i]->render(widgets[i]);
+			ui_render_widgets(widgets[i]->childs);
+		}
 		i++;
 	}
-	if (widget->render)
-		widget->render(widget);
 }
 
 static void	ui_event(t_core *core)
@@ -63,11 +120,10 @@ static void	ui_event(t_core *core)
 	if (SDL_WaitEvent(&core->event))
 	{
 		if (core->event.type == SDL_KEYDOWN && core->onkeypress != NULL)
-			core->onkeypress(core->event.key.keysym.sym, core->onkeypress_param);
-		if (core->event.type == SDL_QUIT)
 		{
-			core->is_running = false;
+			core->onkeypress(core->event.key.keysym.sym, core->onkeypress_param);
 		}
+		
 		else if (core->event.type == SDL_MOUSEMOTION)
 		{
 			core->mouse.motion.x = core->event.motion.x - core->mouse.position.x;
@@ -79,25 +135,29 @@ static void	ui_event(t_core *core)
 		}
 		else if (core->event.type == SDL_MOUSEBUTTONDOWN)
 		{
-			if (core->event.button.button >= UI_MOUSE_BUTTON_SUPPORTED)
-				return ;
-			core->mouse.mouse_buttons[core->event.button.button] = true;
-			core->mouse.last_click = core->event.button.button;
-			// printf("button down: %d\n", core->event.button.button);
+			if (core->event.button.button < UI_MOUSE_BUTTON_SUPPORTED)
+				core->mouse.mouse_buttons[core->event.button.button] = true;
 		}
 		else if (core->event.type == SDL_MOUSEBUTTONUP)
 		{
-			if (core->event.button.button >= UI_MOUSE_BUTTON_SUPPORTED)
-				return ;
-			core->mouse.mouse_buttons[core->event.button.button] = false;
+			core->dragged_widget = NULL;
+			if (core->event.button.button < UI_MOUSE_BUTTON_SUPPORTED)
+				core->mouse.mouse_buttons[core->event.button.button] = false;
+		}
+		// if (core->event.type == SDL_MOUSEMOTION || core->event.type == SDL_DROPFILE || core->event.type == SDL_MOUSEBUTTONDOWN)
+		// printf("id : %d, enum: %d\n", core->event.window.windowID, core->event.type);
+	}
+}
 
-			// printf("button up: %d\n", core->event.button.button);
-		}
-		else if (core->event.type == SDL_WINDOWEVENT)
-		{
-			
-			// printf("window core->event\n");
-		}
+static void	ui_render_present(t_widget **windows)
+{
+	int	i;
+
+	i = 0;
+	while (windows[i])
+	{
+		SDL_RenderPresent(windows[i]->renderer);
+		i++;
 	}
 }
 
@@ -107,16 +167,16 @@ void	ui_run(t_core *core)
 
 	while (core->is_running)
 	{
+		core->focused_widget = NULL;
 		ui_event(core);
-		ui_update_widget_and_childs(core->canvas);
-		if (core->focused_widget->update)
-			core->focused_widget->update(core->focused_widget);
-		if (core->focused_widget->manage_cursor)
-			core->focused_widget->manage_cursor(core->focused_widget);
-		ui_widget_clear(core->canvas);
-		ui_render_widget_and_childs(core->canvas);
-		SDL_RenderPresent(core->renderer);
-
+		if (core->event.window.event != SDL_WINDOWEVENT_FOCUS_LOST)
+		{
+			ui_update_widgets(core->windows);
+			if (core->focused_widget && core->focused_widget->update)
+				core->focused_widget->update(core->focused_widget);
+			ui_render_widgets(core->windows);
+			ui_render_present(core->windows);
+		}
 	}
 	ui_destroy(core);
 

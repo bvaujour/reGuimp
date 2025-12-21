@@ -6,7 +6,7 @@
 #    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/03 16:48:10 by bvaujour          #+#    #+#              #
-#    Updated: 2025/12/16 22:48:46 by injah            ###   ########.fr        #
+#    Updated: 2025/12/20 06:55:57 by injah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,15 +19,19 @@ SRC =	ui_core.c						\
 		ui_binding.c					\
 		ui_widget_user.c				\
 		ui_widget.c						\
-		ui_canvas.c						\
-		ui_button.c						\
+		ui_window.c						\
 		ui_utils.c						\
-		ui_drawable.c					\
+		ui_button.c						\
 		ui_slider.c						\
+		ui_drawable.c					\
+		ui_box.c						\
+		ui_dragbox.c					\
 
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 
-CFLAGS = -Wall -Wextra -Werror -g -Ilibft
+SDL_CFLAGS = $(shell pkg-config --cflags sdl2 SDL2_image SDL2_ttf)
+
+CFLAGS = -Wall -Wextra -Werror -g -Ilibft $(SDL_CFLAGS)
 
 CC = cc
 

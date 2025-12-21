@@ -12,53 +12,42 @@
 
 #include "libui_int.h"
 
-void	ui_drawable_stroke(t_widget *drawable, int x, int y)
-{
-	t_drawable_data		*data;
-
-	data = (t_drawable_data *)drawable->data;
-	SDL_SetSurfaceBlendMode(data->brush, SDL_BLENDMODE_MUL);
-	SDL_SetSurfaceColorMod(data->brush, data->brush_color.r, data->brush_color.g, data->brush_color.b);
-	SDL_SetSurfaceAlphaMod(data->brush, data->brush_color.a);
-	SDL_BlitScaled(data->brush, NULL, drawable->surface, &(SDL_Rect){x - data->brush_size / 2, y - data->brush_size / 2, data->brush_size, data->brush_size});
-}
-
-//quality: [0:100]
-void	ui_drawable_export_jpg(t_widget *drawable, const char *file, int quality)
-{
-	IMG_SaveJPG(drawable->surface, file, quality);
-}
-
 void	ui_drawable_export_png(t_widget *drawable, const char *file)
 {
-	IMG_SavePNG(drawable->surface, file);
-}
+	SDL_Surface	*surface;
 
-void		ui_drawable_build_brush(t_widget *drawable)
-{
-	SDL_Surface			*surface;
-	t_drawable_data		*data;
+	surface = SDL_CreateRGBSurfaceWithFormat(0, drawable->rect.w, drawable->rect.h, 32, SDL_PIXELFORMAT_ARGB8888);
 
-	data = (t_drawable_data *)drawable->data;
-	if (data->cursor)
-		SDL_FreeCursor(data->cursor);
-	surface = SDL_CreateRGBSurfaceWithFormat(0, data->brush_size, data->brush_size, 32, SDL_PIXELFORMAT_ARGB8888);
-	ui_draw_outline(surface, (SDL_Color){0, 0, 0, 255}, 1);
-	SDL_SetSurfaceColorMod(data->brush, data->brush_color.r, data->brush_color.g, data->brush_color.b);
-	SDL_BlitScaled(data->brush, NULL, surface, NULL);
-	data->cursor = SDL_CreateColorCursor(surface, data->brush_size / 2, data->brush_size / 2);
+	SDL_SetRenderTarget(drawable->renderer, drawable->background);
+
+	SDL_RenderReadPixels(drawable->renderer, NULL, SDL_PIXELFORMAT_ARGB8888, surface->pixels, surface->pitch);
+
+	SDL_SetRenderTarget(drawable->renderer, NULL);
+	IMG_SavePNG(surface, file);
 	SDL_FreeSurface(surface);
 }
 
 void		ui_drawable_set_brush(t_widget *drawable, const char *path)
 {
 	t_drawable_data		*data;
-
+	// SDL_Surface		*loaded_img;
+	SDL_Surface 		*surface;
 	data = (t_drawable_data *)drawable->data;
 	if (data->brush)
-		SDL_FreeSurface(data->brush);
-	data->brush = IMG_Load(path);
-	ui_drawable_build_brush(drawable);
+		SDL_DestroyTexture(data->brush);
+	surface = IMG_Load(path);
+	//surface = SDL_ConvertSurfaceFormat(loaded_img, SDL_PIXELFORMAT_ARGB8888, 0);
+	// SDL_FreeSurface(loaded_img);
+	if (!surface)
+		printf("failed load brush\n");
+	data->brush_ratio = (float)surface->h / surface->w;
+	data->brush_rect.w = data->brush_size;
+	data->brush_rect.h = data->brush_ratio * data->brush_size;
+	data->brush = SDL_CreateTextureFromSurface(drawable->renderer, surface);
+	if (!data->brush)
+		printf("failed load brush\n");
+	SDL_SetTextureBlendMode(data->brush, SDL_BLENDMODE_BLEND);
+	SDL_FreeSurface(surface);
 }
 
 void		ui_drawable_set_brush_size(t_widget *drawable, int size)
@@ -67,7 +56,8 @@ void		ui_drawable_set_brush_size(t_widget *drawable, int size)
 
 	data = (t_drawable_data *)drawable->data;
 	data->brush_size = size;
-	ui_drawable_build_brush(drawable);
+	data->brush_rect.w = size;
+	data->brush_rect.h = data->brush_ratio * size;
 }
 
 void		ui_drawable_set_brush_color(t_widget *drawable, char red, char green, char blue, char alpha)
@@ -79,89 +69,120 @@ void		ui_drawable_set_brush_color(t_widget *drawable, char red, char green, char
 	data->brush_color.g = green;
 	data->brush_color.b = blue;
 	data->brush_color.a = alpha;
-	ui_drawable_build_brush(drawable);
 }
 
 static void	ui_drawable_render(t_widget *drawable)
 {
-	SDL_BlitSurface(drawable->surface, NULL, drawable->parent->surface, &drawable->rect);
+	SDL_Color		color;
+	t_drawable_data	*data;
 
+	data = (t_drawable_data *)drawable->data;
+	SDL_RenderSetClipRect(drawable->renderer, &drawable->parent->absolute);
+	SDL_RenderCopy(drawable->renderer, drawable->background, NULL, &drawable->absolute);
+
+	if (drawable->state == HOVERED || drawable->state == CLICKED)
+	{
+		data->brush_rect.x = drawable->core->mouse.position.x - data->brush_rect.w / 2;
+		data->brush_rect.y = drawable->core->mouse.position.y - data->brush_rect.h / 2;
+		// printf("brush posx: %d\nbrush posy: %d\nbrush ratio: %f\nbrush_width: %d\nbrush height:%d\n", data->brush_rect.x, data->brush_rect.y, data->brush_ratio, data->brush_rect.w, data->brush_rect.h);
+		color = data->brush_color;
+		SDL_SetTextureColorMod(data->brush, color.r, color.g, color.b);
+		SDL_RenderCopy(drawable->renderer, data->brush, NULL, &data->brush_rect);
+	}
+	SDL_RenderSetClipRect(drawable->renderer, NULL);
+}
+
+static void	ui_drawable_event(t_widget *drawable, SDL_Event event)
+{
+	(void)drawable;
+	if (event.type == SDL_DROPFILE)
+	{
+		SDL_Surface *surface = IMG_Load(event.drop.file);
+		if (surface)
+		{
+			SDL_Texture *tmp = SDL_CreateTextureFromSurface(drawable->renderer, surface);
+
+			SDL_SetRenderTarget(drawable->renderer, drawable->background);
+			SDL_RenderCopy(drawable->renderer, tmp, NULL, NULL);
+			SDL_SetRenderTarget(drawable->renderer, NULL);
+
+			SDL_DestroyTexture(tmp);
+			SDL_FreeSurface(surface);
+
+		printf ("%s\n", event.drop.file);
+		}
+	}
 }
 
 static void	ui_drawable_update(t_widget *drawable)
 {
-	t_core		*core;
+	t_drawable_data	*data;
+	t_core			*core;
 
 	core = drawable->core;
-	ui_widget_manage_state_and_click(drawable);
-	if (drawable->state == UI_CLICKED_STATE)
+	ui_drawable_event(drawable, core->event);
+	if (drawable->state == CLICKED)
 	{
-		ui_drawable_stroke(drawable, core->mouse.position.x - drawable->rect.x, core->mouse.position.y - drawable->rect.y);
+		data = (t_drawable_data *)drawable->data;
+		SDL_SetTextureAlphaMod(data->brush, data->brush_color.a);
+		SDL_SetTextureColorMod(data->brush, data->brush_color.r, data->brush_color.g, data->brush_color.b);
+		data->brush_rect.x = core->mouse.position.x - drawable->absolute.x - data->brush_rect.w / 2;
+		data->brush_rect.y = core->mouse.position.y - drawable->absolute.y - data->brush_rect.h / 2;
+		SDL_SetRenderTarget(drawable->renderer, drawable->background);
+		SDL_RenderCopy(drawable->renderer, data->brush, NULL, &data->brush_rect);
+		SDL_SetRenderTarget(drawable->renderer, NULL);
 	}
-}
-
-static void	ui_drawable_manage_cursor(t_widget *drawable)
-{
-	(void)drawable;
-	t_drawable_data		*data;
-
-	data = (t_drawable_data *)drawable->data;
-	ui_set_cursor(drawable->core, data->cursor);
 }
 
 static void	ui_drawable_destroy(t_widget *drawable)
 {
+	(void)drawable;
+
 	t_drawable_data		*data;
 
 	data = (t_drawable_data *)drawable->data;
 	if (data->cursor)
 		SDL_FreeCursor(data->cursor);
 	if (data->brush)
-		SDL_FreeSurface(data->brush);
-	SDL_FreeSurface(drawable->surface);
+		SDL_DestroyTexture(data->brush);
+	if (drawable->background)
+		SDL_DestroyTexture(drawable->background);
 	free(data->brush_path);
 }
 
 static void	ui_drawable_build(t_widget *drawable)
 {
-	SDL_Color	color;
-	SDL_Surface	*surface;
-	t_drawable_data		*data;
-
-	data = (t_drawable_data *)drawable->data;
-	color = drawable->colors[drawable->state];
-	surface = SDL_CreateRGBSurfaceWithFormat(0, drawable->rect.w, drawable->rect.h, 32, SDL_PIXELFORMAT_ARGB8888);
-	if (!surface)
-		return ;
-	SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, color.r, color.g, color.b, color.a));
-	drawable->surface = surface;
-	ui_drawable_set_brush(drawable, data->brush_path);
-
+	drawable->background = SDL_CreateTexture(drawable->renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, drawable->rect.w, drawable->rect.h);
+	SDL_SetRenderTarget(drawable->renderer, drawable->background);
+	SDL_SetRenderDrawColor(drawable->renderer, 255, 255, 255, 255);
+	SDL_RenderFillRect(drawable->renderer, NULL);
+	SDL_SetRenderTarget(drawable->renderer, NULL);
 }
 
-t_widget	*ui_create_drawable(t_core *core, int x, int y, int width, int height)
+t_widget	*ui_create_drawable(t_widget *parent, int x, int y, int width, int height)
 {
 	t_widget			*drawable;
 	t_drawable_data		*data;
 
-	drawable = ui_init_widget(core, x, y, width, height);
-	data = malloc(sizeof(t_drawable_data));
+	drawable = ui_new_widget(DRAWABLE, sizeof(t_drawable_data));
+	data = (t_drawable_data *)drawable->data;
 	*data = (t_drawable_data){0};
-	drawable->data = data; 
-	drawable->type = DRAWABLE;
 	drawable->outline = 2;
-	drawable->colors[UI_OUTLINE_COLOR] = (SDL_Color){0, 0, 0, 100};
-	drawable->colors[UI_NORMAL_COLOR] = (SDL_Color){255, 255, 255, 255};
-	drawable->colors[UI_HOVERED_COLOR] = (SDL_Color){100, 100, 100, 255};
-	drawable->colors[UI_CLICKED_COLOR] = (SDL_Color){150, 150, 150, 255};
-	data->brush_color = (SDL_Color){0, 0, 0, 255};
-	data->brush_size = 20;
+	drawable->rect = (SDL_Rect){x, y, width, height};
+	data->brush_size = 500;
+	data->brush_color = (SDL_Color){255, 255, 255, 255};
 	drawable->render = ui_drawable_render;
 	drawable->update = ui_drawable_update;
 	drawable->destroy = ui_drawable_destroy;
-	drawable->build = ui_drawable_build;
-	drawable->manage_cursor = ui_drawable_manage_cursor;
-	data->brush_path = ft_strdup("libui/assets/brushs/brush_base.png");
+	data->brush_path = ft_strdup("/home/injah/Documents/qtmq3NBTkrXVETGT2FUPjL.png");
+	ui_set_child_references(parent, drawable);
+	if (parent->add_child == NULL || parent->add_child(parent, drawable) == UI_ERROR)
+	{
+		printf("ui_create_drawable: FAILED ADD CHILD\n");
+		ui_drawable_destroy(drawable);
+		return (NULL);
+	}
 	ui_drawable_build(drawable);
+	ui_drawable_set_brush(drawable, data->brush_path);
 	return (drawable);
 }
