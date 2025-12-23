@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 16:31:56 by injah             #+#    #+#             */
-/*   Updated: 2025/12/20 07:08:37 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/23 14:09:40 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ void	ui_run(t_core *core)
 
 	while (core->is_running)
 	{
-		core->focused_widget = NULL;
+		// core->focused_widget = NULL;
 		ui_event(core);
 		if (core->event.window.event != SDL_WINDOWEVENT_FOCUS_LOST)
 		{

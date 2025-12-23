@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2025/12/20 06:56:45 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/23 15:35:10 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@
 # define	UI_MAX_DRAGBOX_CHILDS			1
 # define	UI_MAX_BUTTON_CHILDS			1
 # define	UI_MAX_BOX_CHILDS				10
+# define	UI_MAX_DRAWABLE_CHILDS			0
+# define	UI_MAX_SLIDER_CHILDS			0
 # define	UI_ERROR						-1
 # define	UI_SUCCESS						0
 
@@ -38,6 +40,7 @@ typedef enum	e_widget_type
 	WINDOW,
 	BUTTON,
 	DRAWABLE,
+	DRAGBOX,
 	SLIDER,
 	BOX,
 }				e_widget_type;
@@ -131,17 +134,6 @@ typedef struct	s_button_data
 	SDL_Texture	*text_texture;
 }				t_button_data;
 
-typedef struct	s_box_data
-{
-	int	dummy;
-}				t_box_data;
-
-typedef struct	s_dragbox_data
-{
-	int	dummy;
-}				t_dragbox_data;
-
-
 
 typedef struct	s_core
 {
@@ -166,7 +158,6 @@ int			ui_core_add_window(t_core *core, t_widget *window);
 
 
 //WIDGET
-void		ui_set_child_references(t_widget *parent, t_widget *child);
 
 
 void		ui_widget_common_update(t_widget *widget);
@@ -174,7 +165,8 @@ void		ui_widget_common_update(t_widget *widget);
 t_widget 	**ui_new_widget_tab(int tab_len);
 int			ui_add_child(t_widget *parent, t_widget *child);
 
-t_widget	 *ui_new_widget(e_widget_type type, size_t sizeof_data);
+t_widget	*ui_new_widget(SDL_Rect rect, e_widget_type type, int max_child);
+
 
 //UTILS
 SDL_Color	ui_unpack_color(unsigned int color);

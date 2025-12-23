@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:36:13 by injah             #+#    #+#             */
-/*   Updated: 2025/12/20 06:47:04 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/23 15:29:45 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,37 +96,27 @@ void	ui_button_build_label(t_widget *button)
 
 t_widget	*ui_create_button(t_widget *parent, int x, int y, int width, int height)
 {
-	t_widget		*button;
-	t_button_data	*data;
+	t_widget			*button;
+	t_button_data		*data;
 
-	if (parent == NULL || parent->add_child == NULL)
+	if (parent == NULL)
 		return (NULL);
-	button = ui_new_widget(BUTTON, sizeof(t_button_data));
+	button = ui_new_widget((SDL_Rect){x, y, width, height}, BUTTON, UI_MAX_BUTTON_CHILDS);
 	if (!button)
 		return (NULL);
-	button->childs = ui_new_widget_tab(UI_MAX_BUTTON_CHILDS);
-	if (!button->childs)
-	{
-		ui_button_destroy(button);
-		return (NULL);
-	}
+	if (ui_add_child(parent, button) != UI_SUCCESS)
+		return (free(button), NULL);
+	button->data = malloc(sizeof(t_button_data));
+	if (!button->data)
+		return (free(button), NULL);
 	data = (t_button_data *)button->data;
 	*data = (t_button_data){0};
-	button->rect = (SDL_Rect){x, y, width, height};
 	ui_set_widget_colors(button, 0xFF5F5F5F, 0xFF7F7F7F, 0xFF9F9F9F, 0xFFBFBFBF);
-	button->outline = 2;
 	button->render = ui_button_render;
 	button->update = ui_button_update;
 	button->destroy = ui_button_destroy;
 	button->add_child = ui_button_add_child;
-	ui_set_child_references(parent, button);
 	button->background = ui_new_texture(parent->renderer, width, height);
 	ui_button_build_label(button);
-	if (parent->add_child == NULL || parent->add_child(parent, button) == UI_ERROR)
-	{
-		printf("ui_create_button: FAILED ADD CHILD\n");
-		ui_button_destroy(button);
-		return (NULL);
-	}
 	return (button);
 }

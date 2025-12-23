@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2025/12/20 07:10:09 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/22 01:05:16 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,11 +83,12 @@ int	main()
 	(void)data;
 	data = (t_data){0};
 	data.test = 2;
-	data.core = ui_init(1280, 720);
+	data.core = ui_init();
+	ui_get_screen_size(&data.screen_width, &data.screen_height);
 	ui_bind_onkeypress(data.core, on_key_pressed, &data);
 
-	data.tool_window = ui_create_window(data.core, 0, 0, 800, 600);
-	data.render_window = ui_create_window(data.core, 800, 0, 800, 600);
+	data.tool_window = ui_create_window(data.core, 0, 0, data.screen_width / 4, data.screen_height);
+	data.render_window = ui_create_window(data.core, data.screen_width / 4, 0,  3 * data.screen_width / 4, data.screen_height);
 
 	data.dragbox = ui_create_dragbox(data.tool_window, 0, 0, 300, 500);
 	data.box = ui_create_box(data.dragbox, 50, 50, 300, 500);

@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
-/*   Updated: 2025/12/20 06:45:21 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/23 15:33:58 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	ui_widget_common_update(t_widget *widget)
 		widget->state = NORMAL;
 }
 
-t_widget *ui_new_widget(e_widget_type type, size_t sizeof_data)
+t_widget *ui_new_widget(SDL_Rect rect, e_widget_type type, int max_child)
 {
 	t_widget		*widget;
 
@@ -61,14 +61,16 @@ t_widget *ui_new_widget(e_widget_type type, size_t sizeof_data)
 	if (widget == NULL)
 		return (NULL);
 	*widget = (t_widget){0};
-	widget->data = malloc(sizeof_data);
-	if (widget->data == NULL)
+	if (max_child)
 	{
-		free(widget);
-		return (NULL);
+		widget->childs = ui_new_widget_tab(max_child);
+		if (widget->childs == NULL)
+			return (free(widget), NULL);
 	}
+	widget->rect = rect;
 	widget->type = type;
 	widget->is_visible = true;
+	widget->outline = 2;
 	return (widget);
 }
 
@@ -111,30 +113,6 @@ int	ui_core_add_window(t_core *core, t_widget *window)
 	return (-1);
 }
 
-int	ui_add_child(t_widget *parent, t_widget *child)
-{
-	if (parent->add_child == NULL || parent->add_child(parent, child) == UI_ERROR)
-	{
-		printf("ui_add_child failed\n");
-		return (UI_ERROR);
-	}
-	printf("Adding child\n");
-	child->parent = parent;
-	child->core = parent->core;
-	child->renderer = parent->renderer;
-	parent->childs[parent->nb_child] = child;
-	parent->nb_child++;
-	return (UI_SUCCESS);
-}
-
-void	ui_set_child_references(t_widget *parent, t_widget *child)
-{
-	child->parent = parent;
-	child->core = parent->core;
-	child->renderer = parent->renderer;
-	child->window_id = parent->window_id;
-}
-
 void	ui_draw_outline(SDL_Renderer *renderer, SDL_Rect start_rect, int size)
 {
 	int			i;
@@ -157,4 +135,17 @@ void	ui_draw_background(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Rect r
 	SDL_SetTextureColorMod(texture, color.r, color.g, color.b);
 	SDL_SetTextureAlphaMod(texture, color.a);
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
+}
+
+int	ui_add_child(t_widget *parent, t_widget *child)
+{
+	child->parent = parent;
+	child->core = parent->core;
+	child->renderer = parent->renderer;
+	child->window_id = parent->window_id;
+	if (parent->add_child == NULL)
+		return (ft_dprintf(2, "ui_add_child: parent widget does not have add child function\n"), UI_ERROR);
+	if (parent->add_child(parent, child) == UI_ERROR)
+		return (ft_dprintf(2, "ui_add_child: parent widget can't add this child\n"), UI_ERROR);
+	return (UI_SUCCESS);	
 }

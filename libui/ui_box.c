@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 21:09:13 by injah             #+#    #+#             */
-/*   Updated: 2025/12/20 06:53:30 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/23 15:29:17 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,34 +46,21 @@ static int	ui_box_add_child(t_widget *box, t_widget *child)
 }
 t_widget	*ui_create_box(t_widget *parent, int x, int y, int width, int height)
 {
-	t_widget		*box;
+	t_widget	*box;
 
-	if (parent == NULL || parent->add_child == NULL)
+	if (parent == NULL)
 		return (NULL);
-	box = ui_new_widget(BUTTON, sizeof(t_box_data));
+	box = ui_new_widget((SDL_Rect){x, y, width, height}, BOX, UI_MAX_BOX_CHILDS);
 	if (!box)
 		return (NULL);
-	box->childs = ui_new_widget_tab(UI_MAX_BOX_CHILDS);
-	if (!box->childs)
-	{
-		ui_box_destroy(box);
-		return (NULL);
-	}
-	box->rect = (SDL_Rect){x, y, width, height};
+	if (ui_add_child(parent, box) != UI_SUCCESS)
+		return (free(box), NULL);
 	ui_set_widget_colors(box, 0x7F5F5F5F, 0x7F5F5F5F, 0x7F5F5F5F, 0x7F5F5F5F);
-	box->outline = 5;
 	box->is_dragable = true;
 	box->render = ui_box_render;
 	box->update = ui_box_update;
 	box->destroy = ui_box_destroy;
 	box->add_child = ui_box_add_child;
-	ui_set_child_references(parent, box);
 	box->background = ui_new_texture(parent->renderer, width, height);
-	if (parent->add_child == NULL || parent->add_child(parent, box) == UI_ERROR)
-	{
-		printf("ui_create_box: FAILED ADD CHILD\n");
-		ui_box_destroy(box);
-		return (NULL);
-	}
 	return (box);
 }

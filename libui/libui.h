@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2025/12/20 06:56:30 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/22 00:53:35 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void		ui_set_widget_visibility(t_widget *widget, int new_visibility);
 int			ui_get_widget_visibility(t_widget *widget);
 void		ui_toggle_widget_visibility(t_widget *widget);
 
+void		ui_get_screen_size(int *screen_width, int *screen_height);
 
 
 

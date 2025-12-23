@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 16:33:33 by injah             #+#    #+#             */
-/*   Updated: 2025/12/20 06:50:15 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/23 15:30:59 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,32 +70,27 @@ void	ui_slider_update(t_widget *slider)
 
 t_widget	*ui_create_slider(t_widget *parent, int x, int y, int width, int height)
 {
-	t_widget		*slider;
-	t_slider_data	*data;
-	
-	slider = ui_new_widget(SLIDER, sizeof(t_slider_data));
-	if (!slider)
-	{
-		ui_slider_destroy(slider);
+	t_widget			*slider;
+	t_slider_data		*data;
+
+	if (parent == NULL)
 		return (NULL);
-	}
+	slider = ui_new_widget((SDL_Rect){x, y, width, height}, SLIDER, UI_MAX_SLIDER_CHILDS);
+	if (!slider)
+		return (NULL);
+	if (ui_add_child(parent, slider) != UI_SUCCESS)
+		return (free(slider), NULL);
+	slider->data = malloc(sizeof(t_slider_data));
+	if (!slider->data)
+		return (free(slider), NULL);
 	data = (t_slider_data *)slider->data;
 	*data = (t_slider_data){0};
-	slider->rect = (SDL_Rect){x, y, width, height};
-	slider->outline = 2;
 	data->slide_factor = 20;
 	ui_set_widget_colors(slider, 0xFF7F7F7F, 0xFF7F7F7F, 0xFF9F9F9F, 0xFF9F9F9F);
 	data->fill_color = (SDL_Color){100, 100, 100, 100};
 	slider->render = ui_slider_render;
 	slider->update = ui_slider_update;
 	slider->destroy = ui_slider_destroy;
-	ui_set_child_references(parent, slider);
-	if (!parent->add_child || parent->add_child(parent, slider) == UI_ERROR)
-	{
-		printf("ui_create_slider: FAILED ADD CHILD\n");
-		ui_slider_destroy(slider);
-		return (NULL);
-	}
 	data->slide_texture = ui_new_texture(parent->renderer, width / data->slide_factor, height);
 	slider->background = ui_new_texture(parent->renderer, width, height);
 	return (slider);

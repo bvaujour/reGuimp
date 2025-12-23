@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 12:53:46 by injah             #+#    #+#             */
-/*   Updated: 2025/12/19 23:46:42 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/23 15:31:21 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,31 +64,25 @@ static int	ui_window_add_child(t_widget *window, t_widget *child)
 
 t_widget 	*ui_create_window(t_core *core, int x, int y, int width, int height)
 {
-	t_widget		*window;
-	t_window_data	*data;
+	t_widget			*window;
+	t_window_data		*data;
 
-	window = ui_new_widget(WINDOW, sizeof(t_window_data));
-	if (window == NULL)
-	{
-		printf("ui_create_window: SDL_window failed\n");
-		ui_window_destroy(window);
+	if (core == NULL)
 		return (NULL);
-	}
+	window = ui_new_widget((SDL_Rect){0, 0, width, height}, WINDOW, UI_MAX_WINDOW_CHILDS);
+	if (!window)
+		return (NULL);
+	window->data = malloc(sizeof(t_window_data));
+	if (!window->data)
+		return (free(window), NULL);
 	data = (t_window_data *)window->data;
 	*data = (t_window_data){0};
-	window->childs = ui_new_widget_tab(UI_MAX_WINDOW_CHILDS);
-	if (window->childs == NULL)
-	{
-		ui_window_destroy(window);
-		return (NULL);
-	}
 	window->core = core;
 	ui_set_widget_colors(window, 0xFF444444, 0xFF444444, 0xFF444444, 0xFF444444);
 	window->render = ui_window_render;
 	window->update = ui_window_update;
 	window->destroy = ui_window_destroy;
 	window->add_child = ui_window_add_child;
-	window->rect = (SDL_Rect){0, 0, width, height};
 	data->window = SDL_CreateWindow("LIBUI", x, y, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if (data->window == NULL)
 	{

@@ -100,35 +100,24 @@ static int	ui_dragbox_add_child(t_widget *dragbox, t_widget *child)
 	dragbox->nb_child++;
 	return (UI_SUCCESS);
 }
+
 t_widget	*ui_create_dragbox(t_widget *parent, int x, int y, int width, int height)
 {
-	t_widget		*dragbox;
+	t_widget	*dragbox;
 
-	if (parent == NULL || parent->add_child == NULL)
+	if (parent == NULL)
 		return (NULL);
-	dragbox = ui_new_widget(BUTTON, sizeof(t_dragbox_data));
+	dragbox = ui_new_widget((SDL_Rect){x, y, width, height}, DRAGBOX, UI_MAX_DRAGBOX_CHILDS);
 	if (!dragbox)
 		return (NULL);
-	dragbox->childs = ui_new_widget_tab(UI_MAX_DRAGBOX_CHILDS);
-	if (!dragbox->childs)
-	{
-		ui_dragbox_destroy(dragbox);
-		return (NULL);
-	}
-	dragbox->rect = (SDL_Rect){x, y, width, height};
+	if (ui_add_child(parent, dragbox) != UI_SUCCESS)
+		return (free(dragbox), NULL);
 	ui_set_widget_colors(dragbox, 0x7F5F5F5F, 0x7F5F5F5F, 0x7F5F5F5F, 0x7F5F5F5F);
 	dragbox->outline = 25;
 	dragbox->render = ui_dragbox_render;
 	dragbox->update = ui_dragbox_update;
 	dragbox->destroy = ui_dragbox_destroy;
 	dragbox->add_child = ui_dragbox_add_child;
-	ui_set_child_references(parent, dragbox);
 	dragbox->background = ui_new_texture(parent->renderer, width, height);
-	if (parent->add_child == NULL || parent->add_child(parent, dragbox) == UI_ERROR)
-	{
-		printf("ui_create_dragbox: FAILED ADD CHILD\n");
-		ui_dragbox_destroy(dragbox);
-		return (NULL);
-	}
 	return (dragbox);
 }

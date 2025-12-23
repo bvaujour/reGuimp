@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:24:56 by injah             #+#    #+#             */
-/*   Updated: 2025/12/20 00:43:40 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/22 00:51:14 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,4 +73,15 @@ int	ui_get_widget_visibility(t_widget *widget)
 void	ui_toggle_widget_visibility(t_widget *widget)
 {
 	widget->is_visible = !widget->is_visible;
+}
+
+void	ui_get_screen_size(int *screen_width, int *screen_height)
+{
+	SDL_Rect	rect;
+
+	SDL_GetDisplayUsableBounds(0, &rect);
+	if (screen_width)
+		*screen_width = rect.w;
+	if (screen_height)
+		*screen_height = rect.h;
 }

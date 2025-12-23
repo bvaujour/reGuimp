@@ -97,6 +97,8 @@ static void	ui_drawable_event(t_widget *drawable, SDL_Event event)
 	(void)drawable;
 	if (event.type == SDL_DROPFILE)
 	{
+	printf ("HELLO\n");
+
 		SDL_Surface *surface = IMG_Load(event.drop.file);
 		if (surface)
 		{
@@ -109,7 +111,7 @@ static void	ui_drawable_event(t_widget *drawable, SDL_Event event)
 			SDL_DestroyTexture(tmp);
 			SDL_FreeSurface(surface);
 
-		printf ("%s\n", event.drop.file);
+			printf ("%s\n", event.drop.file);
 		}
 	}
 }
@@ -121,6 +123,7 @@ static void	ui_drawable_update(t_widget *drawable)
 
 	core = drawable->core;
 	ui_drawable_event(drawable, core->event);
+
 	if (drawable->state == CLICKED)
 	{
 		data = (t_drawable_data *)drawable->data;
@@ -164,24 +167,24 @@ t_widget	*ui_create_drawable(t_widget *parent, int x, int y, int width, int heig
 	t_widget			*drawable;
 	t_drawable_data		*data;
 
-	drawable = ui_new_widget(DRAWABLE, sizeof(t_drawable_data));
+	if (parent == NULL)
+		return (NULL);
+	drawable = ui_new_widget((SDL_Rect){x, y, width, height}, DRAWABLE, UI_MAX_DRAWABLE_CHILDS);
+	if (!drawable)
+		return (NULL);
+	if (ui_add_child(parent, drawable) != UI_SUCCESS)
+		return (free(drawable), NULL);
+	drawable->data = malloc(sizeof(t_drawable_data));
+	if (!drawable->data)
+		return (free(drawable), NULL);
 	data = (t_drawable_data *)drawable->data;
 	*data = (t_drawable_data){0};
-	drawable->outline = 2;
-	drawable->rect = (SDL_Rect){x, y, width, height};
-	data->brush_size = 500;
+	data->brush_size = 25;
 	data->brush_color = (SDL_Color){255, 255, 255, 255};
 	drawable->render = ui_drawable_render;
 	drawable->update = ui_drawable_update;
 	drawable->destroy = ui_drawable_destroy;
-	data->brush_path = ft_strdup("/home/injah/Documents/qtmq3NBTkrXVETGT2FUPjL.png");
-	ui_set_child_references(parent, drawable);
-	if (parent->add_child == NULL || parent->add_child(parent, drawable) == UI_ERROR)
-	{
-		printf("ui_create_drawable: FAILED ADD CHILD\n");
-		ui_drawable_destroy(drawable);
-		return (NULL);
-	}
+	data->brush_path = ft_strdup("libui/assets/brushs/brush_base.png");
 	ui_drawable_build(drawable);
 	ui_drawable_set_brush(drawable, data->brush_path);
 	return (drawable);
