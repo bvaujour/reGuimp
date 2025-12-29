@@ -6,61 +6,60 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 21:09:13 by injah             #+#    #+#             */
-/*   Updated: 2025/12/23 15:29:17 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/29 01:04:06 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libui_int.h"
 
 
-void		ui_box_render(t_widget *box)
+void		ui_box_render(t_widget *widget)
 {
-	SDL_RenderSetClipRect(box->renderer, &box->parent->absolute);
-	ui_draw_background(box->renderer, box->background, box->absolute, box->colors[box->state]);
-	ui_draw_outline(box->renderer, box->absolute, box->outline);
-	SDL_RenderSetClipRect(box->renderer, NULL);
+	SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
+	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute);
+	ui_draw_outline(widget->renderer, widget->absolute, widget->outline, widget->outline_color);
+	SDL_RenderSetClipRect(widget->renderer, NULL);
 }
 
-void		ui_box_update(t_widget *box)
+void		ui_box_update(t_widget *widget)
 {
-	(void)box;
+	ui_set_cursor(widget->core, widget->core->mouse.arrow);
 }
 
-void		ui_box_destroy(t_widget *box)
+void		ui_box_destroy(t_widget *widget)
 {
-	SDL_DestroyTexture(box->background);
+	SDL_DestroyTexture(widget->texture);
 }
 
-static int	ui_box_add_child(t_widget *box, t_widget *child)
+static int	ui_box_add_child(t_widget *widget, t_widget *child)
 {
-	(void)box;
+	(void)widget;
 	(void)child;
-	if (box->nb_child == UI_MAX_BOX_CHILDS)
+	if (widget->nb_child == UI_MAX_BOX_CHILDS)
 	{
 		printf("ui_window_add_child: Window has maximum child\n");
 		return (UI_ERROR);
 	}
-	box->childs[box->nb_child] = child;
-	box->nb_child++;
+	widget->childs[widget->nb_child] = child;
+	widget->nb_child++;
 	return (UI_SUCCESS);
 }
 t_widget	*ui_create_box(t_widget *parent, int x, int y, int width, int height)
 {
-	t_widget	*box;
+	t_widget	*widget;
 
 	if (parent == NULL)
 		return (NULL);
-	box = ui_new_widget((SDL_Rect){x, y, width, height}, BOX, UI_MAX_BOX_CHILDS);
-	if (!box)
+	widget = ui_new_widget((SDL_Rect){x, y, width, height}, BOX, UI_MAX_BOX_CHILDS);
+	if (!widget)
 		return (NULL);
-	if (ui_add_child(parent, box) != UI_SUCCESS)
-		return (free(box), NULL);
-	ui_set_widget_colors(box, 0x7F5F5F5F, 0x7F5F5F5F, 0x7F5F5F5F, 0x7F5F5F5F);
-	box->is_dragable = true;
-	box->render = ui_box_render;
-	box->update = ui_box_update;
-	box->destroy = ui_box_destroy;
-	box->add_child = ui_box_add_child;
-	box->background = ui_new_texture(parent->renderer, width, height);
-	return (box);
+	if (ui_add_child(parent, widget) != UI_SUCCESS)
+		return (free(widget), NULL);
+	ui_set_widget_colors(widget, 0x7F5F5F5F, 0x7F5F5F5F, 0x7F5F5F5F);
+	widget->render = ui_box_render;
+	widget->update = ui_box_update;
+	widget->destroy = ui_box_destroy;
+	widget->add_child = ui_box_add_child;
+	widget->texture = ui_new_texture(parent->renderer, width, height, widget->colors[widget->state]);
+	return (widget);
 }

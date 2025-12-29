@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:24:56 by injah             #+#    #+#             */
-/*   Updated: 2025/12/22 00:51:14 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/29 01:07:54 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	ui_set_widget_position_and_size(t_widget *widget, int x, int y, int width, 
 	ui_set_widget_size(widget, width, height);
 }
 
-void	ui_set_widget_colors(t_widget *widget, unsigned int normal, unsigned int hovered, unsigned int clicked, unsigned int released)
+void	ui_set_widget_colors(t_widget *widget, unsigned int normal, unsigned int hovered, unsigned int clicked)
 {
 	if (widget == NULL)
 	{
@@ -40,22 +40,24 @@ void	ui_set_widget_colors(t_widget *widget, unsigned int normal, unsigned int ho
 	widget->colors[NORMAL] = ui_unpack_color(normal);
 	widget->colors[HOVERED] = ui_unpack_color(hovered);
 	widget->colors[CLICKED] = ui_unpack_color(clicked);
-	widget->colors[RELEASED] = ui_unpack_color(released);
 }
 
-int	ui_set_widget_background(t_widget *widget, const char *path)
+int	ui_set_widget_texture(t_widget *widget, const char *path)
 {
 	SDL_Surface	*surface;
-
+	SDL_Color	color;
 	surface = IMG_Load(path);
 	if (!surface)
 	{
-		printf("ui_set_widget_background: failed open image.\n");
+		printf("ui_set_widget_texture: failed open image.\n");
 		return (-1);
 	}
-	if (widget->background)
-		SDL_DestroyTexture(widget->background);
-	widget->background = SDL_CreateTextureFromSurface(widget->renderer, surface);
+	if (widget->texture)
+		SDL_DestroyTexture(widget->texture);
+	widget->texture = SDL_CreateTextureFromSurface(widget->renderer, surface);
+	color = widget->colors[widget->state];
+	SDL_SetTextureColorMod(widget->texture, color.r, color.g, color.b);
+	SDL_SetTextureAlphaMod(widget->texture, color.a);
 	SDL_FreeSurface(surface);
 	return (0);
 }

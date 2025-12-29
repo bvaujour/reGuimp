@@ -6,14 +6,13 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
-/*   Updated: 2025/12/23 15:33:58 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/29 01:03:12 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libui_int.h"
 
-
-static SDL_Rect	ui_get_absolute_rect(t_widget *widget)
+SDL_Rect	ui_get_absolute_rect(t_widget *widget)
 {
 	t_widget 	*reference;
 	SDL_Point	position;
@@ -30,27 +29,34 @@ static SDL_Rect	ui_get_absolute_rect(t_widget *widget)
 	return ((SDL_Rect){position.x, position.y, widget->rect.w, widget->rect.h});
 }
 
-void	ui_widget_common_update(t_widget *widget)
+void	ui_widget_change_state(t_widget *widget, e_widget_state new_state)
+{
+	SDL_Color	color;
+
+	if (widget->state != new_state)
+	{
+		widget->state = new_state;
+		color = widget->colors[new_state];
+		SDL_SetTextureColorMod(widget->texture, color.r, color.g, color.b);
+		SDL_SetTextureAlphaMod(widget->texture, color.a);
+	}
+}
+
+void	ui_widget_manage_state(t_widget *widget)
 {
 	t_core			*core;
 
 	core = widget->core;
-	widget->absolute = ui_get_absolute_rect(widget);
-	if (widget->window_id == core->event.window.windowID && SDL_PointInRect(&core->mouse.position, &widget->absolute))
+	if (SDL_PointInRect(&core->mouse.position, &widget->absolute))
 	{
-		core->focused_widget = widget;
+		widget->core->focused_widget = widget;
 		if (core->mouse.mouse_buttons[SDL_BUTTON_LEFT])
-			widget->state = CLICKED;
+			ui_widget_change_state(widget, CLICKED);
 		else
-		{
-			if (core->mouse.mouse_buttons[SDL_BUTTON_LEFT] == false && widget->state == CLICKED)
-				widget->state = RELEASED;
-			else
-				widget->state = HOVERED;
-		}
+			ui_widget_change_state(widget, HOVERED);
 	}
 	else
-		widget->state = NORMAL;
+		ui_widget_change_state(widget, NORMAL);
 }
 
 t_widget *ui_new_widget(SDL_Rect rect, e_widget_type type, int max_child)
@@ -113,12 +119,13 @@ int	ui_core_add_window(t_core *core, t_widget *window)
 	return (-1);
 }
 
-void	ui_draw_outline(SDL_Renderer *renderer, SDL_Rect start_rect, int size)
+void	ui_draw_outline(SDL_Renderer *renderer, SDL_Rect start_rect, int size, SDL_Color color)
 {
 	int			i;
 	SDL_Rect	rect;
 
 	i = 0;
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 	while (i < size)
 	{
 		rect.x = start_rect.x + i;
@@ -129,14 +136,6 @@ void	ui_draw_outline(SDL_Renderer *renderer, SDL_Rect start_rect, int size)
 		i++;
 	}
 }
-
-void	ui_draw_background(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Rect rect, SDL_Color color)
-{
-	SDL_SetTextureColorMod(texture, color.r, color.g, color.b);
-	SDL_SetTextureAlphaMod(texture, color.a);
-	SDL_RenderCopy(renderer, texture, NULL, &rect);
-}
-
 int	ui_add_child(t_widget *parent, t_widget *child)
 {
 	child->parent = parent;

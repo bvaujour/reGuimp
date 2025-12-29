@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2025/12/22 01:05:16 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/29 00:41:50 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,18 +94,18 @@ int	main()
 	data.box = ui_create_box(data.dragbox, 50, 50, 300, 500);
 
 	data.button = ui_create_button(data.box, 10, 10, 500, 100);
-	data.button2 = ui_create_button(data.tool_window, 0, 0, 30, 30);
+	// data.button2 = ui_create_button(data.tool_window, 0, 0, 30, 30);
 	data.color_slider[RED] = ui_create_slider(data.box, 10, 140, 200, 30);
 	data.color_slider[GREEN] = ui_create_slider(data.box, 10, 180, 200, 30);
 	data.color_slider[BLUE] = ui_create_slider(data.box, 10, 220, 200, 30);
 	data.color_slider[ALPHA] = ui_create_slider(data.box, 10, 260, 200, 30);
 	data.drawable = ui_create_drawable(data.render_window, 0, 0, 800, 600);
 	
-	ui_bind_widget_onclick(data.button, on_button_clicked, &data);
-	ui_set_widget_background(data.tool_window, "libui/assets/backgrounds/dark-blue-paint-minimal-background.jpg");
+	ui_bind_button_onclicked(data.button, on_button_clicked, &data);
+	ui_set_widget_texture(data.tool_window, "libui/assets/backgrounds/dark-blue-paint-minimal-background.jpg");
 	
-	ui_set_widget_position_and_size(data.button2, 500, 10, 100, 30);
-	ui_bind_widget_onclick(data.button2, on_button_clicked, &data);
+	// ui_set_widget_position_and_size(data.button2, 0, 10, 100, 30);
+	// ui_bind_button_onclicked(data.button2, on_button_clicked, &data);
 
 	
 	

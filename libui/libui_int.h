@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2025/12/23 15:35:10 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/29 01:03:40 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,7 @@
 # include <SDL2/SDL.h>
 # include <SDL2/SDL_ttf.h>
 # include <SDL2/SDL_image.h>
-// # include "SDL_ttf/include/SDL2/SDL_ttf.h"
-// # include "SDL_image/include/SDL2/SDL_image.h"
+# include <math.h>
 
 # define	UI_MOUSE_BUTTON_SUPPORTED		10
 # define	UI_MAX_WINDOWS					5
@@ -47,10 +46,9 @@ typedef enum	e_widget_type
 
 typedef enum	e_widget_state
 {
-	NORMAL,
 	HOVERED,
+	NORMAL,
 	CLICKED,
-	RELEASED,
 	NUM_STATE
 }				e_widget_state;
 
@@ -65,13 +63,12 @@ typedef struct	s_mouse_infos
 	SDL_Cursor	*current_cursor;
 }				t_mouse_infos;
 
-typedef struct	s_user_binding
+typedef struct	s_image_data
 {
-	void	(*function)();
-	void	*param;
-}				t_user_binding;
-
-
+	Uint32	*pixels;
+	int		width;
+	int		height;
+}				t_image_data;
 
 typedef struct	s_widget
 {
@@ -85,36 +82,33 @@ typedef struct	s_widget
 	e_widget_type		type;
 	SDL_Rect			rect;
 	SDL_Rect			absolute;
-	SDL_Texture			*background;
+	SDL_Texture			*texture;
 	e_widget_state		state;
 	SDL_Color			colors[NUM_STATE];
 	int					outline;
+	SDL_Color			outline_color;
 	bool				is_visible;
-	bool				is_dragable;
 	void				(*update)(struct s_widget *widget);
 	void				(*render)(struct s_widget *widget);
 	void				(*destroy)(struct s_widget *widget);
 	int					(*add_child)(struct s_widget *parent, struct s_widget *child);
-
-	void				(*onclick)(struct s_widget *, int, void *);
-	void				*onclick_param;
 }				t_widget;
 
 typedef struct	s_drawable_data
 {
-	char		*brush_path;
 	SDL_Cursor	*cursor;
 	SDL_Texture	*brush;
 	SDL_Color	brush_color;
 	SDL_Rect	brush_rect;
 	float		brush_ratio;
 	int			brush_size;
+	SDL_Texture	*layers[10];
+	int			active_layer;
 }				t_drawable_data;
 
 typedef struct	s_window_data
 {
 	SDL_Window		*window;
-	int				id;
 }				t_window_data;
 
 typedef struct	s_slider_data
@@ -132,6 +126,8 @@ typedef struct	s_slider_data
 typedef struct	s_button_data
 {
 	SDL_Texture	*text_texture;
+	void		(*onclicked)(struct s_widget *, int, void *);
+	void		*onclicked_param;
 }				t_button_data;
 
 
@@ -159,8 +155,8 @@ int			ui_core_add_window(t_core *core, t_widget *window);
 
 //WIDGET
 
-
-void		ui_widget_common_update(t_widget *widget);
+SDL_Rect	ui_get_absolute_rect(t_widget *widget);
+void		ui_widget_manage_state(t_widget *widget);
 
 t_widget 	**ui_new_widget_tab(int tab_len);
 int			ui_add_child(t_widget *parent, t_widget *child);
@@ -170,11 +166,10 @@ t_widget	*ui_new_widget(SDL_Rect rect, e_widget_type type, int max_child);
 
 //UTILS
 SDL_Color	ui_unpack_color(unsigned int color);
-void		ui_draw_outline(SDL_Renderer *renderer, SDL_Rect start_rect, int size);
-void		ui_draw_background(SDL_Renderer *renderer, SDL_Texture *texture, SDL_Rect rect, SDL_Color color);
+void		ui_draw_outline(SDL_Renderer *renderer, SDL_Rect start_rect, int size, SDL_Color color);
 
 
-SDL_Texture	*ui_new_texture(SDL_Renderer *renderer, int width, int height);
+SDL_Texture	*ui_new_texture(SDL_Renderer *renderer, int width, int height, SDL_Color color_mod);
 
 
 

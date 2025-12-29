@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 16:31:56 by injah             #+#    #+#             */
-/*   Updated: 2025/12/23 14:09:40 by injah            ###   ########.fr       */
+/*   Updated: 2025/12/29 00:36:25 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,38 +78,100 @@ void	ui_destroy_widgets(t_widget **widgets)
 	free(widgets);
 }
 
-void	ui_update_widgets(t_widget **widgets)
+// void	ui_update_widgets(t_widget **widgets)
+// {
+// 	int	i;
+
+// 	if (widgets == NULL)
+// 		return ;
+// 	i = 0;
+// 	while (widgets[i])
+// 	{
+// 		if (widgets[i]->is_visible)
+// 		{
+// 			ui_widget_manage_state(widgets[i]);
+// 			if (widgets[i]->state != NORMAL)
+// 			{
+// 				widgets[i]->core->focused_widget = widgets[i];
+// 				ui_update_widgets(widgets[i]->childs);
+// 			}
+// 		}
+// 		i++;
+// 	}
+// }
+
+// void	ui_render_widgets(t_widget **widgets)
+// {
+// 	int	i;
+
+// 	if (widgets == NULL)
+// 		return ;
+// 	i = 0;
+// 	while (widgets[i])
+// 	{
+// 		if (widgets[i]->is_visible)
+// 		{
+// 			widgets[i]->render(widgets[i]);
+// 			ui_render_widgets(widgets[i]->childs);
+// 		}
+// 		i++;
+// 	}
+// }
+
+static void ui_render_widget(t_widget *widget)
 {
 	int	i;
 
-	if (widgets == NULL)
+	if (widget->is_visible == false)
 		return ;
-	i = 0;
-	while (widgets[i])
+	widget->render(widget);
+	if (widget->childs)
 	{
-		if (widgets[i]->is_visible)
+		i = 0;
+		while (widget->childs[i])
 		{
-			ui_widget_common_update(widgets[i]);
-			ui_update_widgets(widgets[i]->childs);
+			ui_render_widget(widget->childs[i]);
+			i++;
 		}
-		i++;
 	}
 }
 
-void	ui_render_widgets(t_widget **widgets)
+static void ui_update_widget(t_widget *widget)
 {
 	int	i;
 
-	if (widgets == NULL)
+	if (widget->is_visible == false)
 		return ;
-	i = 0;
-	while (widgets[i])
+	widget->absolute = ui_get_absolute_rect(widget);
+	ui_widget_manage_state(widget);
+	if (widget->childs)
 	{
-		if (widgets[i]->is_visible)
+		i = 0;
+		while (widget->childs[i])
 		{
-			if (widgets[i]->render)
-				widgets[i]->render(widgets[i]);
-			ui_render_widgets(widgets[i]->childs);
+			ui_update_widget(widget->childs[i]);
+			i++;
+		}
+	}
+}
+
+static void	ui_update_core(t_core *core)
+{
+	int				i;
+	t_window_data	*data;
+
+	i = 0;
+	while (core->windows[i])
+	{
+		data = core->windows[i]->data;
+		if (core->event.window.windowID == SDL_GetWindowID(data->window))
+		{
+			ui_update_widget(core->windows[i]);
+			if (core->focused_widget)
+				core->focused_widget->update(core->focused_widget);
+			ui_render_widget(core->windows[i]);
+			SDL_RenderPresent(core->windows[i]->renderer);
+			break ;
 		}
 		i++;
 	}
@@ -149,34 +211,14 @@ static void	ui_event(t_core *core)
 	}
 }
 
-static void	ui_render_present(t_widget **windows)
-{
-	int	i;
-
-	i = 0;
-	while (windows[i])
-	{
-		SDL_RenderPresent(windows[i]->renderer);
-		i++;
-	}
-}
-
 void	ui_run(t_core *core)
 {
 	core->is_running = true;
-
 	while (core->is_running)
 	{
-		// core->focused_widget = NULL;
 		ui_event(core);
 		if (core->event.window.event != SDL_WINDOWEVENT_FOCUS_LOST)
-		{
-			ui_update_widgets(core->windows);
-			if (core->focused_widget && core->focused_widget->update)
-				core->focused_widget->update(core->focused_widget);
-			ui_render_widgets(core->windows);
-			ui_render_present(core->windows);
-		}
+			ui_update_core(core);
 	}
 	ui_destroy(core);
 

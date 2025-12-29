@@ -61,63 +61,62 @@ static void	ui_widget_drag(t_widget *widget, SDL_Event event)
 	}
 }
 
-void		ui_dragbox_render(t_widget *dragbox)
+void		ui_dragbox_render(t_widget *widget)
 {
-	SDL_RenderSetClipRect(dragbox->renderer, &dragbox->parent->absolute);
-	
-	ui_draw_background(dragbox->renderer, dragbox->background, dragbox->absolute, dragbox->colors[dragbox->state]);
-	ui_draw_outline(dragbox->renderer, dragbox->absolute, dragbox->outline);
-	SDL_RenderSetClipRect(dragbox->renderer, NULL);
+	SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
+	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute);
+	ui_draw_outline(widget->renderer, widget->absolute, widget->outline, widget->outline_color);
+	SDL_RenderSetClipRect(widget->renderer, NULL);
 }
 
-void		ui_dragbox_update(t_widget *dragbox)
+void		ui_dragbox_update(t_widget *widget)
 {
-	ui_set_cursor(dragbox->core, dragbox->core->mouse.crosshair);
-	ui_widget_drag(dragbox, dragbox->core->event);
+	ui_set_cursor(widget->core, widget->core->mouse.crosshair);
+	ui_widget_drag(widget, widget->core->event);
 }
 
-void		ui_dragbox_destroy(t_widget *dragbox)
+void		ui_dragbox_destroy(t_widget *widget)
 {
-	SDL_DestroyTexture(dragbox->background);
+	SDL_DestroyTexture(widget->texture);
 }
 
-static int	ui_dragbox_add_child(t_widget *dragbox, t_widget *child)
+static int	ui_dragbox_add_child(t_widget *widget, t_widget *child)
 {
-	(void)dragbox;
+	(void)widget;
 	(void)child;
-	if (dragbox->nb_child == UI_MAX_BOX_CHILDS)
+	if (widget->nb_child == UI_MAX_BOX_CHILDS)
 	{
 		printf("ui_window_add_child: Window has maximum child\n");
 		return (UI_ERROR);
 	}
-	dragbox->rect.w = child->rect.w;
-	dragbox->rect.h = child->rect.h;
-	child->rect.x = dragbox->outline;
-	child->rect.y = dragbox->outline;
-	child->rect.w = dragbox->rect.w - 2 * dragbox->outline;
-	child->rect.h = dragbox->rect.h - 2 * dragbox->outline;
-	dragbox->childs[dragbox->nb_child] = child;
-	dragbox->nb_child++;
+	widget->rect.w = child->rect.w;
+	widget->rect.h = child->rect.h;
+	child->rect.x = widget->outline;
+	child->rect.y = widget->outline;
+	child->rect.w = widget->rect.w - 2 * widget->outline;
+	child->rect.h = widget->rect.h - 2 * widget->outline;
+	widget->childs[widget->nb_child] = child;
+	widget->nb_child++;
 	return (UI_SUCCESS);
 }
 
 t_widget	*ui_create_dragbox(t_widget *parent, int x, int y, int width, int height)
 {
-	t_widget	*dragbox;
+	t_widget	*widget;
 
 	if (parent == NULL)
 		return (NULL);
-	dragbox = ui_new_widget((SDL_Rect){x, y, width, height}, DRAGBOX, UI_MAX_DRAGBOX_CHILDS);
-	if (!dragbox)
+	widget = ui_new_widget((SDL_Rect){x, y, width, height}, DRAGBOX, UI_MAX_DRAGBOX_CHILDS);
+	if (!widget)
 		return (NULL);
-	if (ui_add_child(parent, dragbox) != UI_SUCCESS)
-		return (free(dragbox), NULL);
-	ui_set_widget_colors(dragbox, 0x7F5F5F5F, 0x7F5F5F5F, 0x7F5F5F5F, 0x7F5F5F5F);
-	dragbox->outline = 25;
-	dragbox->render = ui_dragbox_render;
-	dragbox->update = ui_dragbox_update;
-	dragbox->destroy = ui_dragbox_destroy;
-	dragbox->add_child = ui_dragbox_add_child;
-	dragbox->background = ui_new_texture(parent->renderer, width, height);
-	return (dragbox);
+	if (ui_add_child(parent, widget) != UI_SUCCESS)
+		return (free(widget), NULL);
+	ui_set_widget_colors(widget, 0x7F5F5F5F, 0x7F5F5F5F, 0x7F5F5F5F);
+	widget->outline = 25;
+	widget->render = ui_dragbox_render;
+	widget->update = ui_dragbox_update;
+	widget->destroy = ui_dragbox_destroy;
+	widget->add_child = ui_dragbox_add_child;
+	widget->texture = ui_new_texture(parent->renderer, width, height, widget->colors[widget->state]);
+	return (widget);
 }
