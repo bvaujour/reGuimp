@@ -6,7 +6,7 @@
 #    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/03 16:48:10 by bvaujour          #+#    #+#              #
-#    Updated: 2026/01/05 13:24:23 by injah            ###   ########.fr        #
+#    Updated: 2026/01/05 13:58:25 by injah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,7 @@ SRC =	ui_core.c						\
 		ui_slider.c						\
 		ui_drawable.c					\
 		ui_drawable_user.c				\
+		ui_drawable_utils.c				\
 		ui_box.c						\
 		ui_dragbox.c					\
 

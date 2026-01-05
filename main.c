@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2025/12/29 00:41:50 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/05 14:58:14 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	main()
 	ui_bind_onkeypress(data.core, on_key_pressed, &data);
 
 	data.tool_window = ui_create_window(data.core, 0, 0, data.screen_width / 4, data.screen_height);
-	data.render_window = ui_create_window(data.core, data.screen_width / 4, 0,  3 * data.screen_width / 4, data.screen_height);
+	data.render_window = ui_create_window(data.core, data.screen_width / 4, 0,  2 * data.screen_width / 4, data.screen_height);
 
 	data.dragbox = ui_create_dragbox(data.tool_window, 0, 0, 300, 500);
 	data.box = ui_create_box(data.dragbox, 50, 50, 300, 500);
@@ -114,8 +114,6 @@ int	main()
 	ui_bind_slider_onvaluechange(data.color_slider[GREEN], on_slider_value_change, &data);
 	ui_bind_slider_onvaluechange(data.color_slider[BLUE], on_slider_value_change, &data);
 	ui_bind_slider_onvaluechange(data.color_slider[ALPHA], on_slider_value_change, &data);
-
-
 
 
 

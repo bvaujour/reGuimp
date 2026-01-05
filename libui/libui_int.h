@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/05 13:28:24 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/05 15:41:04 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ typedef struct	s_widget
 	int					outline;
 	SDL_Color			outline_color;
 	bool				is_visible;
+	void				(*event)(struct s_widget *widget, SDL_Event event);
 	void				(*update)(struct s_widget *widget);
 	void				(*render)(struct s_widget *widget);
 	void				(*destroy)(struct s_widget *widget);
@@ -146,7 +147,7 @@ typedef struct	s_core
 
 //ENGINE
 void		ui_destroy(t_core *core);
-void		ui_destroy_widgets(t_widget **widgets);
+void 		ui_destroy_widget(t_widget *widget);
 
 void		ui_set_cursor(t_core *core, SDL_Cursor *cursor);
 
@@ -173,6 +174,12 @@ SDL_Texture	*ui_new_texture(SDL_Renderer *renderer, int width, int height, SDL_C
 
 
 
+void 	ui_bucket_image(t_image_data img, int start_x, int start_y, Uint32 color);
+void	 ui_draw_circle_on_image(t_image_data img, SDL_Point center, int radius, int thickness, Uint32 color);
+void	ui_draw_disk_on_image(t_image_data img, SDL_Point center, int radius, Uint32 color);
+void	ui_draw_rect_on_image(t_image_data img, SDL_Rect rect, Uint32 color);
+void	ui_set_render_target_pixels(SDL_Renderer *renderer, SDL_Texture *texture, Uint32 *pixels);
+int		ui_get_render_target_image_data(SDL_Renderer *renderer, SDL_Texture *texture, t_image_data *img);
 
 
 #endif

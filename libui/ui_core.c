@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:23:08 by injah             #+#    #+#             */
-/*   Updated: 2025/12/20 06:21:59 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/05 14:33:28 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,19 @@ void	ui_set_cursor(t_core *core, SDL_Cursor *cursor)
 
 void	ui_destroy(t_core *core)
 {
+	int	i;
+
+	i = 0;
+	while (core->windows[i])
+	{
+		ui_destroy_widget(core->windows[i]);
+		i++;
+	}
+	free(core->windows);
 	SDL_FreeCursor(core->mouse.arrow);
 	SDL_FreeCursor(core->mouse.hand);
 	SDL_FreeCursor(core->mouse.crosshair);
 	TTF_CloseFont(core->font);
-	ui_destroy_widgets(core->windows);
 	free(core);
 	IMG_Quit();
 	TTF_Quit();
