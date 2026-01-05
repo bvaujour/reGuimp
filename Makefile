@@ -6,7 +6,7 @@
 #    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/20 09:45:35 by injah             #+#    #+#              #
-#    Updated: 2025/12/20 07:00:11 by injah            ###   ########.fr        #
+#    Updated: 2026/01/05 13:27:46 by injah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,8 +21,8 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
 
 # SDL via pkg-config (flags automatiques)
-SDL_CFLAGS  = $(shell pkg-config --cflags sdl2 SDL2_image SDL2_ttf)
-SDL_LDFLAGS = $(shell pkg-config --libs   sdl2 SDL2_image SDL2_ttf)
+SDL_CFLAGS  = $(shell pkg-config --cflags sdl2) -Ilibui/SDL_ttf/include/SDL2 -Ilibui/SDL_ttf/freetype/include
+SDL_LDFLAGS = $(shell pkg-config --libs sdl2)  -Llibui/SDL_ttf/lib -lSDL2_ttf -Llibui/lib -lfreetype -Llibui/SDL_image/lib -lSDL2_image
 
 # Libs du projet
 LIBUI_DIR = libui

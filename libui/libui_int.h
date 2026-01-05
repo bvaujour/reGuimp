@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2025/12/29 01:03:40 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/05 13:28:24 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 # include "libft.h"
 # include <stdbool.h>
 # include <SDL2/SDL.h>
-# include <SDL2/SDL_ttf.h>
-# include <SDL2/SDL_image.h>
+# include "SDL_ttf/include/SDL2/SDL_ttf.h"
+# include "SDL_image/include/SDL2/SDL_image.h"
 # include <math.h>
 
 # define	UI_MOUSE_BUTTON_SUPPORTED		10

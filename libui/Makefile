@@ -6,7 +6,7 @@
 #    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/03 16:48:10 by bvaujour          #+#    #+#              #
-#    Updated: 2025/12/26 21:13:09 by injah            ###   ########.fr        #
+#    Updated: 2026/01/05 13:24:23 by injah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,9 +30,9 @@ SRC =	ui_core.c						\
 
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 
-SDL_CFLAGS = $(shell pkg-config --cflags sdl2 SDL2_image SDL2_ttf)
+SDL_CFLAGS = $(shell pkg-config --cflags sdl2)
 
-CFLAGS = -Wall -Wextra -Werror -g -Ilibft $(SDL_CFLAGS)
+CFLAGS = -Wall -Wextra -Werror -g -Ilibft $(SDL_CFLAGS) -ISDL_ttf/include/SDL2 -ISDL_image/include/SDL2
 
 CC = cc
 
