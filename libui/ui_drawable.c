@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_drawable.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 21:16:05 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 11:28:36 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 15:16:48 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,19 +81,19 @@ static void	ui_drawable_event(t_widget *widget, SDL_Event event)
 	}
 }
 
-// static void	ui_drawable_draw_brush(t_widget *widget)
-// {
-// 	t_drawable_data	*data;
-// 	t_core			*core;
+void	ui_drawable_draw_brush(t_widget *widget)
+{
+	t_drawable_data	*data;
+	t_core			*core;
 
-// 	core = widget->core;
-// 	data = (t_drawable_data *)widget->data;
-// 	data->brush_rect.x = core->mouse.position.x - widget->absolute.x - data->brush_rect.w / 2;
-// 	data->brush_rect.y = core->mouse.position.y - widget->absolute.y - data->brush_rect.h / 2;
-// 	SDL_SetRenderTarget(widget->renderer, data->layer);
-// 	SDL_RenderCopy(widget->renderer, data->brush, NULL, &data->brush_rect);
-// 	SDL_SetRenderTarget(widget->renderer, NULL);
-// }
+	core = widget->core;
+	data = (t_drawable_data *)widget->data;
+	data->brush_rect.x = core->mouse.position.x - widget->absolute.x - data->brush_rect.w / 2;
+	data->brush_rect.y = core->mouse.position.y - widget->absolute.y - data->brush_rect.h / 2;
+	SDL_SetRenderTarget(widget->renderer, data->layer);
+	SDL_RenderCopy(widget->renderer, data->brush, NULL, &data->brush_rect);
+	SDL_SetRenderTarget(widget->renderer, NULL);
+}
 
 
 static void	ui_drawable_erase(t_widget *widget)
@@ -146,7 +146,7 @@ void	ui_test(t_widget *widget)
 
 	SDL_SetRenderDrawColor(widget->renderer, 0, 255, 255, 255);
 	SDL_SetRenderTarget(widget->renderer, data->layer);
-	SDL_RenderDrawRect(widget->renderer, &(SDL_Rect){200, 200, 300, 300});
+	SDL_RenderDrawRect(widget->renderer, &(SDL_Rect){250, 250, 300, 300});
 	SDL_RenderDrawLine(widget->renderer, 101, 201, 400, 400);
 	SDL_SetRenderTarget(widget->renderer, NULL);
 

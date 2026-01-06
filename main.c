@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/06 11:53:54 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 15:35:56 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int	main()
 	
 	ui_bind_button_onclicked(data.button, on_button_clicked, &data);
 	ui_set_widget_texture(data.tool_window, "libui/assets/backgrounds/dark-blue-paint-minimal-background.jpg");
-	
+
 	// ui_set_widget_position_and_size(data.button2, 0, 10, 100, 30);
 	// ui_bind_button_onclicked(data.button2, on_button_clicked, &data);
 
@@ -116,10 +116,6 @@ int	main()
 	ui_bind_slider_onvaluechanged(data.color_slider[ALPHA], on_slider_value_change, &data);
 
 
-
-
-
-	
 	ui_run(data.core);
 	
 	return (0);
