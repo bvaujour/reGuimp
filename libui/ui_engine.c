@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 16:31:56 by injah             #+#    #+#             */
-/*   Updated: 2026/01/05 15:48:36 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 12:49:19 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static void ui_update_widget(t_widget *widget)
 	}
 }
 
-static void	ui_update(t_core *core)
+static void	ui_global_update(t_core *core)
 {
 	int				i;
 	t_window_data	*data;
@@ -79,7 +79,7 @@ static void	ui_update(t_core *core)
 	while (core->windows[i])
 	{
 		data = core->windows[i]->data;
-		if (SDL_GetWindowID(SDL_GetMouseFocus()) == SDL_GetWindowID(data->window))
+		if (SDL_GetWindowID(SDL_GetMouseFocus()) == data->id)
 		{
 			// printf("update window %d\n", SDL_GetWindowID(data->window));
 			ui_update_widget(core->windows[i]);
@@ -93,7 +93,7 @@ static void	ui_update(t_core *core)
 	}
 }
 
-static void	ui_event(t_core *core)
+static void	ui_global_event(t_core *core)
 {
 	if (SDL_WaitEvent(&core->event))
 	{
@@ -122,24 +122,21 @@ static void	ui_event(t_core *core)
 			if (core->event.button.button < UI_MOUSE_BUTTON_SUPPORTED)
 				core->mouse.mouse_buttons[core->event.button.button] = false;
 		}
-		else if (core->event.type == SDL_DROPFILE)
-		{
-			printf("file droped on window %d\n", core->event.window.windowID);
-		}
-		printf("window ID %d\n", core->event.window.windowID);
-
+		SDL_GetMouseState(&core->mouse.position.x, &core->mouse.position.y);
 		// if (core->event.type == SDL_MOUSEMOTION || core->event.type == SDL_DROPFILE || core->event.type == SDL_MOUSEBUTTONDOWN)
 		// printf("id : %d, enum: %d\n", core->event.window.windowID, core->event.type);
 	}
 }
+
+
 
 void	ui_run(t_core *core)
 {
 	core->is_running = true;
 	while (core->is_running)
 	{
-		ui_event(core);
-		ui_update(core);
+		ui_global_event(core);
+		ui_global_update(core);
 	}
 	ui_destroy(core);
 

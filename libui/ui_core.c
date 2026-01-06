@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:23:08 by injah             #+#    #+#             */
-/*   Updated: 2026/01/05 14:33:28 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 12:18:15 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,10 @@ void	ui_destroy(t_core *core)
 	IMG_Quit();
 	TTF_Quit();
 	SDL_Quit();
+}
+
+void	ui_bind_onkeypress(t_core *core, void (*f)(int, void *), void *param)
+{
+	core->onkeypress = f;
+	core->onkeypress_param = param;
 }

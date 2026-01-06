@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 16:33:33 by injah             #+#    #+#             */
-/*   Updated: 2025/12/29 01:04:48 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 12:09:21 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,14 @@ void	ui_slider_render(t_widget *widget)
 	data = (t_slider_data *)widget->data;
 
 	SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
-	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute);
+	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute); // le slider background
+	SDL_RenderFillRect(widget->renderer, &(SDL_Rect){widget->absolute.x, widget->absolute.y, widget->absolute.w * data->value, widget->absolute.h}); // la partie du slider remplie
+	int				padding = 10;
+	SDL_RenderCopy(widget->renderer, data->label, NULL, &(SDL_Rect){widget->absolute.x + padding, widget->absolute.y + padding, widget->rect.w - 2 * padding, widget->rect.h - 2 * padding});
 	ui_draw_outline(widget->renderer, widget->absolute, widget->outline, widget->outline_color);
-	SDL_RenderFillRect(widget->renderer, &(SDL_Rect){widget->absolute.x, widget->absolute.y, widget->absolute.w * data->value, widget->absolute.h});
-	SDL_RenderCopy(widget->renderer, data->slide_texture, NULL, &(SDL_Rect){widget->absolute.x + data->slide_position.x, widget->absolute.y, widget->absolute.w / data->slide_factor, widget->rect.h});
+
+	SDL_RenderCopy(widget->renderer, data->slide_texture, NULL, &(SDL_Rect){widget->absolute.x + data->slide_position.x, widget->absolute.y, widget->absolute.w / data->slide_factor, widget->rect.h}); //render le slider
+	ui_draw_outline(widget->renderer, widget->absolute, widget->outline, widget->outline_color);
 	SDL_RenderSetClipRect(widget->renderer, NULL);
 }
 
@@ -35,14 +39,14 @@ void	ui_slider_destroy(t_widget *widget)
 		SDL_DestroyTexture(widget->texture);
 	if (data->slide_texture)
 		SDL_DestroyTexture(data->slide_texture);
+	if (data->label)
+		SDL_DestroyTexture(data->label);
 }
 
 void	ui_slider_update(t_widget *widget)
 {
 	t_slider_data	*data;
 	t_core			*core;
-	float			value;
-
 
 	core = widget->core;
 	ui_set_cursor(core, core->mouse.hand);
@@ -57,11 +61,10 @@ void	ui_slider_update(t_widget *widget)
 		if (data->onvaluechange)
 		{
 			if (data->slide_position.x == 0)
-				value = 0;
+				data->value = 0;
 			else
-				value = (float)data->slide_position.x / (widget->absolute.w - widget->absolute.w / data->slide_factor);
-			data->onvaluechange(widget, value, data->onvaluechange_param);
-			data->value = value;
+				data->value = (float)data->slide_position.x / (widget->absolute.w - widget->absolute.w / data->slide_factor);
+			data->onvaluechange(widget, data->value, data->onvaluechange_param);
 		}
 	}
 }
@@ -84,13 +87,16 @@ t_widget	*ui_create_slider(t_widget *parent, int x, int y, int width, int height
 	data = (t_slider_data *)widget->data;
 	*data = (t_slider_data){0};
 	data->slide_factor = 20;
+	data->value = 0.5f;
+	data->slide_position.x = width / 2 - width / data->slide_factor;
 	ui_set_widget_colors(widget, 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
-	data->fill_color = (SDL_Color){100, 100, 100, 100};
-	data->slide_color = (SDL_Color){200, 200, 200, 100};
+	data->fill_color = (SDL_Color){100, 100, 100, 255};
+	data->slide_color = (SDL_Color){255, 255, 255, 255};
 	widget->render = ui_slider_render;
 	widget->update = ui_slider_update;
 	widget->destroy = ui_slider_destroy;
 	data->slide_texture = ui_new_texture(parent->renderer, width / data->slide_factor, height, data->slide_color);
 	widget->texture = ui_new_texture(parent->renderer, width, height, widget->colors[widget->state]);
+	ui_slider_set_label(widget, "default label");
 	return (widget);
 }

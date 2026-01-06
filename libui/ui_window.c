@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 12:53:46 by injah             #+#    #+#             */
-/*   Updated: 2025/12/29 01:04:57 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/05 16:12:17 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ t_widget 	*ui_create_window(t_core *core, int x, int y, int width, int height)
 		ui_window_destroy(widget);
 		return (NULL);
 	}
-	widget->window_id = SDL_GetWindowID(data->window);
+	data->id = SDL_GetWindowID(data->window);
 	widget->texture = ui_new_texture(widget->renderer, width, height, widget->colors[widget->state]);
 	if (ui_core_add_window(core, widget) == -1)
 	{

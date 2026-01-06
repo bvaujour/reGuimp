@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:36:13 by injah             #+#    #+#             */
-/*   Updated: 2025/12/29 01:04:21 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 12:08:55 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,6 @@ static void	ui_button_event(t_widget *widget, SDL_Event event)
 {
 	t_button_data	*data;
 
-	if (event.type == SDL_KEYDOWN)
-	{
-		if (event.key.keysym.sym == SDLK_SPACE)
-			widget->state = CLICKED;
-	}
 	if (event.type == SDL_MOUSEBUTTONUP)
 	{
 		if (event.button.button == SDL_BUTTON_LEFT)
@@ -41,15 +36,15 @@ static void		ui_button_update(t_widget *widget)
 static void		ui_button_render(t_widget *widget)
 {
 	t_button_data	*data;
-	int				text_offset = 10;
+	int				padding = 10;
 
 	data = (t_button_data *)widget->data;
 
 	SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
 	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute);
+	SDL_SetTextureColorMod(data->label, 255, 0, 0);
+	SDL_RenderCopy(widget->renderer, data->label, NULL, &(SDL_Rect){widget->absolute.x + padding, widget->absolute.y + padding, widget->rect.w - 2 * padding, widget->rect.h - 2 * padding});
 	ui_draw_outline(widget->renderer, widget->absolute, widget->outline, widget->outline_color);
-	SDL_SetTextureColorMod(data->text_texture, 255, 0, 0);
-	SDL_RenderCopy(widget->renderer, data->text_texture, NULL, &(SDL_Rect){widget->absolute.x + text_offset, widget->absolute.y + text_offset, widget->rect.w - 2 * text_offset, widget->rect.h - 2 * text_offset});
 	SDL_RenderSetClipRect(widget->renderer, NULL);
 }
 
@@ -78,16 +73,7 @@ static int	ui_button_add_child(t_widget *widget, t_widget *child)
 	return (UI_SUCCESS);
 }
 
-void	ui_button_build_label(t_widget *widget)
-{
-	SDL_Surface		*surface;
-	t_button_data	*data;
 
-	data = (t_button_data *)widget->data;
-	surface = TTF_RenderText_Solid(widget->core->font, "widget", (SDL_Color){255, 255, 255, 255});
-	data->text_texture = SDL_CreateTextureFromSurface(widget->renderer, surface);
-	SDL_FreeSurface(surface);
-}
 
 t_widget	*ui_create_button(t_widget *parent, int x, int y, int width, int height)
 {
@@ -112,6 +98,6 @@ t_widget	*ui_create_button(t_widget *parent, int x, int y, int width, int height
 	widget->destroy = ui_button_destroy;
 	widget->add_child = ui_button_add_child;
 	widget->texture = ui_new_texture(parent->renderer, width, height, widget->colors[widget->state]);
-	ui_button_build_label(widget);
+	ui_button_set_label(widget, "default label");
 	return (widget);
 }

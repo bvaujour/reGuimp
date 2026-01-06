@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
-/*   Updated: 2025/12/29 01:03:12 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/05 16:13:31 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,6 @@ int	ui_add_child(t_widget *parent, t_widget *child)
 	child->parent = parent;
 	child->core = parent->core;
 	child->renderer = parent->renderer;
-	child->window_id = parent->window_id;
 	if (parent->add_child == NULL)
 		return (ft_dprintf(2, "ui_add_child: parent widget does not have add child function\n"), UI_ERROR);
 	if (parent->add_child(parent, child) == UI_ERROR)

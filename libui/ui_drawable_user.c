@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/26 21:11:52 by injah             #+#    #+#             */
-/*   Updated: 2025/12/28 14:07:04 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 11:30:46 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,12 @@
 void	ui_drawable_export_png(t_widget *drawable, const char *file)
 {
 	SDL_Surface	*surface;
+	t_drawable_data	*data;
 
+	data = (t_drawable_data *)drawable->data;
 	surface = SDL_CreateRGBSurfaceWithFormat(0, drawable->rect.w, drawable->rect.h, 32, SDL_PIXELFORMAT_ARGB8888);
 
-	SDL_SetRenderTarget(drawable->renderer, drawable->texture);
+	SDL_SetRenderTarget(drawable->renderer, data->snapshot);
 
 	SDL_RenderReadPixels(drawable->renderer, NULL, SDL_PIXELFORMAT_ARGB8888, surface->pixels, surface->pitch);
 
@@ -30,10 +32,14 @@ void	ui_drawable_export_png(t_widget *drawable, const char *file)
 void	ui_drawable_export_jpeg(t_widget *drawable, const char *file, int quality)
 {
 	SDL_Surface	*surface;
+	t_drawable_data	*data;
+
+	data = (t_drawable_data *)drawable->data;
+	SDL_SetRenderTarget(drawable->renderer, data->snapshot);
 
 	surface = SDL_CreateRGBSurfaceWithFormat(0, drawable->rect.w, drawable->rect.h, 32, SDL_PIXELFORMAT_ARGB8888);
 
-	SDL_SetRenderTarget(drawable->renderer, drawable->texture);
+	SDL_SetRenderTarget(drawable->renderer, data->snapshot);
 
 	SDL_RenderReadPixels(drawable->renderer, NULL, SDL_PIXELFORMAT_ARGB8888, surface->pixels, surface->pitch);
 

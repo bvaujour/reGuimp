@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/05 15:41:04 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 12:02:59 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ typedef struct	s_image_data
 typedef struct	s_widget
 {
 	struct s_core		*core;
-	unsigned int		window_id;
 	SDL_Renderer		*renderer;
 	struct s_widget		**childs;
 	int					nb_child;
@@ -103,17 +102,19 @@ typedef struct	s_drawable_data
 	SDL_Rect	brush_rect;
 	float		brush_ratio;
 	int			brush_size;
-	SDL_Texture	*layers[10];
-	int			active_layer;
+	SDL_Texture	*layer;
+	SDL_Texture	*snapshot;
 }				t_drawable_data;
 
 typedef struct	s_window_data
 {
 	SDL_Window		*window;
+	unsigned int	id;
 }				t_window_data;
 
 typedef struct	s_slider_data
 {
+	SDL_Texture		*label;
 	SDL_Point		slide_position;
 	SDL_Texture		*slide_texture;
 	SDL_Color		slide_color;
@@ -126,7 +127,7 @@ typedef struct	s_slider_data
 
 typedef struct	s_button_data
 {
-	SDL_Texture	*text_texture;
+	SDL_Texture	*label;
 	void		(*onclicked)(struct s_widget *, int, void *);
 	void		*onclicked_param;
 }				t_button_data;

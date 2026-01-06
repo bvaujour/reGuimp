@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/05 14:58:14 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 11:53:54 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,10 +110,10 @@ int	main()
 	
 	
 	
-	ui_bind_slider_onvaluechange(data.color_slider[RED], on_slider_value_change, &data);
-	ui_bind_slider_onvaluechange(data.color_slider[GREEN], on_slider_value_change, &data);
-	ui_bind_slider_onvaluechange(data.color_slider[BLUE], on_slider_value_change, &data);
-	ui_bind_slider_onvaluechange(data.color_slider[ALPHA], on_slider_value_change, &data);
+	ui_bind_slider_onvaluechanged(data.color_slider[RED], on_slider_value_change, &data);
+	ui_bind_slider_onvaluechanged(data.color_slider[GREEN], on_slider_value_change, &data);
+	ui_bind_slider_onvaluechanged(data.color_slider[BLUE], on_slider_value_change, &data);
+	ui_bind_slider_onvaluechanged(data.color_slider[ALPHA], on_slider_value_change, &data);
 
 
 
