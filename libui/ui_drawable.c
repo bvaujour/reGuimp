@@ -6,7 +6,7 @@
 /*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 21:16:05 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 15:16:48 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/06 16:28:29 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,7 @@ void	ui_drawable_draw_brush(t_widget *widget)
 	SDL_SetRenderTarget(widget->renderer, NULL);
 }
 
-
-static void	ui_drawable_erase(t_widget *widget)
+void	ui_drawable_erase(t_widget *widget)
 {
 	t_drawable_data	*data;
 	t_core			*core;
@@ -116,8 +115,8 @@ static void	ui_drawable_update(t_widget *widget)
 {
 	if (widget->state == CLICKED)
 	{
-		// ui_drawable_draw_brush(widget);
-		ui_drawable_erase(widget);
+		ui_drawable_draw_brush(widget);
+		// ui_drawable_erase(widget);
 	}
 }
 

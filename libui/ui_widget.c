@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_widget.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
-/*   Updated: 2026/01/05 16:13:31 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 16:15:41 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,11 +73,27 @@ t_widget *ui_new_widget(SDL_Rect rect, e_widget_type type, int max_child)
 		if (widget->childs == NULL)
 			return (free(widget), NULL);
 	}
+	widget->max_child = max_child;
 	widget->rect = rect;
 	widget->type = type;
 	widget->is_visible = true;
 	widget->outline = 2;
 	return (widget);
+}
+
+int	ui_add_child(t_widget *widget, t_widget *child)
+{
+	if (widget->nb_child == widget->max_child)
+	{
+		printf("ui_add_child: Widget has maximum child\n");
+		return (UI_ERROR);
+	}
+	widget->childs[widget->nb_child] = child;
+	widget->nb_child++;
+	child->parent = widget;
+	child->core = widget->core;
+	child->renderer = widget->renderer;
+	return (UI_SUCCESS);
 }
 
 t_widget 	**ui_new_widget_tab(int tab_len)
@@ -135,15 +151,4 @@ void	ui_draw_outline(SDL_Renderer *renderer, SDL_Rect start_rect, int size, SDL_
 		SDL_RenderDrawRect(renderer, &rect);
 		i++;
 	}
-}
-int	ui_add_child(t_widget *parent, t_widget *child)
-{
-	child->parent = parent;
-	child->core = parent->core;
-	child->renderer = parent->renderer;
-	if (parent->add_child == NULL)
-		return (ft_dprintf(2, "ui_add_child: parent widget does not have add child function\n"), UI_ERROR);
-	if (parent->add_child(parent, child) == UI_ERROR)
-		return (ft_dprintf(2, "ui_add_child: parent widget can't add this child\n"), UI_ERROR);
-	return (UI_SUCCESS);	
 }

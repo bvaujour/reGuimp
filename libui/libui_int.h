@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libui_int.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 12:02:59 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 16:20:28 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ typedef struct	s_widget
 	struct s_core		*core;
 	SDL_Renderer		*renderer;
 	struct s_widget		**childs;
+	int					max_child;
 	int					nb_child;
 	struct s_widget		*parent;
 	void				*data;
@@ -91,7 +92,7 @@ typedef struct	s_widget
 	void				(*update)(struct s_widget *widget);
 	void				(*render)(struct s_widget *widget);
 	void				(*destroy)(struct s_widget *widget);
-	int					(*add_child)(struct s_widget *parent, struct s_widget *child);
+	void				(*build)(struct s_widget *widget);
 }				t_widget;
 
 typedef struct	s_drawable_data
@@ -159,7 +160,7 @@ int			ui_core_add_window(t_core *core, t_widget *window);
 
 SDL_Rect	ui_get_absolute_rect(t_widget *widget);
 void		ui_widget_manage_state(t_widget *widget);
-
+int			ui_add_child(t_widget *widget, t_widget *child);
 t_widget 	**ui_new_widget_tab(int tab_len);
 int			ui_add_child(t_widget *parent, t_widget *child);
 

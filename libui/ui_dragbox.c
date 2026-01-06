@@ -80,26 +80,6 @@ void		ui_dragbox_destroy(t_widget *widget)
 	SDL_DestroyTexture(widget->texture);
 }
 
-static int	ui_dragbox_add_child(t_widget *widget, t_widget *child)
-{
-	(void)widget;
-	(void)child;
-	if (widget->nb_child == UI_MAX_BOX_CHILDS)
-	{
-		printf("ui_window_add_child: Window has maximum child\n");
-		return (UI_ERROR);
-	}
-	widget->rect.w = child->rect.w;
-	widget->rect.h = child->rect.h;
-	child->rect.x = widget->outline;
-	child->rect.y = widget->outline;
-	child->rect.w = widget->rect.w - 2 * widget->outline;
-	child->rect.h = widget->rect.h - 2 * widget->outline;
-	widget->childs[widget->nb_child] = child;
-	widget->nb_child++;
-	return (UI_SUCCESS);
-}
-
 t_widget	*ui_create_dragbox(t_widget *parent, int x, int y, int width, int height)
 {
 	t_widget	*widget;
@@ -116,7 +96,6 @@ t_widget	*ui_create_dragbox(t_widget *parent, int x, int y, int width, int heigh
 	widget->render = ui_dragbox_render;
 	widget->update = ui_dragbox_update;
 	widget->destroy = ui_dragbox_destroy;
-	widget->add_child = ui_dragbox_add_child;
 	widget->texture = ui_new_texture(parent->renderer, width, height, widget->colors[widget->state]);
 	return (widget);
 }

@@ -6,7 +6,7 @@
 /*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/06 16:07:51 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/06 17:01:26 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,16 +84,17 @@ int	main()
 	data = (t_data){0};
 	data.test = 2;
 	data.core = ui_init();
+
 	ui_get_screen_size(&data.screen_width, &data.screen_height);
 	ui_bind_onkeypress(data.core, on_key_pressed, &data);
 
 	data.tool_window = ui_create_window(data.core, 0, 0, data.screen_width / 4, data.screen_height);
 	data.render_window = ui_create_window(data.core, data.screen_width / 4, 0,  2 * data.screen_width / 4, data.screen_height);
 
-	data.dragbox = ui_create_dragbox(data.tool_window, 0, 0, 300, 500);
-	data.box = ui_create_box(data.dragbox, 50, 50, 300, 500);
+	// data.dragbox = ui_create_dragbox(data.tool_window, 0, 0, 300, 500);
+	data.box = ui_create_box(data.tool_window, 50, 50, 300, 500);
 
-	data.button = ui_create_button(data.box, 10, 10, 500, 100);
+	data.button = ui_create_button(data.box, 10, 10, 5000, 100);
 	// data.button2 = ui_create_button(data.tool_window, 0, 0, 30, 30);
 	data.color_slider[RED] = ui_create_slider(data.box, 10, 140, 200, 30);
 	data.color_slider[GREEN] = ui_create_slider(data.box, 10, 180, 200, 30);
@@ -109,7 +110,6 @@ int	main()
 
 	
 	
-	
 	ui_bind_slider_onvaluechanged(data.color_slider[RED], on_slider_value_change, &data);
 	ui_bind_slider_onvaluechanged(data.color_slider[GREEN], on_slider_value_change, &data);
 	ui_bind_slider_onvaluechanged(data.color_slider[BLUE], on_slider_value_change, &data);
@@ -117,6 +117,5 @@ int	main()
 
 
 	ui_run(data.core);
-	int test;
 	return (0);
 }

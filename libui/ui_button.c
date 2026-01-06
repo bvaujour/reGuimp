@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_button.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:36:13 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 12:08:55 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 17:33:24 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,8 @@ static void		ui_button_render(t_widget *widget)
 	int				padding = 10;
 
 	data = (t_button_data *)widget->data;
-
 	SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
 	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute);
-	SDL_SetTextureColorMod(data->label, 255, 0, 0);
 	SDL_RenderCopy(widget->renderer, data->label, NULL, &(SDL_Rect){widget->absolute.x + padding, widget->absolute.y + padding, widget->rect.w - 2 * padding, widget->rect.h - 2 * padding});
 	ui_draw_outline(widget->renderer, widget->absolute, widget->outline, widget->outline_color);
 	SDL_RenderSetClipRect(widget->renderer, NULL);
@@ -52,28 +50,6 @@ static void	ui_button_destroy(t_widget *widget)
 {
 	SDL_DestroyTexture(widget->texture);
 }
-
-
-static int	ui_button_add_child(t_widget *widget, t_widget *child)
-{
-	(void)child;
-	if (widget->nb_child == UI_MAX_BUTTON_CHILDS)
-	{
-		printf("ui_window_add_child: Window has maximum child\n");
-		return (UI_ERROR);
-	}
-	int	padding_x = widget->rect.w / 10; 
-	int	padding_y = widget->rect.h / 10;
-	child->rect.x = padding_x;
-	child->rect.y = padding_y;
-	child->rect.w = widget->rect.w - 2 * padding_x;
-	child->rect.h = widget->rect.h - 2 * padding_y;
-	widget->childs[widget->nb_child] = child;
-	widget->nb_child++;
-	return (UI_SUCCESS);
-}
-
-
 
 t_widget	*ui_create_button(t_widget *parent, int x, int y, int width, int height)
 {
@@ -96,7 +72,6 @@ t_widget	*ui_create_button(t_widget *parent, int x, int y, int width, int height
 	widget->render = ui_button_render;
 	widget->update = ui_button_update;
 	widget->destroy = ui_button_destroy;
-	widget->add_child = ui_button_add_child;
 	widget->texture = ui_new_texture(parent->renderer, width, height, widget->colors[widget->state]);
 	ui_button_set_label(widget, "default label");
 	return (widget);

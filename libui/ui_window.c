@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_window.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 12:53:46 by injah             #+#    #+#             */
-/*   Updated: 2026/01/05 16:12:17 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 17:16:37 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ static void	ui_window_event(t_widget *window, SDL_Event event)
 
 static void		ui_window_update(t_widget *widget)
 {
-	ui_window_event(widget, widget->core->event);
 	ui_set_cursor(widget->core, widget->core->mouse.arrow);
 }
 
@@ -50,19 +49,6 @@ static void	ui_window_destroy(t_widget *widget)
 		SDL_DestroyWindow(data->window);
 }
 
-static int	ui_window_add_child(t_widget *widget, t_widget *child)
-{
-	(void)child;
-	if (widget->nb_child == UI_MAX_WINDOW_CHILDS)
-	{
-		printf("ui_window_add_child: Window has maximum child\n");
-		return (UI_ERROR);
-	}
-	widget->childs[widget->nb_child] = child;
-	widget->nb_child++;
-	return (UI_SUCCESS);
-}
-
 t_widget 	*ui_create_window(t_core *core, int x, int y, int width, int height)
 {
 	t_widget			*widget;
@@ -83,7 +69,7 @@ t_widget 	*ui_create_window(t_core *core, int x, int y, int width, int height)
 	widget->render = ui_window_render;
 	widget->update = ui_window_update;
 	widget->destroy = ui_window_destroy;
-	widget->add_child = ui_window_add_child;
+	widget->event = ui_window_event;
 	data->window = SDL_CreateWindow("LIBUI", x, y, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if (data->window == NULL)
 	{
