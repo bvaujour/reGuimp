@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_button.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:36:13 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 17:33:24 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/06 19:25:22 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,9 @@ static void		ui_button_render(t_widget *widget)
 	int				padding = 10;
 
 	data = (t_button_data *)widget->data;
-	SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
+	// SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
 	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute);
 	SDL_RenderCopy(widget->renderer, data->label, NULL, &(SDL_Rect){widget->absolute.x + padding, widget->absolute.y + padding, widget->rect.w - 2 * padding, widget->rect.h - 2 * padding});
-	ui_draw_outline(widget->renderer, widget->absolute, widget->outline, widget->outline_color);
-	SDL_RenderSetClipRect(widget->renderer, NULL);
 }
 
 static void	ui_button_destroy(t_widget *widget)

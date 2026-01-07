@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 10:25:14 by injah             #+#    #+#             */
-/*   Updated: 2025/12/22 00:52:44 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/07 02:32:49 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ typedef struct	s_data
 	t_widget		*button;
 	t_widget		*button2;
 	t_widget		*box;
-	t_widget		*dragbox;
 	t_widget		*color_slider[NUM_COLOR];
 	unsigned char	color_values[NUM_COLOR];
 }				t_data;

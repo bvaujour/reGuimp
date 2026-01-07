@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 16:33:33 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 12:09:21 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/06 19:25:56 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,13 @@ void	ui_slider_render(t_widget *widget)
 
 	data = (t_slider_data *)widget->data;
 
-	SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
+	// SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
 	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute); // le slider background
 	SDL_RenderFillRect(widget->renderer, &(SDL_Rect){widget->absolute.x, widget->absolute.y, widget->absolute.w * data->value, widget->absolute.h}); // la partie du slider remplie
 	int				padding = 10;
 	SDL_RenderCopy(widget->renderer, data->label, NULL, &(SDL_Rect){widget->absolute.x + padding, widget->absolute.y + padding, widget->rect.w - 2 * padding, widget->rect.h - 2 * padding});
-	ui_draw_outline(widget->renderer, widget->absolute, widget->outline, widget->outline_color);
 
 	SDL_RenderCopy(widget->renderer, data->slide_texture, NULL, &(SDL_Rect){widget->absolute.x + data->slide_position.x, widget->absolute.y, widget->absolute.w / data->slide_factor, widget->rect.h}); //render le slider
-	ui_draw_outline(widget->renderer, widget->absolute, widget->outline, widget->outline_color);
-	SDL_RenderSetClipRect(widget->renderer, NULL);
 }
 
 void	ui_slider_destroy(t_widget *widget)

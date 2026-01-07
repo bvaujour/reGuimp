@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_window.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 12:53:46 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 17:16:37 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/06 19:21:09 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ static void	ui_window_event(t_widget *window, SDL_Event event)
 		{
 			window->rect.w = event.window.data1;
 			window->rect.h = event.window.data2;
-			printf("w %d\n", window->rect.w);
 		}
 	}
 }
@@ -33,7 +32,6 @@ static void		ui_window_update(t_widget *widget)
 static void		ui_window_render(t_widget *widget)
 {
 	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute);
-	ui_draw_outline(widget->renderer, widget->absolute, widget->outline, widget->outline_color);
 }
 
 static void	ui_window_destroy(t_widget *widget)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libui_int.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 16:20:28 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/07 02:30:56 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,7 @@
 # include "SDL_image/include/SDL2/SDL_image.h"
 # include <math.h>
 
-# define	UI_MOUSE_BUTTON_SUPPORTED		10
 # define	UI_MAX_WINDOWS					5
-
 # define	UI_MAX_WINDOW_CHILDS			20
 # define	UI_MAX_DRAGBOX_CHILDS			1
 # define	UI_MAX_BUTTON_CHILDS			1
@@ -56,7 +54,7 @@ typedef struct	s_mouse_infos
 {
 	SDL_Point	position;
 	SDL_Point	motion;
-	bool		mouse_buttons[UI_MOUSE_BUTTON_SUPPORTED];
+	Uint32 		mouse_state;
 	SDL_Cursor	*arrow;
 	SDL_Cursor	*hand;
 	SDL_Cursor	*crosshair;
@@ -85,9 +83,8 @@ typedef struct	s_widget
 	SDL_Texture			*texture;
 	e_widget_state		state;
 	SDL_Color			colors[NUM_STATE];
-	int					outline;
-	SDL_Color			outline_color;
 	bool				is_visible;
+	bool				is_dragable;
 	void				(*event)(struct s_widget *widget, SDL_Event event);
 	void				(*update)(struct s_widget *widget);
 	void				(*render)(struct s_widget *widget);
@@ -165,11 +162,12 @@ t_widget 	**ui_new_widget_tab(int tab_len);
 int			ui_add_child(t_widget *parent, t_widget *child);
 
 t_widget	*ui_new_widget(SDL_Rect rect, e_widget_type type, int max_child);
+void		ui_widget_outline(t_widget *widget);
 
 
 //UTILS
 SDL_Color	ui_unpack_color(unsigned int color);
-void		ui_draw_outline(SDL_Renderer *renderer, SDL_Rect start_rect, int size, SDL_Color color);
+
 
 
 SDL_Texture	*ui_new_texture(SDL_Renderer *renderer, int width, int height, SDL_Color color_mod);

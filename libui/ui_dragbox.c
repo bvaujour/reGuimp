@@ -63,10 +63,8 @@ static void	ui_widget_drag(t_widget *widget, SDL_Event event)
 
 void		ui_dragbox_render(t_widget *widget)
 {
-	SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
+	// SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
 	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute);
-	ui_draw_outline(widget->renderer, widget->absolute, widget->outline, widget->outline_color);
-	SDL_RenderSetClipRect(widget->renderer, NULL);
 }
 
 void		ui_dragbox_update(t_widget *widget)
@@ -91,8 +89,7 @@ t_widget	*ui_create_dragbox(t_widget *parent, int x, int y, int width, int heigh
 		return (NULL);
 	if (ui_add_child(parent, widget) != UI_SUCCESS)
 		return (free(widget), NULL);
-	ui_set_widget_colors(widget, 0x7F5F5F5F, 0x7F5F5F5F, 0x7F5F5F5F);
-	widget->outline = 25;
+	ui_set_widget_colors(widget, 0xFF5F5F5F, 0xFF5F5F5F, 0xFF5F5F5F);
 	widget->render = ui_dragbox_render;
 	widget->update = ui_dragbox_update;
 	widget->destroy = ui_dragbox_destroy;

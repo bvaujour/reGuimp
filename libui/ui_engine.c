@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 16:31:56 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 12:49:19 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/07 03:25:15 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ static void ui_render_widget(t_widget *widget)
 
 	if (widget->is_visible == false)
 		return ;
+	SDL_RenderSetClipRect(widget->renderer, &widget->absolute);
 	widget->render(widget);
 	if (widget->childs)
 	{
@@ -47,6 +48,9 @@ static void ui_render_widget(t_widget *widget)
 			i++;
 		}
 	}
+	if (widget == widget->core->focused_widget)
+		ui_widget_outline(widget);
+	SDL_RenderSetClipRect(widget->renderer, NULL);
 }
 
 static void ui_update_widget(t_widget *widget)
@@ -70,6 +74,84 @@ static void ui_update_widget(t_widget *widget)
 	}
 }
 
+void	ui_build_widget(t_widget *widget)
+{
+	int	i;
+
+	i = 0;
+	if (widget->build)
+		widget->build(widget);
+	if (widget->childs)
+		while (widget->childs[i])
+		{
+			ui_build_widget(widget->childs[i]);
+			i++;
+		}
+}
+
+void	ui_global_build(t_core *core)
+{
+	int	i;
+
+	i = 0;
+	while (core->windows[i])
+	{
+		ui_build_widget(core->windows[i]);
+		i++;
+	}
+}
+
+static void		ui_manage_drag(t_widget *widget)
+{
+	SDL_Rect	 intersection;
+	SDL_Rect	new_rect;
+	int			i;
+
+
+	i = 0;
+	new_rect = widget->rect;
+	new_rect.x += widget->core->mouse.motion.x;
+	new_rect.y += widget->core->mouse.motion.y;
+	if (new_rect.x < 0)
+	{
+		new_rect.x = 10;
+		new_rect.y = 10;
+		new_rect.w = widget->parent->rect.w / 2 - 20;
+		new_rect.h = widget->parent->rect.h - 20;
+	}
+	if (new_rect.y < 0)
+	{
+		new_rect.x = 10;
+		new_rect.y = 10;
+		new_rect.w = widget->parent->rect.w - 20;
+		new_rect.h = widget->parent->rect.h / 2 - 20;
+	}
+	if (new_rect.x > widget->parent->rect.w - new_rect.w)
+	{
+		new_rect.x = widget->parent->rect.w / 2 - 10;
+		new_rect.y = 10;
+		new_rect.w = widget->parent->rect.w / 2 - 20;
+		new_rect.h = widget->parent->rect.h - 20;
+	}
+	if (new_rect.y > widget->parent->rect.h - new_rect.h)
+	{
+		new_rect.x = 10;
+		new_rect.y = widget->parent->rect.h / 2 - 10;
+		new_rect.w = widget->parent->rect.w - 20;
+		new_rect.h = widget->parent->rect.h / 2 - 20;
+	}
+	while (widget->parent->childs[i])
+	{
+		if (widget->parent->childs[i] != widget)
+		{
+			if (SDL_IntersectRect(&widget->parent->childs[i]->rect, &new_rect, &intersection))
+				return ;
+		}
+		i++;
+	}
+	widget->rect = new_rect;
+}
+
 static void	ui_global_update(t_core *core)
 {
 	int				i;
@@ -79,12 +161,16 @@ static void	ui_global_update(t_core *core)
 	while (core->windows[i])
 	{
 		data = core->windows[i]->data;
-		if (SDL_GetWindowID(SDL_GetMouseFocus()) == data->id)
+		if (core->event.window.windowID == data->id || (SDL_GetWindowID(SDL_GetMouseFocus()) == data->id && core->event.type == SDL_DROPFILE))
 		{
-			// printf("update window %d\n", SDL_GetWindowID(data->window));
+			
 			ui_update_widget(core->windows[i]);
 			if (core->focused_widget)
+			{
 				core->focused_widget->update(core->focused_widget);
+				if ( core->dragged_widget == core->focused_widget)
+					ui_manage_drag(core->dragged_widget);
+			}
 			ui_render_widget(core->windows[i]);
 			SDL_RenderPresent(core->windows[i]->renderer);
 			break ;
@@ -95,6 +181,7 @@ static void	ui_global_update(t_core *core)
 
 static void	ui_global_event(t_core *core)
 {
+	core->mouse.mouse_state = SDL_GetMouseState(NULL, NULL);
 	if (SDL_WaitEvent(&core->event))
 	{
 		if (core->event.type == SDL_KEYDOWN && core->onkeypress != NULL)
@@ -106,33 +193,21 @@ static void	ui_global_event(t_core *core)
 		{
 			core->mouse.motion.x = core->event.motion.x - core->mouse.position.x;
 			core->mouse.motion.y = core->event.motion.y - core->mouse.position.y;
-			core->mouse.position.x = core->event.motion.x;
+			core->mouse.position.x =  core->event.motion.x;
 			core->mouse.position.y = core->event.motion.y;
-			// printf("%d\n", core->mouse.motion.x);
-			// printf("%d\n", core->mouse.motion.y);
-		}
-		else if (core->event.type == SDL_MOUSEBUTTONDOWN)
-		{
-			if (core->event.button.button < UI_MOUSE_BUTTON_SUPPORTED)
-				core->mouse.mouse_buttons[core->event.button.button] = true;
 		}
 		else if (core->event.type == SDL_MOUSEBUTTONUP)
 		{
-			core->dragged_widget = NULL;
-			if (core->event.button.button < UI_MOUSE_BUTTON_SUPPORTED)
-				core->mouse.mouse_buttons[core->event.button.button] = false;
+			if (core->event.button.button == SDL_BUTTON_LEFT)
+				core->dragged_widget = NULL;
 		}
-		SDL_GetMouseState(&core->mouse.position.x, &core->mouse.position.y);
-		// if (core->event.type == SDL_MOUSEMOTION || core->event.type == SDL_DROPFILE || core->event.type == SDL_MOUSEBUTTONDOWN)
-		// printf("id : %d, enum: %d\n", core->event.window.windowID, core->event.type);
 	}
 }
-
-
 
 void	ui_run(t_core *core)
 {
 	core->is_running = true;
+	ui_global_build(core);
 	while (core->is_running)
 	{
 		ui_global_event(core);

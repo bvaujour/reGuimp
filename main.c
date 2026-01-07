@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/06 17:01:26 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/07 02:33:28 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,10 +88,9 @@ int	main()
 	ui_get_screen_size(&data.screen_width, &data.screen_height);
 	ui_bind_onkeypress(data.core, on_key_pressed, &data);
 
-	data.tool_window = ui_create_window(data.core, 0, 0, data.screen_width / 4, data.screen_height);
+	data.tool_window = ui_create_window(data.core, 0, 0, data.screen_width / 2, data.screen_height);
 	data.render_window = ui_create_window(data.core, data.screen_width / 4, 0,  2 * data.screen_width / 4, data.screen_height);
 
-	// data.dragbox = ui_create_dragbox(data.tool_window, 0, 0, 300, 500);
 	data.box = ui_create_box(data.tool_window, 50, 50, 300, 500);
 
 	data.button = ui_create_button(data.box, 10, 10, 5000, 100);

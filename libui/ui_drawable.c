@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_drawable.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 21:16:05 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 16:28:29 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/06 19:29:13 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,11 @@ static void	ui_drawable_render(t_widget *widget)
 	t_drawable_data	*data;
 	data = (t_drawable_data *)widget->data;
 
-	SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
+	// SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
 	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute);
 	SDL_RenderCopy(widget->renderer, data->layer, NULL, &widget->absolute);
-	ui_draw_outline(widget->renderer, widget->absolute, widget->outline, widget->outline_color);
 	if (widget->state == HOVERED || widget->state == CLICKED)
 		ui_drawable_render_brush_at_mouse(widget);
-	SDL_RenderSetClipRect(widget->renderer, NULL);
 }
 
 static void	ui_drawable_snapshot(t_widget *widget)
@@ -184,7 +182,7 @@ t_widget	*ui_create_drawable(t_widget *parent, int x, int y, int width, int heig
 	widget->texture = SDL_CreateTexture(widget->renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, widget->rect.w, widget->rect.h);
 	data->layer = SDL_CreateTexture(widget->renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, widget->rect.w, widget->rect.h);
 	data->snapshot = SDL_CreateTexture(widget->renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, widget->rect.w, widget->rect.h);
-	SDL_SetRenderDrawColor(widget->renderer, 255, 255, 255, 255);
+	SDL_SetRenderDrawColor(widget->renderer, 0, 0, 0, 255);
 	SDL_SetRenderTarget(widget->renderer, widget->texture);
 	SDL_RenderFillRect(widget->renderer, NULL);
 	SDL_SetRenderTarget(widget->renderer, NULL);

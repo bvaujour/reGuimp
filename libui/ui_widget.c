@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_widget.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 16:15:41 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/07 02:31:28 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,11 @@ void	ui_widget_manage_state(t_widget *widget)
 	core = widget->core;
 	if (SDL_PointInRect(&core->mouse.position, &widget->absolute))
 	{
-		widget->core->focused_widget = widget;
-		if (core->mouse.mouse_buttons[SDL_BUTTON_LEFT])
+		if (core->mouse.mouse_state & SDL_BUTTON(SDL_BUTTON_LEFT))
+		{
 			ui_widget_change_state(widget, CLICKED);
+			widget->core->focused_widget = widget;
+		}
 		else
 			ui_widget_change_state(widget, HOVERED);
 	}
@@ -77,7 +79,6 @@ t_widget *ui_new_widget(SDL_Rect rect, e_widget_type type, int max_child)
 	widget->rect = rect;
 	widget->type = type;
 	widget->is_visible = true;
-	widget->outline = 2;
 	return (widget);
 }
 
@@ -135,20 +136,8 @@ int	ui_core_add_window(t_core *core, t_widget *window)
 	return (-1);
 }
 
-void	ui_draw_outline(SDL_Renderer *renderer, SDL_Rect start_rect, int size, SDL_Color color)
+void	ui_widget_outline(t_widget *widget)
 {
-	int			i;
-	SDL_Rect	rect;
-
-	i = 0;
-	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-	while (i < size)
-	{
-		rect.x = start_rect.x + i;
-		rect.y = start_rect.y + i;
-		rect.w = start_rect.w - 2 * i;
-		rect.h = start_rect.h - 2 * i;
-		SDL_RenderDrawRect(renderer, &rect);
-		i++;
-	}
+	SDL_SetRenderDrawColor(widget->renderer, 0, 0, 0, 255);
+	SDL_RenderDrawRect(widget->renderer, &widget->absolute);
 }
