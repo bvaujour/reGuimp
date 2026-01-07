@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_button.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:36:13 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 12:08:55 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/07 16:41:55 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,6 @@ static int	ui_button_add_child(t_widget *widget, t_widget *child)
 	widget->nb_child++;
 	return (UI_SUCCESS);
 }
-
-
 
 t_widget	*ui_create_button(t_widget *parent, int x, int y, int width, int height)
 {

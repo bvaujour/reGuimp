@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/06 15:35:56 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/07 17:28:57 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "guimp.h"
-
 
 void	on_key_pressed(int key, void *param)
 {
@@ -41,6 +40,10 @@ void	on_button_clicked(t_widget *widget, int mouse_button_click, void *param)
 	{
 		printf("button2 clicked\n");
 		ui_toggle_widget_visibility(data->box);
+	}
+	else if (widget == data->text_button)
+	{
+		ui_create_text_dragbox(data->drawable);
 	}
 	// static int size = 20;
 	// if (clicked_widget == data->button)
@@ -91,32 +94,32 @@ int	main()
 	data.render_window = ui_create_window(data.core, data.screen_width / 4, 0,  2 * data.screen_width / 4, data.screen_height);
 
 	data.dragbox = ui_create_dragbox(data.tool_window, 0, 0, 300, 500);
-	data.box = ui_create_box(data.dragbox, 50, 50, 300, 500);
+	// data.box = ui_create_box(data.dragbox, 50, 50, 300, 500);
 
-	data.button = ui_create_button(data.box, 10, 10, 500, 100);
-	// data.button2 = ui_create_button(data.tool_window, 0, 0, 30, 30);
-	data.color_slider[RED] = ui_create_slider(data.box, 10, 140, 200, 30);
-	data.color_slider[GREEN] = ui_create_slider(data.box, 10, 180, 200, 30);
-	data.color_slider[BLUE] = ui_create_slider(data.box, 10, 220, 200, 30);
-	data.color_slider[ALPHA] = ui_create_slider(data.box, 10, 260, 200, 30);
+	// // data.button2 = ui_create_button(data.tool_window, 0, 0, 30, 30);
+	// data.color_slider[RED] = ui_create_slider(data.box, 10, 140, 200, 30);
+	// data.color_slider[GREEN] = ui_create_slider(data.box, 10, 180, 200, 30);
+	// data.color_slider[BLUE] = ui_create_slider(data.box, 10, 220, 200, 30);
+	// data.color_slider[ALPHA] = ui_create_slider(data.box, 10, 260, 200, 30);
 	data.drawable = ui_create_drawable(data.render_window, 0, 0, 800, 600);
-	
-	ui_bind_button_onclicked(data.button, on_button_clicked, &data);
-	ui_set_widget_texture(data.tool_window, "libui/assets/backgrounds/dark-blue-paint-minimal-background.jpg");
+	// data.button = ui_create_button(data.tool_window, 10, 10, 500, 100);
+	data.text_button = ui_create_button(data.tool_window, 10, 10, 200, 100);
+	ui_bind_button_onclicked(data.text_button, on_button_clicked, &data);
+	// ui_set_widget_texture(data.tool_window, "libui/assets/backgrounds/dark-blue-paint-minimal-background.jpg");
 
-	// ui_set_widget_position_and_size(data.button2, 0, 10, 100, 30);
-	// ui_bind_button_onclicked(data.button2, on_button_clicked, &data);
-
+	// // ui_set_widget_position_and_size(data.button2, 0, 10, 100, 30);
+	// // ui_bind_button_onclicked(data.button2, on_button_clicked, &data);
 	
 	
+	// ui_bind_slider_onvaluechanged(data.color_slider[RED], on_slider_value_change, &data);
+	// ui_bind_slider_onvaluechanged(data.color_slider[GREEN], on_slider_value_change, &data);
+	// ui_bind_slider_onvaluechanged(data.color_slider[BLUE], on_slider_value_change, &data);
+	// ui_bind_slider_onvaluechanged(data.color_slider[ALPHA], on_slider_value_change, &data);
 	
-	ui_bind_slider_onvaluechanged(data.color_slider[RED], on_slider_value_change, &data);
-	ui_bind_slider_onvaluechanged(data.color_slider[GREEN], on_slider_value_change, &data);
-	ui_bind_slider_onvaluechanged(data.color_slider[BLUE], on_slider_value_change, &data);
-	ui_bind_slider_onvaluechanged(data.color_slider[ALPHA], on_slider_value_change, &data);
-
+	
 
 	ui_run(data.core);
+	
 	
 	return (0);
 }

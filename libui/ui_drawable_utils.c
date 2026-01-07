@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_drawable_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/05 13:55:47 by injah             #+#    #+#             */
-/*   Updated: 2026/01/05 13:59:15 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/07 16:50:43 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,6 @@ void ui_draw_circle_on_image(t_image_data img, SDL_Point center, int radius, int
         }
     }
 }
-
 
 void ui_bucket_image(t_image_data img, int start_x, int start_y, Uint32 color)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libui.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/06 12:06:00 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/07 17:17:51 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,10 @@ void		ui_drawable_export_png(t_widget *drawable, const char *file);
 void		ui_drawable_set_brush(t_widget *drawable, const char *path);
 void		ui_drawable_set_brush_size(t_widget *drawable, int size);
 void		ui_drawable_set_brush_color(t_widget *drawable, char red, char green, char blue, char alpha);
+
+//TEXT
+
+void        ui_create_text_dragbox(t_widget *drawable);
 
 //WINDOW
 

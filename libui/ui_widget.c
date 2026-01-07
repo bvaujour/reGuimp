@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_widget.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
-/*   Updated: 2026/01/05 16:13:31 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/07 14:31:16 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,7 @@ void	ui_draw_outline(SDL_Renderer *renderer, SDL_Rect start_rect, int size, SDL_
 		i++;
 	}
 }
+
 int	ui_add_child(t_widget *parent, t_widget *child)
 {
 	child->parent = parent;

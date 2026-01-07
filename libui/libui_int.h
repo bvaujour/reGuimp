@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libui_int.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 12:02:59 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/07 17:44:40 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,10 @@
 
 # define	UI_MAX_WINDOW_CHILDS			20
 # define	UI_MAX_DRAGBOX_CHILDS			1
+# define	UI_MAX_TEXTBOX_CHILDS			1
 # define	UI_MAX_BUTTON_CHILDS			1
 # define	UI_MAX_BOX_CHILDS				10
-# define	UI_MAX_DRAWABLE_CHILDS			0
+# define	UI_MAX_DRAWABLE_CHILDS			10
 # define	UI_MAX_SLIDER_CHILDS			0
 # define	UI_ERROR						-1
 # define	UI_SUCCESS						0
@@ -40,6 +41,7 @@ typedef enum	e_widget_type
 	BUTTON,
 	DRAWABLE,
 	DRAGBOX,
+	TEXTBOX,
 	SLIDER,
 	BOX,
 }				e_widget_type;

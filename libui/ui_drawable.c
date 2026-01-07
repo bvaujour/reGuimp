@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_drawable.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 21:16:05 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 15:16:48 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/07 17:34:48 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,7 @@ void	ui_drawable_draw_brush(t_widget *widget)
 	SDL_SetRenderTarget(widget->renderer, NULL);
 }
 
-
-static void	ui_drawable_erase(t_widget *widget)
+void	ui_drawable_erase(t_widget *widget)
 {
 	t_drawable_data	*data;
 	t_core			*core;
@@ -116,8 +115,8 @@ static void	ui_drawable_update(t_widget *widget)
 {
 	if (widget->state == CLICKED)
 	{
-		// ui_drawable_draw_brush(widget);
-		ui_drawable_erase(widget);
+		ui_drawable_draw_brush(widget);
+		// ui_drawable_erase(widget);
 	}
 }
 
@@ -138,6 +137,25 @@ static void	ui_drawable_destroy(t_widget *widget)
 		SDL_DestroyTexture(data->snapshot);
 }
 
+void	ui_drawable_print_text(t_widget *widget)
+{
+	SDL_Surface 	*text_surface;
+    SDL_Texture 	*text;
+	SDL_Rect		text_rect = {50, 50, 200, 50};
+    TTF_Font    	*font;
+	t_drawable_data *data;
+
+	data = (t_drawable_data *)widget->data;
+    font = TTF_OpenFont("libui/assets/fonts/Roboto/Roboto-Black.ttf", 50);
+    text_surface = TTF_RenderText_Blended(font, "mamoulin grosse merde", (SDL_Color){0, 0, 0, 255});
+    text = SDL_CreateTextureFromSurface(widget->renderer, text_surface);
+	SDL_SetRenderTarget(widget->renderer, data->layer);
+	SDL_SetRenderDrawColor(widget->renderer, 0, 0, 0, 255);
+	SDL_RenderDrawRect(widget->renderer, &text_rect);
+	SDL_RenderCopy(widget->renderer, text, NULL, &text_rect);
+	SDL_SetRenderTarget(widget->renderer, NULL);
+}
+
 void	ui_test(t_widget *widget)
 {
 	t_image_data	img;
@@ -156,6 +174,20 @@ void	ui_test(t_widget *widget)
 	ui_bucket_image(img, 300, 200, 0xFF00FF00);
 	ui_set_render_target_pixels(widget->renderer, data->layer, img.pixels);
 	free(img.pixels);
+}
+
+int 	ui_drawable_add_child(t_widget *parent, t_widget *child)
+{
+	(void)parent;
+	(void)child;
+	if (parent->nb_child == UI_MAX_BOX_CHILDS)
+	{
+		printf("ui_window_add_child: Window has maximum child\n");
+		return (UI_ERROR);
+	}
+	parent->childs[parent->nb_child] = child;
+	parent->nb_child++;
+	return (UI_SUCCESS);
 }
 
 t_widget	*ui_create_drawable(t_widget *parent, int x, int y, int width, int height)
@@ -181,6 +213,7 @@ t_widget	*ui_create_drawable(t_widget *parent, int x, int y, int width, int heig
 	widget->render = ui_drawable_render;
 	widget->update = ui_drawable_update;
 	widget->event = ui_drawable_event;
+	widget->add_child = ui_drawable_add_child;
 	widget->destroy = ui_drawable_destroy;
 	widget->texture = SDL_CreateTexture(widget->renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, widget->rect.w, widget->rect.h);
 	data->layer = SDL_CreateTexture(widget->renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, widget->rect.w, widget->rect.h);
