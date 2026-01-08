@@ -6,7 +6,7 @@
 #    By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/03 16:48:10 by bvaujour          #+#    #+#              #
-#    Updated: 2026/01/07 14:03:03 by kipouliq         ###   ########.fr        #
+#    Updated: 2026/01/08 13:30:23 by kipouliq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,7 @@ SRC =	ui_core.c						\
 		ui_drawable_utils.c				\
 		ui_box.c						\
 		ui_dragbox.c					\
-		ui_text_input.c
+		ui_textbox.c
 
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 

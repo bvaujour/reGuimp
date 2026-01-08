@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/07 17:17:51 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 13:32:28 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 
 # define UIKEY_ESCAPE	27
 
-typedef struct	s_core		t_core;
-typedef struct	s_widget	t_widget;
-
+typedef struct	s_core		    t_core;
+typedef struct	s_widget	    t_widget;
+typedef struct  s_properties    t_properties;
 
 //CORE
 
@@ -59,7 +59,7 @@ void		ui_drawable_set_brush_color(t_widget *drawable, char red, char green, char
 
 //TEXT
 
-void        ui_create_text_dragbox(t_widget *drawable);
+void        ui_create_text_dragbox(t_widget *drawable, t_properties *properties);
 
 //WINDOW
 

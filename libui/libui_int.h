@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/07 17:44:40 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 13:28:07 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 
 # define	UI_MAX_WINDOW_CHILDS			20
 # define	UI_MAX_DRAGBOX_CHILDS			1
-# define	UI_MAX_TEXTBOX_CHILDS			1
+# define	UI_MAX_TEXTBOX_CHILDS			0
 # define	UI_MAX_BUTTON_CHILDS			1
 # define	UI_MAX_BOX_CHILDS				10
 # define	UI_MAX_DRAWABLE_CHILDS			10
@@ -147,6 +147,15 @@ typedef struct	s_core
 	t_widget 				*focused_widget;
 	bool					is_running;
 }				t_core;
+
+typedef struct	s_properties
+{
+	int	x;
+	int	y;
+	int	w;
+	int	h;
+	int	outline;
+}				t_properties;
 
 //ENGINE
 void		ui_destroy(t_core *core);
