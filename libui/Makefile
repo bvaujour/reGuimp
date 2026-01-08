@@ -6,7 +6,7 @@
 #    By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/03 16:48:10 by bvaujour          #+#    #+#              #
-#    Updated: 2026/01/08 13:30:23 by kipouliq         ###   ########.fr        #
+#    Updated: 2026/01/08 13:42:30 by kipouliq         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,12 +24,9 @@ SRC =	ui_core.c						\
 		ui_button_user.c				\
 		ui_slider.c						\
 		ui_slider_user.c				\
-		ui_drawable.c					\
-		ui_drawable_user.c				\
-		ui_drawable_utils.c				\
 		ui_box.c						\
-		ui_dragbox.c					\
-		ui_textbox.c
+		ui_image.c						\
+		ui_textboc.cc					\
 
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 

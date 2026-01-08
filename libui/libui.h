@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/08 13:32:28 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 13:42:02 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,12 @@
 typedef struct	s_core		    t_core;
 typedef struct	s_widget	    t_widget;
 typedef struct  s_properties    t_properties;
+typedef struct	s_img
+{
+	unsigned int	*pixels;
+	int				width;
+	int				height;
+}				t_img;
 
 //CORE
 
@@ -32,9 +38,6 @@ void		ui_bind_slider_onvaluechanged(t_widget *slider, void (*f)(struct s_widget 
 
 t_widget	*ui_create_button(t_widget *parent, int x, int y, int width, int height);
 void		ui_button_set_label(t_widget *button, char *label);
-/*prototype should be:
-void on_widget_clicked(t_widget *clicked_widget, int mouse_button_clicked, void *param(cast to your type))*/
-void		ui_bind_button_onclicked(t_widget *button, void (*f)(struct s_widget *, int, void *), void *param);
 
 //WIDGET
 
@@ -48,14 +51,6 @@ int			ui_get_widget_visibility(t_widget *widget);
 void		ui_toggle_widget_visibility(t_widget *widget);
 void		ui_get_screen_size(int *screen_width, int *screen_height);
 
-//DRAWABLE
-
-t_widget	*ui_create_drawable(t_widget *parent, int x, int y, int width, int height);
-void		ui_drawable_export_jpeg(t_widget *edit_img, const char *file, int quality);
-void		ui_drawable_export_png(t_widget *drawable, const char *file);
-void		ui_drawable_set_brush(t_widget *drawable, const char *path);
-void		ui_drawable_set_brush_size(t_widget *drawable, int size);
-void		ui_drawable_set_brush_color(t_widget *drawable, char red, char green, char blue, char alpha);
 
 //TEXT
 
@@ -69,10 +64,6 @@ t_widget 	*ui_create_window(t_core *core, int x, int y, int width, int height);
 
 t_widget	*ui_create_box(t_widget *parent, int x, int y, int width, int height);
 
-//DRAGBOX
-
-t_widget	*ui_create_dragbox(t_widget *parent, int x, int y, int width, int height);
-
 //SLIDER
 
 t_widget	*ui_create_slider(t_widget *parent, int x, int y, int width, int height);
@@ -81,8 +72,12 @@ void		ui_slider_set_label(t_widget *slider, char *label);
 void void	on_key_pressed(int key_pressed, void *param(cast to your type))*/
 void		ui_bind_onkeypress(t_core *core, void (*f)(int, void *), void *param);
 
+t_img		ui_image_get_img(t_widget *image);
+t_widget	*ui_create_image(t_widget *parent, int x, int y, int width, int height);
 
-
+/*prototype should be:
+void	function(t_widget *widget, int button, int x, int y, void *param)*/
+void	ui_widget_bind_onclicked(t_widget *widget, void (*f)(struct s_widget *, int, int, int, void *), void *param);;
 
 
 #endif

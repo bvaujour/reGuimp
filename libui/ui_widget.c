@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
-/*   Updated: 2026/01/07 14:31:16 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 13:44:13 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,11 @@ void	ui_widget_manage_state(t_widget *widget)
 	core = widget->core;
 	if (SDL_PointInRect(&core->mouse.position, &widget->absolute))
 	{
-		widget->core->focused_widget = widget;
-		if (core->mouse.mouse_buttons[SDL_BUTTON_LEFT])
+		if (core->mouse.mouse_state & SDL_BUTTON(SDL_BUTTON_LEFT))
+		{
 			ui_widget_change_state(widget, CLICKED);
+			widget->core->focused_widget = widget;
+		}
 		else
 			ui_widget_change_state(widget, HOVERED);
 	}
@@ -73,11 +75,26 @@ t_widget *ui_new_widget(SDL_Rect rect, e_widget_type type, int max_child)
 		if (widget->childs == NULL)
 			return (free(widget), NULL);
 	}
+	widget->max_child = max_child;
 	widget->rect = rect;
 	widget->type = type;
 	widget->is_visible = true;
-	widget->outline = 2;
 	return (widget);
+}
+
+int	ui_add_child(t_widget *widget, t_widget *child)
+{
+	if (widget->nb_child == widget->max_child)
+	{
+		printf("ui_add_child: Widget has maximum child\n");
+		return (UI_ERROR);
+	}
+	widget->childs[widget->nb_child] = child;
+	widget->nb_child++;
+	child->parent = widget;
+	child->core = widget->core;
+	child->renderer = widget->renderer;
+	return (UI_SUCCESS);
 }
 
 t_widget 	**ui_new_widget_tab(int tab_len)
@@ -119,32 +136,75 @@ int	ui_core_add_window(t_core *core, t_widget *window)
 	return (-1);
 }
 
-void	ui_draw_outline(SDL_Renderer *renderer, SDL_Rect start_rect, int size, SDL_Color color)
+void	ui_widget_outline(t_widget *widget)
 {
-	int			i;
-	SDL_Rect	rect;
-
-	i = 0;
-	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-	while (i < size)
-	{
-		rect.x = start_rect.x + i;
-		rect.y = start_rect.y + i;
-		rect.w = start_rect.w - 2 * i;
-		rect.h = start_rect.h - 2 * i;
-		SDL_RenderDrawRect(renderer, &rect);
-		i++;
-	}
+	SDL_SetRenderDrawColor(widget->renderer, 0, 0, 0, 255);
+	SDL_RenderDrawRect(widget->renderer, &widget->absolute);
 }
 
-int	ui_add_child(t_widget *parent, t_widget *child)
+void		ui_widget_drag(t_widget *widget)
 {
-	child->parent = parent;
-	child->core = parent->core;
-	child->renderer = parent->renderer;
-	if (parent->add_child == NULL)
-		return (ft_dprintf(2, "ui_add_child: parent widget does not have add child function\n"), UI_ERROR);
-	if (parent->add_child(parent, child) == UI_ERROR)
-		return (ft_dprintf(2, "ui_add_child: parent widget can't add this child\n"), UI_ERROR);
-	return (UI_SUCCESS);	
+	SDL_Rect	 intersection;
+	SDL_Rect	new_rect;
+	int			i;
+
+
+	i = 0;
+	new_rect = widget->rect;
+	new_rect.x += widget->core->mouse.motion.x;
+	new_rect.y += widget->core->mouse.motion.y;
+	if (new_rect.x < 0)
+	{
+		new_rect.x = 10;
+		new_rect.y = 10;
+		new_rect.w = widget->parent->rect.w / 2 - 20;
+		new_rect.h = widget->parent->rect.h - 20;
+	}
+	if (new_rect.y < 0)
+	{
+		new_rect.x = 10;
+		new_rect.y = 10;
+		new_rect.w = widget->parent->rect.w - 20;
+		new_rect.h = widget->parent->rect.h / 2 - 20;
+	}
+	if (new_rect.x > widget->parent->rect.w - new_rect.w)
+	{
+		new_rect.x = widget->parent->rect.w / 2 - 10;
+		new_rect.y = 10;
+		new_rect.w = widget->parent->rect.w / 2 - 20;
+		new_rect.h = widget->parent->rect.h - 20;
+	}
+	if (new_rect.y > widget->parent->rect.h - new_rect.h)
+	{
+		new_rect.x = 10;
+		new_rect.y = widget->parent->rect.h / 2 - 10;
+		new_rect.w = widget->parent->rect.w - 20;
+		new_rect.h = widget->parent->rect.h / 2 - 20;
+	}
+	while (widget->parent->childs[i])
+	{
+		if (widget->parent->childs[i] != widget)
+		{
+			if (SDL_IntersectRect(&widget->parent->childs[i]->rect, &new_rect, &intersection))
+				return ;
+		}
+		i++;
+	}
+	widget->rect = new_rect;
+}
+
+void		ui_widget_event(t_widget *widget, SDL_Event event)
+{
+	SDL_Point	relative_mouse_position;
+
+	if (event.type == SDL_MOUSEBUTTONUP)
+	{
+		if (event.button.button == SDL_BUTTON_LEFT)
+		{
+			relative_mouse_position.x = widget->core->mouse.position.x - widget->rect.x;
+			relative_mouse_position.y = widget->core->mouse.position.y - widget->rect.y;
+			if (widget->onclicked)
+				widget->onclicked(widget, event.button.button, relative_mouse_position.x, relative_mouse_position.y, widget->onclicked_param);
+		}
+	}
 }

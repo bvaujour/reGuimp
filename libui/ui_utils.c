@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 17:57:41 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 15:10:43 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/08 12:53:35 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,16 +35,4 @@ SDL_Texture	*ui_new_texture(SDL_Renderer *renderer, int width, int height, SDL_C
 	SDL_SetTextureAlphaMod(texture, color_mod.a);
 	SDL_FreeSurface(surface);
 	return (texture);
-}
-
-int	ui_get_render_target_image_data(SDL_Renderer *renderer, SDL_Texture *texture, t_image_data *img)
-{
-	SDL_QueryTexture(texture, NULL, NULL, &img->width, &img->height);
-	img->pixels = malloc(sizeof(Uint32) * img->width * img->height);
-	if (img->pixels == NULL)
-		return (UI_ERROR);
-	SDL_SetRenderTarget(renderer, texture);
-	SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_ARGB8888, img->pixels, img->width * sizeof(Uint32));
-	SDL_SetRenderTarget(renderer, NULL);
-	return (UI_SUCCESS);
 }

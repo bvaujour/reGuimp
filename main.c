@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/08 13:34:54 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 13:46:38 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,81 +19,49 @@ void	on_key_pressed(int key, void *param)
 	data = (t_data *)param;
 	if (key == UIKEY_ESCAPE)
 		ui_quit(data->core);
-	if (key == 'a')
-		printf("test = %d\n", data->test);
-	// if (key == 'e')
-	// 	ui_drawable_export_jpg(data->drawable, "any.jpg", 50);
 	printf("key = %d\n", key);
 }
-
-void	on_button_clicked(t_widget *widget, int mouse_button_click, void *param)
+void	on_widget_clicked(t_widget *widget, int button, int x, int y, void *param)
 {
 	t_data *data;
-	
+	t_img	img;
 	data = (t_data *)param;
+	if (widget == data->canvas)
+	{
+		img = ui_image_get_img(data->canvas);
+		if (data->tool == DRAW_RECT && button == 1)
+			draw_rect_on_image(img, x, y, 100, 100, pack_color(data->color));
+		if (data->tool == BUCKET && button == 1)
+			bucket_image(img, x, y, pack_color(data->color));
+	}
 	if (widget == data->button)
 	{
-		ui_drawable_export_png(data->drawable, "lol.png");
-		printf("button1 clicked\n");
+		printf("button clicked\n");
+		if (data->tool == DRAW_RECT)
+		{
+			data->tool = BUCKET;
+		}
+		else if (data->tool == BUCKET)
+		{
+			data->tool = DRAW_RECT;
+		}
 	}
-	else if (widget == data->button2)
-	{
-		printf("button2 clicked\n");
-		ui_toggle_widget_visibility(data->box);
-	}
-	else if (widget == data->text_button)
-	{
-		ui_create_text_dragbox(data->drawable);
-	}
-	// static int size = 20;
-	// if (clicked_widget == data->button)
-	// {
-	// 	ui_drawable_set_brush_size(data->drawable, size);
-	// 	size++;
-	// }
-	// data->test++;
-	printf("main button = %d\n", mouse_button_click);
 }
 
-void	on_slider_value_change(t_widget *slider, float value, void *param)
-{
-	t_data *data;
-
-	data = (t_data *)param;
-	if (slider == data->color_slider[RED])
-	{
-		data->color_values[RED] = value * 255;
-	}
-	else if (slider == data->color_slider[GREEN])
-	{
-		data->color_values[GREEN] = value * 255;
-	}
-	else if (slider == data->color_slider[BLUE])
-	{
-		data->color_values[BLUE] = value * 255;
-	}
-	else if (slider == data->color_slider[ALPHA])
-	{
-		data->color_values[ALPHA] = value * 255;
-	}
-	printf("%f\n", value);
-	ui_drawable_set_brush_color(data->drawable, data->color_values[RED], data->color_values[GREEN], data->color_values[BLUE], data->color_values[ALPHA]);
-}
 
 int	main()
 {
 	t_data		data;
-	(void)data;
+
 	data = (t_data){0};
-	data.test = 2;
 	data.core = ui_init();
-	ui_get_screen_size(&data.screen_width, &data.screen_height);
+	data.color = (t_rgba){255, 0, 0, 255};
 	ui_bind_onkeypress(data.core, on_key_pressed, &data);
 
 	data.tool_window = ui_create_window(data.core, 0, 0, data.screen_width / 4, data.screen_height);
 	data.render_window = ui_create_window(data.core, data.screen_width / 4, 0,  2 * data.screen_width / 4, data.screen_height);
 
-	data.dragbox = ui_create_dragbox(data.tool_window, 0, 0, 300, 500);
+	// data.dragbox = ui_create_dragbox(data.tool_window, 0, 0, 300, 500);
 	// data.box = ui_create_box(data.dragbox, 50, 50, 300, 500);
 
 	// // data.button2 = ui_create_button(data.tool_window, 0, 0, 30, 30);
@@ -101,10 +69,10 @@ int	main()
 	// data.color_slider[GREEN] = ui_create_slider(data.box, 10, 180, 200, 30);
 	// data.color_slider[BLUE] = ui_create_slider(data.box, 10, 220, 200, 30);
 	// data.color_slider[ALPHA] = ui_create_slider(data.box, 10, 260, 200, 30);
-	data.drawable = ui_create_drawable(data.render_window, 0, 0, 800, 600);
+	// data.drawable = ui_create_drawable(data.render_window, 0, 0, 800, 600);
 	// data.button = ui_create_button(data.tool_window, 10, 10, 500, 100);
-	data.text_button = ui_create_button(data.tool_window, 10, 10, 200, 100);
-	ui_bind_button_onclicked(data.text_button, on_button_clicked, &data);
+	// data.text_button = ui_create_button(data.tool_window, 10, 10, 200, 100);
+	// ui_bind_button_onclicked(data.text_button, on_button_clicked, &data);
 	// ui_set_widget_texture(data.tool_window, "libui/assets/backgrounds/dark-blue-paint-minimal-background.jpg");
 
 	// // ui_set_widget_position_and_size(data.button2, 0, 10, 100, 30);
@@ -121,5 +89,12 @@ int	main()
 	ui_run(data.core);
 	
 	
+	// data.tool_window = ui_create_window(data.core, 0, 0, 800, 600);
+	// data.render_window = ui_create_window(data.core, 900, 0, 1000, 800);
+	// data.button = ui_create_button(data.tool_window, 50, 0, 100, 50);
+	// data.canvas = ui_create_image(data.render_window, 100, 100, 800, 600);
+	// ui_widget_bind_onclicked(data.button, on_widget_clicked, &data);
+	// ui_widget_bind_onclicked(data.canvas, on_widget_clicked, &data);
+	// ui_run(data.core);
 	return (0);
 }

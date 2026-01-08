@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 13:28:07 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 13:41:31 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,9 @@
 # include "SDL_image/include/SDL2/SDL_image.h"
 # include <math.h>
 
-# define	UI_MOUSE_BUTTON_SUPPORTED		10
 # define	UI_MAX_WINDOWS					5
-
 # define	UI_MAX_WINDOW_CHILDS			20
+# define	UI_MAX_IMAGE_CHILDS				0
 # define	UI_MAX_DRAGBOX_CHILDS			1
 # define	UI_MAX_TEXTBOX_CHILDS			0
 # define	UI_MAX_BUTTON_CHILDS			1
@@ -38,6 +37,7 @@
 typedef enum	e_widget_type
 {
 	WINDOW,
+	IMAGE,
 	BUTTON,
 	DRAWABLE,
 	DRAGBOX,
@@ -58,25 +58,20 @@ typedef struct	s_mouse_infos
 {
 	SDL_Point	position;
 	SDL_Point	motion;
-	bool		mouse_buttons[UI_MOUSE_BUTTON_SUPPORTED];
+	Uint32 		mouse_state;
 	SDL_Cursor	*arrow;
 	SDL_Cursor	*hand;
 	SDL_Cursor	*crosshair;
 	SDL_Cursor	*current_cursor;
 }				t_mouse_infos;
 
-typedef struct	s_image_data
-{
-	Uint32	*pixels;
-	int		width;
-	int		height;
-}				t_image_data;
 
 typedef struct	s_widget
 {
 	struct s_core		*core;
 	SDL_Renderer		*renderer;
 	struct s_widget		**childs;
+	int					max_child;
 	int					nb_child;
 	struct s_widget		*parent;
 	void				*data;
@@ -86,14 +81,15 @@ typedef struct	s_widget
 	SDL_Texture			*texture;
 	e_widget_state		state;
 	SDL_Color			colors[NUM_STATE];
-	int					outline;
-	SDL_Color			outline_color;
 	bool				is_visible;
+	bool				is_dragable;
 	void				(*event)(struct s_widget *widget, SDL_Event event);
 	void				(*update)(struct s_widget *widget);
 	void				(*render)(struct s_widget *widget);
 	void				(*destroy)(struct s_widget *widget);
-	int					(*add_child)(struct s_widget *parent, struct s_widget *child);
+	void				(*build)(struct s_widget *widget);
+	void				(*onclicked)(struct s_widget *, int, int, int, void *);
+	void				*onclicked_param;
 }				t_widget;
 
 typedef struct	s_drawable_data
@@ -107,6 +103,11 @@ typedef struct	s_drawable_data
 	SDL_Texture	*layer;
 	SDL_Texture	*snapshot;
 }				t_drawable_data;
+
+typedef struct	s_image_data
+{
+	SDL_Surface	*surface;
+}				t_image_data;
 
 typedef struct	s_window_data
 {
@@ -130,8 +131,6 @@ typedef struct	s_slider_data
 typedef struct	s_button_data
 {
 	SDL_Texture	*label;
-	void		(*onclicked)(struct s_widget *, int, void *);
-	void		*onclicked_param;
 }				t_button_data;
 
 
@@ -170,16 +169,19 @@ int			ui_core_add_window(t_core *core, t_widget *window);
 
 SDL_Rect	ui_get_absolute_rect(t_widget *widget);
 void		ui_widget_manage_state(t_widget *widget);
-
+int			ui_add_child(t_widget *widget, t_widget *child);
 t_widget 	**ui_new_widget_tab(int tab_len);
 int			ui_add_child(t_widget *parent, t_widget *child);
+void		ui_widget_event(t_widget *widget, SDL_Event event);
 
 t_widget	*ui_new_widget(SDL_Rect rect, e_widget_type type, int max_child);
+void		ui_widget_outline(t_widget *widget);
+void		ui_widget_drag(t_widget *widget);
 
 
 //UTILS
 SDL_Color	ui_unpack_color(unsigned int color);
-void		ui_draw_outline(SDL_Renderer *renderer, SDL_Rect start_rect, int size, SDL_Color color);
+
 
 
 SDL_Texture	*ui_new_texture(SDL_Renderer *renderer, int width, int height, SDL_Color color_mod);
@@ -192,6 +194,7 @@ void	ui_draw_disk_on_image(t_image_data img, SDL_Point center, int radius, Uint3
 void	ui_draw_rect_on_image(t_image_data img, SDL_Rect rect, Uint32 color);
 void	ui_set_render_target_pixels(SDL_Renderer *renderer, SDL_Texture *texture, Uint32 *pixels);
 int		ui_get_render_target_image_data(SDL_Renderer *renderer, SDL_Texture *texture, t_image_data *img);
+
 
 
 #endif
