@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 16:31:56 by injah             #+#    #+#             */
-/*   Updated: 2026/01/07 03:25:15 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 12:21:41 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ static void ui_update_widget(t_widget *widget)
 		return ;
 	widget->absolute = ui_get_absolute_rect(widget);
 	ui_widget_manage_state(widget);
+	ui_widget_event(widget, widget->core->event);
 	if (widget->event)
 		widget->event(widget, widget->core->event);
 	if (widget->childs)
@@ -101,57 +102,6 @@ void	ui_global_build(t_core *core)
 	}
 }
 
-static void		ui_manage_drag(t_widget *widget)
-{
-	SDL_Rect	 intersection;
-	SDL_Rect	new_rect;
-	int			i;
-
-
-	i = 0;
-	new_rect = widget->rect;
-	new_rect.x += widget->core->mouse.motion.x;
-	new_rect.y += widget->core->mouse.motion.y;
-	if (new_rect.x < 0)
-	{
-		new_rect.x = 10;
-		new_rect.y = 10;
-		new_rect.w = widget->parent->rect.w / 2 - 20;
-		new_rect.h = widget->parent->rect.h - 20;
-	}
-	if (new_rect.y < 0)
-	{
-		new_rect.x = 10;
-		new_rect.y = 10;
-		new_rect.w = widget->parent->rect.w - 20;
-		new_rect.h = widget->parent->rect.h / 2 - 20;
-	}
-	if (new_rect.x > widget->parent->rect.w - new_rect.w)
-	{
-		new_rect.x = widget->parent->rect.w / 2 - 10;
-		new_rect.y = 10;
-		new_rect.w = widget->parent->rect.w / 2 - 20;
-		new_rect.h = widget->parent->rect.h - 20;
-	}
-	if (new_rect.y > widget->parent->rect.h - new_rect.h)
-	{
-		new_rect.x = 10;
-		new_rect.y = widget->parent->rect.h / 2 - 10;
-		new_rect.w = widget->parent->rect.w - 20;
-		new_rect.h = widget->parent->rect.h / 2 - 20;
-	}
-	while (widget->parent->childs[i])
-	{
-		if (widget->parent->childs[i] != widget)
-		{
-			if (SDL_IntersectRect(&widget->parent->childs[i]->rect, &new_rect, &intersection))
-				return ;
-		}
-		i++;
-	}
-	widget->rect = new_rect;
-}
-
 static void	ui_global_update(t_core *core)
 {
 	int				i;
@@ -163,13 +113,12 @@ static void	ui_global_update(t_core *core)
 		data = core->windows[i]->data;
 		if (core->event.window.windowID == data->id || (SDL_GetWindowID(SDL_GetMouseFocus()) == data->id && core->event.type == SDL_DROPFILE))
 		{
-			
 			ui_update_widget(core->windows[i]);
 			if (core->focused_widget)
 			{
 				core->focused_widget->update(core->focused_widget);
-				if ( core->dragged_widget == core->focused_widget)
-					ui_manage_drag(core->dragged_widget);
+				if (core->dragged_widget == core->focused_widget)
+					ui_widget_drag(core->dragged_widget);
 			}
 			ui_render_widget(core->windows[i]);
 			SDL_RenderPresent(core->windows[i]->renderer);
@@ -208,6 +157,7 @@ void	ui_run(t_core *core)
 {
 	core->is_running = true;
 	ui_global_build(core);
+	printf("sizeof uint32: %ld\nsizeof unsigned: %ld\n", sizeof(Uint32), sizeof(unsigned int));
 	while (core->is_running)
 	{
 		ui_global_event(core);

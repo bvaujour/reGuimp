@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/06 12:06:00 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 12:13:02 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,12 @@
 
 typedef struct	s_core		t_core;
 typedef struct	s_widget	t_widget;
-
+typedef struct	s_img
+{
+	unsigned int	*pixels;
+	int				width;
+	int				height;
+}				t_img;
 
 //CORE
 
@@ -77,8 +82,12 @@ void		ui_slider_set_label(t_widget *slider, char *label);
 void void	on_key_pressed(int key_pressed, void *param(cast to your type))*/
 void		ui_bind_onkeypress(t_core *core, void (*f)(int, void *), void *param);
 
+t_img		ui_canvas_get_img(t_widget *canvas);
+t_widget	*ui_create_canvas(t_widget *parent, int x, int y, int width, int height);
 
-
+/*prototype should be:
+void	function(t_widget *widget, int button, int x, int y, void *param)*/
+void	ui_widget_bind_onclicked(t_widget *widget, void (*f)(struct s_widget *, int, int, int, void *), void *param);;
 
 
 #endif

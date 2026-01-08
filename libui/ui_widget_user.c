@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:24:56 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 11:52:27 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 12:29:58 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,4 +86,10 @@ void	ui_get_screen_size(int *screen_width, int *screen_height)
 		*screen_width = rect.w;
 	if (screen_height)
 		*screen_height = rect.h;
+}
+
+void	ui_widget_bind_onclicked(t_widget *widget, void (*f)(struct s_widget *, int, int, int, void *), void *param)
+{
+	widget->onclicked = f;
+	widget->onclicked_param = param;
 }

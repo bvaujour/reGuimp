@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/07 02:30:56 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 12:20:28 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 
 # define	UI_MAX_WINDOWS					5
 # define	UI_MAX_WINDOW_CHILDS			20
+# define	UI_MAX_CANVAS_CHILDS			0
 # define	UI_MAX_DRAGBOX_CHILDS			1
 # define	UI_MAX_BUTTON_CHILDS			1
 # define	UI_MAX_BOX_CHILDS				10
@@ -35,6 +36,7 @@
 typedef enum	e_widget_type
 {
 	WINDOW,
+	CANVAS,
 	BUTTON,
 	DRAWABLE,
 	DRAGBOX,
@@ -68,6 +70,7 @@ typedef struct	s_image_data
 	int		height;
 }				t_image_data;
 
+
 typedef struct	s_widget
 {
 	struct s_core		*core;
@@ -90,6 +93,8 @@ typedef struct	s_widget
 	void				(*render)(struct s_widget *widget);
 	void				(*destroy)(struct s_widget *widget);
 	void				(*build)(struct s_widget *widget);
+	void				(*onclicked)(struct s_widget *, int, int, int, void *);
+	void				*onclicked_param;
 }				t_widget;
 
 typedef struct	s_drawable_data
@@ -103,6 +108,11 @@ typedef struct	s_drawable_data
 	SDL_Texture	*layer;
 	SDL_Texture	*snapshot;
 }				t_drawable_data;
+
+typedef struct	s_canvas_data
+{
+	SDL_Surface	*surface;
+}				t_canvas_data;
 
 typedef struct	s_window_data
 {
@@ -160,9 +170,11 @@ void		ui_widget_manage_state(t_widget *widget);
 int			ui_add_child(t_widget *widget, t_widget *child);
 t_widget 	**ui_new_widget_tab(int tab_len);
 int			ui_add_child(t_widget *parent, t_widget *child);
+void		ui_widget_event(t_widget *widget, SDL_Event event);
 
 t_widget	*ui_new_widget(SDL_Rect rect, e_widget_type type, int max_child);
 void		ui_widget_outline(t_widget *widget);
+void		ui_widget_drag(t_widget *widget);
 
 
 //UTILS
@@ -180,6 +192,7 @@ void	ui_draw_disk_on_image(t_image_data img, SDL_Point center, int radius, Uint3
 void	ui_draw_rect_on_image(t_image_data img, SDL_Rect rect, Uint32 color);
 void	ui_set_render_target_pixels(SDL_Renderer *renderer, SDL_Texture *texture, Uint32 *pixels);
 int		ui_get_render_target_image_data(SDL_Renderer *renderer, SDL_Texture *texture, t_image_data *img);
+
 
 
 #endif

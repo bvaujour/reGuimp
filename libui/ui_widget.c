@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
-/*   Updated: 2026/01/07 02:31:28 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 12:20:19 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,4 +140,71 @@ void	ui_widget_outline(t_widget *widget)
 {
 	SDL_SetRenderDrawColor(widget->renderer, 0, 0, 0, 255);
 	SDL_RenderDrawRect(widget->renderer, &widget->absolute);
+}
+
+void		ui_widget_drag(t_widget *widget)
+{
+	SDL_Rect	 intersection;
+	SDL_Rect	new_rect;
+	int			i;
+
+
+	i = 0;
+	new_rect = widget->rect;
+	new_rect.x += widget->core->mouse.motion.x;
+	new_rect.y += widget->core->mouse.motion.y;
+	if (new_rect.x < 0)
+	{
+		new_rect.x = 10;
+		new_rect.y = 10;
+		new_rect.w = widget->parent->rect.w / 2 - 20;
+		new_rect.h = widget->parent->rect.h - 20;
+	}
+	if (new_rect.y < 0)
+	{
+		new_rect.x = 10;
+		new_rect.y = 10;
+		new_rect.w = widget->parent->rect.w - 20;
+		new_rect.h = widget->parent->rect.h / 2 - 20;
+	}
+	if (new_rect.x > widget->parent->rect.w - new_rect.w)
+	{
+		new_rect.x = widget->parent->rect.w / 2 - 10;
+		new_rect.y = 10;
+		new_rect.w = widget->parent->rect.w / 2 - 20;
+		new_rect.h = widget->parent->rect.h - 20;
+	}
+	if (new_rect.y > widget->parent->rect.h - new_rect.h)
+	{
+		new_rect.x = 10;
+		new_rect.y = widget->parent->rect.h / 2 - 10;
+		new_rect.w = widget->parent->rect.w - 20;
+		new_rect.h = widget->parent->rect.h / 2 - 20;
+	}
+	while (widget->parent->childs[i])
+	{
+		if (widget->parent->childs[i] != widget)
+		{
+			if (SDL_IntersectRect(&widget->parent->childs[i]->rect, &new_rect, &intersection))
+				return ;
+		}
+		i++;
+	}
+	widget->rect = new_rect;
+}
+
+void		ui_widget_event(t_widget *widget, SDL_Event event)
+{
+	SDL_Point	relative_mouse_position;
+
+	if (event.type == SDL_MOUSEBUTTONUP)
+	{
+		if (event.button.button == SDL_BUTTON_LEFT)
+		{
+			relative_mouse_position.x = widget->core->mouse.position.x - widget->rect.x;
+			relative_mouse_position.y = widget->core->mouse.position.y - widget->rect.y;
+			if (widget->onclicked)
+				widget->onclicked(widget, event.button.button, relative_mouse_position.x, relative_mouse_position.y, widget->onclicked_param);
+		}
+	}
 }

@@ -6,7 +6,7 @@
 #    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/03 16:48:10 by bvaujour          #+#    #+#              #
-#    Updated: 2026/01/06 12:00:26 by injah            ###   ########.fr        #
+#    Updated: 2026/01/08 11:54:24 by injah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ SRC =	ui_core.c						\
 		ui_drawable_user.c				\
 		ui_drawable_utils.c				\
 		ui_box.c						\
-		ui_dragbox.c					\
+		ui_canvas.c						\
 
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 
