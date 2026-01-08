@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:36:13 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 13:42:42 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 13:47:32 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void	ui_button_destroy(t_widget *button)
 }
 
 
-static int	ui_button_add_child(t_widget *widget, t_widget *child)
+int	ui_button_add_child(t_widget *widget, t_widget *child)
 {
 	(void)child;
 	if (widget->nb_child == UI_MAX_BUTTON_CHILDS)

@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 13:58:22 by kipouliq          #+#    #+#             */
-/*   Updated: 2026/01/08 13:35:46 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 14:05:59 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ void	ui_textbox_render(t_widget *widget)
 {
 	SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
 	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute);
-	ui_draw_outline(widget->renderer, widget->absolute, widget->outline,
-		widget->outline_color);
+	ui_widget_outline(widget);
 	SDL_RenderSetClipRect(widget->renderer, NULL);
 }
 
@@ -47,7 +46,7 @@ t_widget	*ui_create_widget_textbox(t_widget *parent, int x, int y, int width,
 	if (ui_add_child(parent, widget) != UI_SUCCESS)
 		return (free(widget), NULL);
 	ui_set_widget_colors(widget, 0x7F5F5F5F, 0x7F5F5F5F, 0x7F5F5F5F);
-	widget->outline = 25;
+	// widget->outline = 25;
 	widget->render = ui_textbox_render;
 	widget->update = ui_textbox_update;
 	widget->destroy = ui_textbox_destroy;
@@ -70,8 +69,8 @@ void	ui_create_textbox(t_widget *widget, t_properties *properties)
 	else
 		text_dragbox = ui_create_widget_textbox(widget, widget->rect.x, widget->rect.y,
 				widget->rect.w, widget->rect.h);
-	widget->add_child(widget, text_dragbox);
-	printf("create dragbox!\n");
+	// widget->add_child(widget, text_dragbox);
+	printf("create textbox!\n");
 }
 
 // void	ui_get_text_input(t_widget *widget)

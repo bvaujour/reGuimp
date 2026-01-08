@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 13:41:31 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 14:22:17 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 
 # define	UI_MAX_WINDOWS					5
 # define	UI_MAX_WINDOW_CHILDS			20
-# define	UI_MAX_IMAGE_CHILDS				0
+# define	UI_MAX_IMAGE_CHILDS				10
 # define	UI_MAX_DRAGBOX_CHILDS			1
 # define	UI_MAX_TEXTBOX_CHILDS			0
 # define	UI_MAX_BUTTON_CHILDS			1
@@ -189,7 +189,7 @@ SDL_Texture	*ui_new_texture(SDL_Renderer *renderer, int width, int height, SDL_C
 
 
 void 	ui_bucket_image(t_image_data img, int start_x, int start_y, Uint32 color);
-void	 ui_draw_circle_on_image(t_image_data img, SDL_Point center, int radius, int thickness, Uint32 color);
+void	ui_draw_circle_on_image(t_image_data img, SDL_Point center, int radius, int thickness, Uint32 color);
 void	ui_draw_disk_on_image(t_image_data img, SDL_Point center, int radius, Uint32 color);
 void	ui_draw_rect_on_image(t_image_data img, SDL_Rect rect, Uint32 color);
 void	ui_set_render_target_pixels(SDL_Renderer *renderer, SDL_Texture *texture, Uint32 *pixels);

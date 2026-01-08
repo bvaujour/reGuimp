@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/08 13:46:38 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 14:24:04 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ int	main()
 	data.color = (t_rgba){255, 0, 0, 255};
 	ui_bind_onkeypress(data.core, on_key_pressed, &data);
 
-	data.tool_window = ui_create_window(data.core, 0, 0, data.screen_width / 4, data.screen_height);
-	data.render_window = ui_create_window(data.core, data.screen_width / 4, 0,  2 * data.screen_width / 4, data.screen_height);
+	// data.tool_window = ui_create_window(data.core, 0, 0, data.screen_width / 4, data.screen_height);
+	// data.render_window = ui_create_window(data.core, data.screen_width / 4, 0,  2 * data.screen_width / 4, data.screen_height);
 
 	// data.dragbox = ui_create_dragbox(data.tool_window, 0, 0, 300, 500);
 	// data.box = ui_create_box(data.dragbox, 50, 50, 300, 500);
@@ -86,15 +86,20 @@ int	main()
 	
 	
 
-	ui_run(data.core);
-	
-	
-	// data.tool_window = ui_create_window(data.core, 0, 0, 800, 600);
-	// data.render_window = ui_create_window(data.core, 900, 0, 1000, 800);
-	// data.button = ui_create_button(data.tool_window, 50, 0, 100, 50);
-	// data.canvas = ui_create_image(data.render_window, 100, 100, 800, 600);
-	// ui_widget_bind_onclicked(data.button, on_widget_clicked, &data);
-	// ui_widget_bind_onclicked(data.canvas, on_widget_clicked, &data);
 	// ui_run(data.core);
+	
+	
+	data.tool_window = ui_create_window(data.core, 0, 0, 800, 600);
+	data.render_window = ui_create_window(data.core, 900, 0, 1000, 800);
+	data.button = ui_create_button(data.tool_window, 50, 0, 100, 50);
+	data.canvas = ui_create_image(data.render_window, 100, 100, 800, 600);
+	
+	// t_widget *box = ui_create_box(data.canvas, 0, 0, 100, 100);
+// 
+	// (void) box;
+
+	ui_widget_bind_onclicked(data.button, on_widget_clicked, &data);
+	ui_widget_bind_onclicked(data.canvas, on_widget_clicked, &data);
+	ui_run(data.core);
 	return (0);
 }

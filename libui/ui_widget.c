@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 13:44:13 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 14:19:09 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,34 +153,34 @@ void		ui_widget_drag(t_widget *widget)
 	new_rect = widget->rect;
 	new_rect.x += widget->core->mouse.motion.x;
 	new_rect.y += widget->core->mouse.motion.y;
-	if (new_rect.x < 0)
-	{
-		new_rect.x = 10;
-		new_rect.y = 10;
-		new_rect.w = widget->parent->rect.w / 2 - 20;
-		new_rect.h = widget->parent->rect.h - 20;
-	}
-	if (new_rect.y < 0)
-	{
-		new_rect.x = 10;
-		new_rect.y = 10;
-		new_rect.w = widget->parent->rect.w - 20;
-		new_rect.h = widget->parent->rect.h / 2 - 20;
-	}
-	if (new_rect.x > widget->parent->rect.w - new_rect.w)
-	{
-		new_rect.x = widget->parent->rect.w / 2 - 10;
-		new_rect.y = 10;
-		new_rect.w = widget->parent->rect.w / 2 - 20;
-		new_rect.h = widget->parent->rect.h - 20;
-	}
-	if (new_rect.y > widget->parent->rect.h - new_rect.h)
-	{
-		new_rect.x = 10;
-		new_rect.y = widget->parent->rect.h / 2 - 10;
-		new_rect.w = widget->parent->rect.w - 20;
-		new_rect.h = widget->parent->rect.h / 2 - 20;
-	}
+	// if (new_rect.x < 0)
+	// {
+	// 	new_rect.x = 10;
+	// 	new_rect.y = 10;
+	// 	new_rect.w = widget->parent->rect.w / 2 - 20;
+	// 	new_rect.h = widget->parent->rect.h - 20;
+	// }
+	// if (new_rect.y < 0)
+	// {
+	// 	new_rect.x = 10;
+	// 	new_rect.y = 10;
+	// 	new_rect.w = widget->parent->rect.w - 20;
+	// 	new_rect.h = widget->parent->rect.h / 2 - 20;
+	// }
+	// if (new_rect.x > widget->parent->rect.w - new_rect.w)
+	// {
+	// 	new_rect.x = widget->parent->rect.w / 2 - 10;
+	// 	new_rect.y = 10;
+	// 	new_rect.w = widget->parent->rect.w / 2 - 20;
+	// 	new_rect.h = widget->parent->rect.h - 20;
+	// }
+	// if (new_rect.y > widget->parent->rect.h - new_rect.h)
+	// {
+	// 	new_rect.x = 10;
+	// 	new_rect.y = widget->parent->rect.h / 2 - 10;
+	// 	new_rect.w = widget->parent->rect.w - 20;
+	// 	new_rect.h = widget->parent->rect.h / 2 - 20;
+	// }
 	while (widget->parent->childs[i])
 	{
 		if (widget->parent->childs[i] != widget)
