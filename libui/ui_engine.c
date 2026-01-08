@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_engine.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 16:31:56 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 12:21:41 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 17:14:19 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ static void	ui_global_update(t_core *core)
 			if (core->focused_widget)
 			{
 				core->focused_widget->update(core->focused_widget);
-				if (core->dragged_widget == core->focused_widget)
+				if (core->dragged_widget)
 					ui_widget_drag(core->dragged_widget);
 			}
 			ui_render_widget(core->windows[i]);

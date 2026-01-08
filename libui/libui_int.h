@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 14:22:17 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 14:29:40 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,8 +181,6 @@ void		ui_widget_drag(t_widget *widget);
 
 //UTILS
 SDL_Color	ui_unpack_color(unsigned int color);
-
-
 
 SDL_Texture	*ui_new_texture(SDL_Renderer *renderer, int width, int height, SDL_Color color_mod);
 

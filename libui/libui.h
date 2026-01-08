@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/08 13:42:02 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 16:07:14 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void		ui_get_screen_size(int *screen_width, int *screen_height);
 
 //TEXT
 
-void        ui_create_text_dragbox(t_widget *drawable, t_properties *properties);
+t_widget    *ui_create_textbox(t_widget *widget, t_properties *properties);
 
 //WINDOW
 

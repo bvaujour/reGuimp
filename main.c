@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/08 14:24:04 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/08 16:07:21 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,9 @@ int	main()
 	data.button = ui_create_button(data.tool_window, 50, 0, 100, 50);
 	data.canvas = ui_create_image(data.render_window, 100, 100, 800, 600);
 	
-	// t_widget *box = ui_create_box(data.canvas, 0, 0, 100, 100);
-// 
+	t_widget *box = ui_create_box(data.canvas, 0, 0, 100, 100);
+	t_widget *textbox = ui_create_textbox(box, NULL);
+	(void) textbox;
 	// (void) box;
 
 	ui_widget_bind_onclicked(data.button, on_widget_clicked, &data);
