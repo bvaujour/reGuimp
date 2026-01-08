@@ -6,13 +6,13 @@
 #    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/20 09:45:35 by injah             #+#    #+#              #
-#    Updated: 2026/01/08 11:29:40 by injah            ###   ########.fr        #
+#    Updated: 2026/01/08 13:03:36 by injah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = guimp
 
-SRC = main.c draws.c
+SRC = main.c draws.c utils.c
 OBJ = $(SRC:.c=.o)
 
 CC = cc

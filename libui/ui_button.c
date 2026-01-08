@@ -6,31 +6,15 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:36:13 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 12:00:30 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 12:51:43 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libui_int.h"
 
-static void	ui_button_event(t_widget *button, SDL_Event event)
-{
-	t_button_data	*data;
-
-	if (event.type == SDL_MOUSEBUTTONUP)
-	{
-		if (event.button.button == SDL_BUTTON_LEFT)
-		{
-			data = button->data;
-			if (data->onclicked)
-				data->onclicked(button, event.button.button, data->onclicked_param);
-		}
-	}
-}
-
 static void		ui_button_update(t_widget *button)
 {
 	ui_set_cursor(button->core, button->core->mouse.hand);
-	ui_button_event(button, button->core->event);
 }
 
 static void		ui_button_render(t_widget *button)

@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 12:20:28 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 12:52:19 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 
 # define	UI_MAX_WINDOWS					5
 # define	UI_MAX_WINDOW_CHILDS			20
-# define	UI_MAX_CANVAS_CHILDS			0
+# define	UI_MAX_IMAGE_CHILDS				0
 # define	UI_MAX_DRAGBOX_CHILDS			1
 # define	UI_MAX_BUTTON_CHILDS			1
 # define	UI_MAX_BOX_CHILDS				10
@@ -36,7 +36,7 @@
 typedef enum	e_widget_type
 {
 	WINDOW,
-	CANVAS,
+	IMAGE,
 	BUTTON,
 	DRAWABLE,
 	DRAGBOX,
@@ -62,13 +62,6 @@ typedef struct	s_mouse_infos
 	SDL_Cursor	*crosshair;
 	SDL_Cursor	*current_cursor;
 }				t_mouse_infos;
-
-typedef struct	s_image_data
-{
-	Uint32	*pixels;
-	int		width;
-	int		height;
-}				t_image_data;
 
 
 typedef struct	s_widget
@@ -109,10 +102,10 @@ typedef struct	s_drawable_data
 	SDL_Texture	*snapshot;
 }				t_drawable_data;
 
-typedef struct	s_canvas_data
+typedef struct	s_image_data
 {
 	SDL_Surface	*surface;
-}				t_canvas_data;
+}				t_image_data;
 
 typedef struct	s_window_data
 {
@@ -136,8 +129,6 @@ typedef struct	s_slider_data
 typedef struct	s_button_data
 {
 	SDL_Texture	*label;
-	void		(*onclicked)(struct s_widget *, int, void *);
-	void		*onclicked_param;
 }				t_button_data;
 
 

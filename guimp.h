@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 10:25:14 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 12:26:42 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 13:14:40 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,20 @@ enum	e_tool
 	ERRASE,
 };
 
+typedef struct	s_vector2
+{
+	int	x;
+	int	y;
+}				t_vector2;
+
+typedef	struct	s_rgba
+{
+	char	r;
+	char	g;
+	char	b;
+	char	a;
+}				t_rgba;
+
 typedef struct	s_data
 {
 	t_core			*core;
@@ -46,11 +60,13 @@ typedef struct	s_data
 	t_widget		*render_window;
 	t_widget		*button;
 	t_widget		*box;
-	t_widget		*color_slider[NUM_COLOR];
-	unsigned char	color_values[NUM_COLOR];
+	t_rgba			color;
 	enum e_tool		tool;
 }				t_data;
 
-void	draw_rect_on_image(t_img img, int start_x, int start_y, int width, int height, unsigned int color);
+void			draw_rect_on_image(t_img img, int start_x, int start_y, int width, int height, unsigned int color);
+void 			bucket_image(t_img img, int start_x, int start_y, unsigned color);
+t_rgba			unpack_color(unsigned int color);
+unsigned int	pack_color(t_rgba color);
 
 #endif
