@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/09 15:09:59 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/09 16:30:36 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,7 @@ typedef struct	s_button_data
 typedef struct	s_textbox_data
 {
 	SDL_Texture *text_texture;
+	SDL_Surface *text_surface;
 	char		*text_content;
 }				t_textbox_data;
 

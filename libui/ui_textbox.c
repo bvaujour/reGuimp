@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 13:58:22 by kipouliq          #+#    #+#             */
-/*   Updated: 2026/01/09 15:52:21 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/09 16:45:54 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,18 +23,19 @@ static void	ui_textbox_event(t_widget *box, SDL_Event event)
 void	ui_print_textbox(t_widget *canvas)
 {
 	t_widget 		*textbox;
-	t_textbox_data 	*data = NULL;
+	t_image_data	*canvas_data;
+	t_textbox_data 	*textbox_data = NULL;
 	
 	textbox = ui_search_child_by_type(canvas, TEXTBOX);
 	if (textbox)
 	{
-		data = (t_textbox_data *)textbox->data;
-		if (!data)
+		textbox_data = (t_textbox_data *)textbox->data;
+		canvas_data = (t_image_data *)canvas->data;
+		if (!textbox_data || !canvas_data)
 			return ;
-		printf("trying to print!\n");
-		printf("error : %s\n", SDL_GetError());
-		// SDL_RenderCopy(canvas->renderer, textbox->texture, NULL, &textbox->absolute);
-		SDL_RenderCopy(canvas->renderer, textbox->texture, NULL, &(SDL_Rect){0, 0, 200, 100});
+		printf("%d\n", textbox->type);
+		printf("%d\n", SDL_BlitSurface(textbox_data->text_surface, NULL, canvas_data->surface, NULL));
+		printf("%s\n", SDL_GetError());
 		// SDL_DestroyTexture(data->text_texture);
 		// data->text_texture = NULL;
 	}
@@ -54,7 +55,6 @@ void	ui_textbox_render(t_widget *widget)
 
 void	ui_textbox_set_text(t_widget *widget)
 {
-	SDL_Surface		*surface;
 	TTF_Font		*font;
 	t_textbox_data  *data;
 
@@ -66,10 +66,9 @@ void	ui_textbox_set_text(t_widget *widget)
 		return ; 
 	}
 	// surface = TTF_RenderText_Blended(font, data->text_content, (SDL_Color){255, 255, 255, 255});
-	surface = TTF_RenderText_Blended(font, "coucou", (SDL_Color){0, 0, 0, 255});
-	data->text_content = 
-	data->text_texture = SDL_CreateTextureFromSurface(widget->renderer, surface);
-	SDL_FreeSurface(surface);
+	
+	data->text_surface = TTF_RenderText_Blended(font, "coucou", (SDL_Color){0, 0, 0, 255});
+	data->text_texture = SDL_CreateTextureFromSurface(widget->renderer, data->text_surface);
 }
 
 void	ui_textbox_update(t_widget *widget)
