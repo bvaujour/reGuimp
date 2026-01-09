@@ -3,14 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   ui_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 17:57:41 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 12:53:35 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/09 15:11:06 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libui_int.h"
+
+t_widget		*ui_search_child_by_type(t_widget *widget, e_widget_type searched_type)
+{
+	if (!widget)
+		return (NULL);
+	if (widget->type == searched_type)
+		return (widget);
+	if (!widget->childs)
+		return (NULL);
+	else
+	{
+		if (ui_search_child_by_type(*(widget->childs), searched_type))
+			return (widget);
+		return (ui_search_child_by_type(*(widget->childs + 1), searched_type)); 
+	}
+}
 
 SDL_Color	ui_unpack_color(unsigned int color)
 {

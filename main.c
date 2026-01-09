@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/08 16:07:21 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/09 15:15:46 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,9 @@ void	on_key_pressed(int key, void *param)
 	data = (t_data *)param;
 	if (key == UIKEY_ESCAPE)
 		ui_quit(data->core);
-	printf("key = %d\n", key);
+	printf("key = %c\n", (char)key);
 }
+
 void	on_widget_clicked(t_widget *widget, int button, int x, int y, void *param)
 {
 	t_data *data;
@@ -33,6 +34,7 @@ void	on_widget_clicked(t_widget *widget, int button, int x, int y, void *param)
 			draw_rect_on_image(img, x, y, 100, 100, pack_color(data->color));
 		if (data->tool == BUCKET && button == 1)
 			bucket_image(img, x, y, pack_color(data->color));
+		ui_print_textbox(data->canvas);
 	}
 	if (widget == data->button)
 	{
@@ -47,7 +49,6 @@ void	on_widget_clicked(t_widget *widget, int button, int x, int y, void *param)
 		}
 	}
 }
-
 
 int	main()
 {
@@ -94,8 +95,8 @@ int	main()
 	data.button = ui_create_button(data.tool_window, 50, 0, 100, 50);
 	data.canvas = ui_create_image(data.render_window, 100, 100, 800, 600);
 	
-	t_widget *box = ui_create_box(data.canvas, 0, 0, 100, 100);
-	t_widget *textbox = ui_create_textbox(box, NULL);
+	t_widget *box = ui_create_box(data.canvas, 0, 0, 100, 50);
+	t_widget *textbox = ui_create_textbox(box);
 	(void) textbox;
 	// (void) box;
 

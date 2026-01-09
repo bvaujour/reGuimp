@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/08 16:07:14 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/09 14:55:59 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ void		ui_get_screen_size(int *screen_width, int *screen_height);
 
 //TEXT
 
-t_widget    *ui_create_textbox(t_widget *widget, t_properties *properties);
+t_widget    *ui_create_textbox(t_widget *widget);
+void		ui_print_textbox(t_widget *canvas);
 
 //WINDOW
 
@@ -79,5 +80,6 @@ t_widget	*ui_create_image(t_widget *parent, int x, int y, int width, int height)
 void	function(t_widget *widget, int button, int x, int y, void *param)*/
 void	ui_widget_bind_onclicked(t_widget *widget, void (*f)(struct s_widget *, int, int, int, void *), void *param);;
 
+//UTILS
 
 #endif

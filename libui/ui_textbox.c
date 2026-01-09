@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 13:58:22 by kipouliq          #+#    #+#             */
-/*   Updated: 2026/01/08 17:13:10 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/09 15:52:21 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,28 +20,55 @@ static void	ui_textbox_event(t_widget *box, SDL_Event event)
 	}
 }
 
-void	ui_textbox_render(t_widget *widget)
+void	ui_print_textbox(t_widget *canvas)
 {
-	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute);
+	t_widget 		*textbox;
+	t_textbox_data 	*data = NULL;
+	
+	textbox = ui_search_child_by_type(canvas, TEXTBOX);
+	if (textbox)
+	{
+		data = (t_textbox_data *)textbox->data;
+		if (!data)
+			return ;
+		printf("trying to print!\n");
+		printf("error : %s\n", SDL_GetError());
+		// SDL_RenderCopy(canvas->renderer, textbox->texture, NULL, &textbox->absolute);
+		SDL_RenderCopy(canvas->renderer, textbox->texture, NULL, &(SDL_Rect){0, 0, 200, 100});
+		// SDL_DestroyTexture(data->text_texture);
+		// data->text_texture = NULL;
+	}
 }
 
-void	ui_textbox_set_text(t_widget *widget, char *text)
+void	ui_textbox_render(t_widget *widget)
+{
+	t_textbox_data *data;
+
+	SDL_RenderCopy(widget->renderer, widget->texture, NULL, &widget->absolute);
+	data = (t_textbox_data *)widget->data;
+	if (!data)
+		return ;
+	if (data->text_texture)
+		SDL_RenderCopy(widget->renderer, data->text_texture, NULL, &widget->absolute);
+}
+
+void	ui_textbox_set_text(t_widget *widget)
 {
 	SDL_Surface		*surface;
-	SDL_Texture		*texture;
 	TTF_Font		*font;
+	t_textbox_data  *data;
 
-	font = TTF_OpenFont("libui/assets/fonts/Roboto/Roboto-Black.ttf", 16);
+	data = (t_textbox_data *)widget->data;
+	font = TTF_OpenFont("libui/assets/fonts/Roboto/Roboto-Black.ttf", 26);
 	if (!font)
 	{
 		ft_dprintf(2, "Error: failed to open font because : %s\n", SDL_GetError());
 		return ; 
 	}
-	surface = TTF_RenderText_Blended(font, text, (SDL_Color){255, 255, 255, 255});
-	printf("text w = %d\ntext h = %d\n", surface->w, surface->h);
-	texture = SDL_CreateTextureFromSurface(widget->renderer, surface);
-	SDL_RenderCopy(widget->renderer, widget->texture, NULL, NULL);
-	printf("error: %s\n", SDL_GetError());
+	// surface = TTF_RenderText_Blended(font, data->text_content, (SDL_Color){255, 255, 255, 255});
+	surface = TTF_RenderText_Blended(font, "coucou", (SDL_Color){0, 0, 0, 255});
+	data->text_content = 
+	data->text_texture = SDL_CreateTextureFromSurface(widget->renderer, surface);
 	SDL_FreeSurface(surface);
 }
 
@@ -66,6 +93,9 @@ t_widget	*ui_create_widget_textbox(t_widget *parent, int x, int y, int width,
 			UI_MAX_TEXTBOX_CHILDS);
 	if (!widget)
 		return (NULL);
+	widget->data = malloc(sizeof(t_textbox_data));
+	if (!widget->data)
+		return (free(widget), NULL);
 	if (ui_add_child(parent, widget) != UI_SUCCESS)
 		return (free(widget), NULL);
 	ui_set_widget_colors(widget, 0x5000FFFF, 0x5000FFFF, 0x5000FFFF);
@@ -78,26 +108,19 @@ t_widget	*ui_create_widget_textbox(t_widget *parent, int x, int y, int width,
 	widget->event = ui_textbox_event;
 	widget->is_dragable = true;
 	widget->parent = parent;
-	printf("parent = %p\n", parent);
 	printf("%d %d %d %d\n", x, y, width, height);
-	ui_textbox_set_text(widget, "coucou");
+	ui_textbox_set_text(widget);
 	return (widget);
 }
 
-t_widget   *ui_create_textbox(t_widget *parent, t_properties *properties)
+t_widget   *ui_create_textbox(t_widget *parent)
 {
 	t_widget	*textbox;
 
 	if (!parent)
 		return (NULL);
-	if (properties)
-	{
-		textbox = ui_create_widget_textbox(parent, properties->x, properties->y,
-				properties->w, properties->h);
-	}
-	else
-		textbox = ui_create_widget_textbox(parent, parent->rect.x, parent->rect.y,
-				parent->rect.w - 50, parent->rect.h);
+	textbox = ui_create_widget_textbox(parent, parent->rect.x, parent->rect.y,
+				parent->rect.w, parent->rect.h);
 	if (!textbox)
 		return (NULL);
 	// ui_add_child(parent, textbox);

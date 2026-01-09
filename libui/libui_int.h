@@ -6,7 +6,7 @@
 /*   By: kipouliq <kipouliq@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 14:29:40 by kipouliq         ###   ########.fr       */
+/*   Updated: 2026/01/09 15:09:59 by kipouliq         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,18 +92,6 @@ typedef struct	s_widget
 	void				*onclicked_param;
 }				t_widget;
 
-typedef struct	s_drawable_data
-{
-	SDL_Cursor	*cursor;
-	SDL_Texture	*brush;
-	SDL_Color	brush_color;
-	SDL_Rect	brush_rect;
-	float		brush_ratio;
-	int			brush_size;
-	SDL_Texture	*layer;
-	SDL_Texture	*snapshot;
-}				t_drawable_data;
-
 typedef struct	s_image_data
 {
 	SDL_Surface	*surface;
@@ -133,6 +121,12 @@ typedef struct	s_button_data
 	SDL_Texture	*label;
 }				t_button_data;
 
+
+typedef struct	s_textbox_data
+{
+	SDL_Texture *text_texture;
+	char		*text_content;
+}				t_textbox_data;
 
 typedef struct	s_core
 {
@@ -184,7 +178,7 @@ SDL_Color	ui_unpack_color(unsigned int color);
 
 SDL_Texture	*ui_new_texture(SDL_Renderer *renderer, int width, int height, SDL_Color color_mod);
 
-
+t_widget	*ui_search_child_by_type(t_widget *widget, e_widget_type searched_type);
 
 void 	ui_bucket_image(t_image_data img, int start_x, int start_y, Uint32 color);
 void	ui_draw_circle_on_image(t_image_data img, SDL_Point center, int radius, int thickness, Uint32 color);
