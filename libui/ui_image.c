@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 10:15:42 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 13:26:58 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 16:33:26 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ void		ui_image_render(t_widget *image)
 
 void		ui_image_update(t_widget *image)
 {
-	(void)image;
+	if (image->state == CLICKED)
+		ui_widget_call_onclicked(image);
 }
 
 void		ui_image_destroy(t_widget *image)

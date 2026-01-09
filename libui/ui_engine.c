@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 16:31:56 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 12:21:41 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 18:28:39 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ static void ui_render_widget(t_widget *widget)
 
 	if (widget->is_visible == false)
 		return ;
-	SDL_RenderSetClipRect(widget->renderer, &widget->absolute);
+	if (widget->parent)
+		SDL_RenderSetClipRect(widget->renderer, &widget->parent->absolute);
 	widget->render(widget);
 	if (widget->childs)
 	{
@@ -61,9 +62,6 @@ static void ui_update_widget(t_widget *widget)
 		return ;
 	widget->absolute = ui_get_absolute_rect(widget);
 	ui_widget_manage_state(widget);
-	ui_widget_event(widget, widget->core->event);
-	if (widget->event)
-		widget->event(widget, widget->core->event);
 	if (widget->childs)
 	{
 		i = 0;
@@ -130,26 +128,25 @@ static void	ui_global_update(t_core *core)
 
 static void	ui_global_event(t_core *core)
 {
-	core->mouse.mouse_state = SDL_GetMouseState(NULL, NULL);
+	SDL_Point	new_mouse_position;
 	if (SDL_WaitEvent(&core->event))
 	{
 		if (core->event.type == SDL_KEYDOWN && core->onkeypress != NULL)
 		{
 			core->onkeypress(core->event.key.keysym.sym, core->onkeypress_param);
 		}
-		
-		else if (core->event.type == SDL_MOUSEMOTION)
-		{
-			core->mouse.motion.x = core->event.motion.x - core->mouse.position.x;
-			core->mouse.motion.y = core->event.motion.y - core->mouse.position.y;
-			core->mouse.position.x =  core->event.motion.x;
-			core->mouse.position.y = core->event.motion.y;
-		}
+		else if (core->event.type == SDL_MOUSEBUTTONDOWN)
+			core->mouse.buttons[core->event.button.button] = true;
 		else if (core->event.type == SDL_MOUSEBUTTONUP)
 		{
+			core->mouse.buttons[core->event.button.button] = false;
 			if (core->event.button.button == SDL_BUTTON_LEFT)
 				core->dragged_widget = NULL;
 		}
+		SDL_GetMouseState(&new_mouse_position.x, &new_mouse_position.y);
+		core->mouse.motion.x = new_mouse_position.x - core->mouse.position.x;
+		core->mouse.motion.y = new_mouse_position.y - core->mouse.position.y;
+		core->mouse.position = new_mouse_position;
 	}
 }
 
@@ -157,7 +154,6 @@ void	ui_run(t_core *core)
 {
 	core->is_running = true;
 	ui_global_build(core);
-	printf("sizeof uint32: %ld\nsizeof unsigned: %ld\n", sizeof(Uint32), sizeof(unsigned int));
 	while (core->is_running)
 	{
 		ui_global_event(core);

@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:36:13 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 12:51:43 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 16:31:27 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 static void		ui_button_update(t_widget *button)
 {
 	ui_set_cursor(button->core, button->core->mouse.hand);
+	if (button->state == CLICKED)
+		ui_widget_call_onclicked(button);
 }
 
 static void		ui_button_render(t_widget *button)

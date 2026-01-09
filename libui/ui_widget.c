@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 12:20:19 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 20:24:11 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,12 @@ void	ui_widget_manage_state(t_widget *widget)
 	core = widget->core;
 	if (SDL_PointInRect(&core->mouse.position, &widget->absolute))
 	{
-		if (core->mouse.mouse_state & SDL_BUTTON(SDL_BUTTON_LEFT))
+		if (core->mouse.buttons[SDL_BUTTON_LEFT] == true)
 		{
 			ui_widget_change_state(widget, CLICKED);
 			widget->core->focused_widget = widget;
+			if (widget->is_dragable)
+				widget->core->dragged_widget = widget;
 		}
 		else
 			ui_widget_change_state(widget, HOVERED);
@@ -207,4 +209,14 @@ void		ui_widget_event(t_widget *widget, SDL_Event event)
 				widget->onclicked(widget, event.button.button, relative_mouse_position.x, relative_mouse_position.y, widget->onclicked_param);
 		}
 	}
+}
+
+void		ui_widget_call_onclicked(t_widget *widget)
+{
+	SDL_Point	relative_mouse_position;
+
+	relative_mouse_position.x = widget->core->mouse.position.x - widget->rect.x;
+	relative_mouse_position.y = widget->core->mouse.position.y - widget->rect.y;
+	if (widget->onclicked)
+		widget->onclicked(widget, SDL_BUTTON_LEFT, relative_mouse_position.x, relative_mouse_position.y, widget->onclicked_param);
 }

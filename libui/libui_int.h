@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 12:52:19 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 17:24:14 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ typedef struct	s_mouse_infos
 {
 	SDL_Point	position;
 	SDL_Point	motion;
-	Uint32 		mouse_state;
+	bool		buttons[3];
 	SDL_Cursor	*arrow;
 	SDL_Cursor	*hand;
 	SDL_Cursor	*crosshair;
@@ -113,6 +113,13 @@ typedef struct	s_window_data
 	unsigned int	id;
 }				t_window_data;
 
+typedef struct	s_box_data
+{
+	enum direction	flow_direction;
+	int				space_between_childs;
+	bool			wrap;
+}				t_box_data;
+
 typedef struct	s_slider_data
 {
 	SDL_Texture		*label;
@@ -166,6 +173,7 @@ void		ui_widget_event(t_widget *widget, SDL_Event event);
 t_widget	*ui_new_widget(SDL_Rect rect, e_widget_type type, int max_child);
 void		ui_widget_outline(t_widget *widget);
 void		ui_widget_drag(t_widget *widget);
+void		ui_widget_call_onclicked(t_widget *widget);
 
 
 //UTILS

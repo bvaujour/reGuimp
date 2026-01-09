@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 10:25:14 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 13:14:40 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 17:56:59 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,13 @@ enum	e_color
 
 enum	e_tool
 {
+	PENCIL,
 	DRAW_RECT,
 	DRAW_CIRCLE,
 	DRAW_BRUSH,
 	BUCKET,
-	ERRASE,
+	ERASER,
+	NUM_TOOL
 };
 
 typedef struct	s_vector2
@@ -58,15 +60,18 @@ typedef struct	s_data
 	t_widget		*tool_window;
 	t_widget		*canvas;
 	t_widget		*render_window;
-	t_widget		*button;
-	t_widget		*box;
+	t_widget		*tool_buttons[NUM_TOOL];
+	t_widget		*tool_box;
 	t_rgba			color;
-	enum e_tool		tool;
+	enum e_tool		active_tool;
 }				t_data;
 
 void			draw_rect_on_image(t_img img, int start_x, int start_y, int width, int height, unsigned int color);
 void 			bucket_image(t_img img, int start_x, int start_y, unsigned color);
 t_rgba			unpack_color(unsigned int color);
 unsigned int	pack_color(t_rgba color);
+void			set_pixel(t_img img, int x, int y, unsigned int color);
+unsigned int	get_pixel(t_img img, int x, int y);
+
 
 #endif

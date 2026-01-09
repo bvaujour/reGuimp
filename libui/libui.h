@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/08 12:52:57 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 16:59:29 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@ typedef struct	s_img
 	int				width;
 	int				height;
 }				t_img;
+
+enum	direction
+{
+	VERTICAL,
+	HORIZONTAL,
+};
 
 //CORE
 

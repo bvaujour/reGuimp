@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 11:27:20 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 13:25:07 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 14:20:04 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	bucket_image(t_img img, int start_x, int start_y, unsigned color)
 	target_color = img.pixels[start_y * img.width + start_x];
 	if (target_color == color)
 		return;
-	stack = malloc((img.width * img.height *2) * sizeof(t_vector2));
+	stack = malloc((img.width * img.height) * sizeof(t_vector2));
 	top = 0;
 	stack[top++] = (t_vector2){start_x, start_y};
 	while (top > 0)
@@ -54,7 +54,7 @@ void	bucket_image(t_img img, int start_x, int start_y, unsigned color)
 		current = stack[--top];
 		if (current.x < 0 || current.x >= img.width || current.y < 0 || current.y >= img.height)
 			continue ;
-		if (img.pixels[current.y * img.width + current.x] != target_color)
+		if (img.pixels[current.y * img.width + current.x] != target_color || img.pixels[current.y * img.width + current.x] == color)
 			continue ;
 		img.pixels[current.y * img.width + current.x] = color;
 		if (top < img.width * img.height)
@@ -67,5 +67,27 @@ void	bucket_image(t_img img, int start_x, int start_y, unsigned color)
 			stack[top++] = (t_vector2){current.x, current.y - 1};
 	}
 	free(stack);
+}
+
+void	copy_image_on_image(t_img src, t_img dst, int start_x, int start_y)
+{
+	int	x;
+	int	y;
+	
+	if (start_x < 0)
+		start_x = 0;
+	if (start_y < 0)
+		start_y = 0;
+	y = 0;
+	while (y < src.height && start_y + y < dst.height)
+	{
+		x = 0;
+		while (x < src.width && start_x + x < dst.width)
+		{
+			dst.pixels[(start_y + y) * dst.width + (start_x + x)] = get_pixel(src, x, y);
+			x++;
+		}
+		y++;
+	}
 }
 

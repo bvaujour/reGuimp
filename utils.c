@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 13:02:42 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 13:14:50 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 14:07:11 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,4 +29,14 @@ unsigned int pack_color(t_rgba color)
 
 	packed_color = color.a << 24 | color.r << 16 | color.g << 8 | color.b;
 	return (packed_color);
+}
+
+void	set_pixel(t_img img, int x, int y, unsigned int color)
+{
+	img.pixels[img.width * y + x] = color;
+}
+
+unsigned int	get_pixel(t_img img, int x, int y)
+{
+	return (img.pixels[img.width * y + x]);
 }

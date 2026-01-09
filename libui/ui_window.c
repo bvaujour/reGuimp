@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 12:53:46 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 11:55:20 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/08 13:40:55 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ t_widget 	*ui_create_window(t_core *core, int x, int y, int width, int height)
 		ui_window_destroy(window);
 		return (NULL);
 	}
-	window->renderer = SDL_CreateRenderer(data->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+	window->renderer = SDL_CreateRenderer(data->window, -1, SDL_RENDERER_ACCELERATED);
 	if (window->renderer == NULL)
 	{
 		printf("ui_create_window: SDL_renderer failed\n");
