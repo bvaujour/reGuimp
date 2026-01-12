@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:24:56 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 12:29:58 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/12 15:32:47 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,4 +92,18 @@ void	ui_widget_bind_onclicked(t_widget *widget, void (*f)(struct s_widget *, int
 {
 	widget->onclicked = f;
 	widget->onclicked_param = param;
+}
+
+void	ui_set_widget_cursor(t_widget *widget, const char *path)
+{
+	SDL_Surface	*surface;
+
+	surface = IMG_Load(path);
+	if (surface)
+	{
+		if (widget->cursor)
+			SDL_FreeCursor(widget->cursor);
+		widget->cursor =  SDL_CreateColorCursor(surface, 0, 0);
+		SDL_FreeSurface(surface);
+	}
 }

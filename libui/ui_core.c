@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:23:08 by injah             #+#    #+#             */
-/*   Updated: 2026/01/06 12:18:15 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/12 14:28:24 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,10 @@ t_core	*ui_init()
 		free (core);
 		return (NULL);
 	}
-	// SDL_SYSTEM_CURSOR_SIZEALL
-	core->mouse.arrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-	core->mouse.hand = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-	core->mouse.crosshair = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 	core->font = TTF_OpenFont("libui/assets/fonts/Roboto/Roboto-Black.ttf", 150);
 	if (!core->font)
 		printf("font not open\n");
-	printf("sizeof(SDL_Rect) = %zu\n", sizeof(SDL_Rect));
 	return (core);
 }
 
@@ -67,9 +62,6 @@ void	ui_destroy(t_core *core)
 		i++;
 	}
 	free(core->windows);
-	SDL_FreeCursor(core->mouse.arrow);
-	SDL_FreeCursor(core->mouse.hand);
-	SDL_FreeCursor(core->mouse.crosshair);
 	TTF_CloseFont(core->font);
 	free(core);
 	IMG_Quit();
@@ -81,4 +73,16 @@ void	ui_bind_onkeypress(t_core *core, void (*f)(int, void *), void *param)
 {
 	core->onkeypress = f;
 	core->onkeypress_param = param;
+}
+
+void	ui_bind_onbuttondown(t_core *core, void (*f)(int, void *), void *param)
+{
+	core->onbuttondown = f;
+	core->onbuttondown_param = param;
+}
+
+void	ui_bind_onbuttonup(t_core *core, void (*f)(int, void *), void *param)
+{
+	core->onbuttonup = f;
+	core->onbuttonup_param = param;
 }

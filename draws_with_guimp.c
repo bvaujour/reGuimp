@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draws.c                                            :+:      :+:    :+:   */
+/*   draws_with_guimp.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 11:27:20 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 14:20:04 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/10 02:18:42 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,5 +89,34 @@ void	copy_image_on_image(t_img src, t_img dst, int start_x, int start_y)
 		}
 		y++;
 	}
+}
+
+void	draw_with_guimp(t_data *data, t_widget *canvas, int button, int x, int y)
+{
+	t_img	img;
+	bool	durty;
+
+	img = ui_image_get_img(canvas);
+	durty = false;
+	if (button == 1)
+	{
+		if (data->active_tool == DRAW_RECT)
+		{
+			draw_rect_on_image(img, x - 50, y - 50, 100, 100, pack_color(data->color));
+			durty = true;
+		}
+		if (data->active_tool == BUCKET)
+		{
+			bucket_image(img, x, y, pack_color(data->color));
+			durty = true;
+		}
+		if (data->active_tool == PENCIL)
+		{
+			set_pixel(img, x, y, pack_color(data->color));
+			durty = true;
+		}
+	}
+	if (durty)
+		ui_image_set_img(data->canvas, img);
 }
 

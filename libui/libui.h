@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/08 16:59:29 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/12 17:52:42 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,24 @@
 # define LIBUI_H
 
 # define UIKEY_ESCAPE	27
+# include <stdio.h>
+# include <stdbool.h>
+# include <math.h>
 
 typedef struct	s_core		t_core;
 typedef struct	s_widget	t_widget;
+
 typedef struct	s_img
 {
 	unsigned int	*pixels;
+	int				pitch;
 	int				width;
 	int				height;
 }				t_img;
 
 enum	direction
 {
+	DEFAULT,
 	VERTICAL,
 	HORIZONTAL,
 };
@@ -55,6 +61,7 @@ void		ui_set_widget_visibility(t_widget *widget, int new_visibility);
 int			ui_get_widget_visibility(t_widget *widget);
 void		ui_toggle_widget_visibility(t_widget *widget);
 void		ui_get_screen_size(int *screen_width, int *screen_height);
+void		ui_set_widget_cursor(t_widget *widget, const char *path);
 
 
 //WINDOW
@@ -64,7 +71,7 @@ t_widget 	*ui_create_window(t_core *core, int x, int y, int width, int height);
 //BOX
 
 t_widget	*ui_create_box(t_widget *parent, int x, int y, int width, int height);
-
+void		ui_set_box_behavior(t_widget *box, enum direction flow_direction, int space_between_childs, bool wrap_childs, bool size_to_content);
 //SLIDER
 
 t_widget	*ui_create_slider(t_widget *parent, int x, int y, int width, int height);
@@ -74,11 +81,26 @@ void void	on_key_pressed(int key_pressed, void *param(cast to your type))*/
 void		ui_bind_onkeypress(t_core *core, void (*f)(int, void *), void *param);
 
 t_img		ui_image_get_img(t_widget *image);
+void		ui_image_set_img(t_widget *image, t_img img);
 t_widget	*ui_create_image(t_widget *parent, int x, int y, int width, int height);
 
 /*prototype should be:
 void	function(t_widget *widget, int button, int x, int y, void *param)*/
-void	ui_widget_bind_onclicked(t_widget *widget, void (*f)(struct s_widget *, int, int, int, void *), void *param);;
+void	ui_widget_bind_onclicked(t_widget *widget, void (*f)(struct s_widget *, int, int, int, void *), void *param);
+/*prototype should be:
+void	function(t_widget *widget, int button, void *param)*/
+void	ui_bind_onbuttondown(t_core *core, void (*f)(int, void *), void *param);
+/*prototype should be:
+void	function(t_widget *widget, int button, void *param)*/
+void	ui_bind_onbuttonup(t_core *core, void (*f)(int, void *), void *param);
 
-
+void	ui_draw_rect(t_widget *image, int x, int y, int width, int height, unsigned int color);
+void	ui_draw_point(t_widget *image, int x, int y, unsigned int color);
+void	ui_draw_line(t_widget *image, int x1, int y1, int x2, int y2, unsigned int color);
+void	ui_draw_filled_rect(t_widget *image, int x, int y, int width, int height, unsigned int color);
+void	ui_draw_circle(t_widget *image, int centreX, int centreY, int radius, unsigned int color);
+void	ui_draw_filled_circle(t_widget *image, int centreX, int centreY, int radius, unsigned int color);
+void	ui_bucket_image(t_widget *image, int start_x, int start_y, unsigned color);
+void	ui_clear_image(t_widget *image, unsigned int color);
+void	ui_erase_image(t_widget *image, int x, int y);
 #endif

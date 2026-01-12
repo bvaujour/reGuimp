@@ -6,27 +6,22 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 12:53:46 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 13:40:55 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/12 14:39:24 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libui_int.h"
 
-static void	ui_window_event(t_widget *window, SDL_Event event)
+static void	ui_window_event(t_widget *window)
 {
-	if (event.type == SDL_WINDOWEVENT)
+	if (window->core->event.type == SDL_WINDOWEVENT)
 	{
-		if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+		if (window->core->event.window.event == SDL_WINDOWEVENT_RESIZED)
 		{
-			window->rect.w = event.window.data1;
-			window->rect.h = event.window.data2;
+			window->rect.w = window->core->event.window.data1;
+			window->rect.h = window->core->event.window.data2;
 		}
 	}
-}
-
-static void		ui_window_update(t_widget *window)
-{
-	ui_set_cursor(window->core, window->core->mouse.arrow);
 }
 
 static void		ui_window_render(t_widget *window)
@@ -39,8 +34,6 @@ static void	ui_window_destroy(t_widget *window)
 	t_window_data	*data;
 
 	data = (t_window_data *)window->data;
-	if (window->texture)
-		SDL_DestroyTexture(window->texture);
 	if (window->renderer)
 		SDL_DestroyRenderer(window->renderer);
 	if (data->window)
@@ -65,9 +58,9 @@ t_widget 	*ui_create_window(t_core *core, int x, int y, int width, int height)
 	window->core = core;
 	ui_set_widget_colors(window, 0xFF444444, 0xFF444444, 0xFF444444);
 	window->render = ui_window_render;
-	window->update = ui_window_update;
 	window->destroy = ui_window_destroy;
 	window->event = ui_window_event;
+	window->cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW); 
 	data->window = SDL_CreateWindow("LIBUI", x, y, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if (data->window == NULL)
 	{
@@ -75,7 +68,7 @@ t_widget 	*ui_create_window(t_core *core, int x, int y, int width, int height)
 		ui_window_destroy(window);
 		return (NULL);
 	}
-	window->renderer = SDL_CreateRenderer(data->window, -1, SDL_RENDERER_ACCELERATED);
+	window->renderer = SDL_CreateRenderer(data->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
 	if (window->renderer == NULL)
 	{
 		printf("ui_create_window: SDL_renderer failed\n");

@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 13:02:42 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 14:07:11 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/12 18:40:42 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,35 @@ void	set_pixel(t_img img, int x, int y, unsigned int color)
 unsigned int	get_pixel(t_img img, int x, int y)
 {
 	return (img.pixels[img.width * y + x]);
+}
+
+int	lerp(int a, int b, int step, int max)
+{
+	return (a + (b - a) * step / max);
+}
+
+int	distance(int x1, int y1, int x2, int y2)
+{
+	int	dist;
+	int	delta_x;
+	int	delta_y;
+	
+	delta_x = x1 - x2;
+	delta_y = y1 - y2;
+	dist = sqrt(delta_x * delta_x + delta_y * delta_y);
+	return (dist);
+}
+
+void	set_parameter_tool_visibility(t_data *data, enum e_tool new_tool)
+{
+	int	i;
+
+	i = 0;
+	while (i < NUM_TOOL)
+	{
+		ui_set_widget_visibility(data->tool_parameters_boxes[i], false);
+		i++;
+	}
+	ui_set_widget_visibility(data->tool_parameters_boxes[new_tool], true);
+	data->active_tool = new_tool;
 }
