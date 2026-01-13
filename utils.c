@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 13:02:42 by injah             #+#    #+#             */
-/*   Updated: 2026/01/12 18:40:42 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/13 16:45:32 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	distance(int x1, int y1, int x2, int y2)
 	return (dist);
 }
 
-void	set_parameter_tool_visibility(t_data *data, enum e_tool new_tool)
+void	show_parameter(t_data *data, enum e_tool tool)
 {
 	int	i;
 
@@ -68,6 +68,5 @@ void	set_parameter_tool_visibility(t_data *data, enum e_tool new_tool)
 		ui_set_widget_visibility(data->tool_parameters_boxes[i], false);
 		i++;
 	}
-	ui_set_widget_visibility(data->tool_parameters_boxes[new_tool], true);
-	data->active_tool = new_tool;
+	ui_set_widget_visibility(data->tool_parameters_boxes[tool], true);
 }

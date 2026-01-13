@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_widget.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
-/*   Updated: 2026/01/12 19:00:27 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/13 15:54:19 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ void		ui_widget_drag(t_widget *widget)
 		return ;
 	while (widget->parent->childs[i])
 	{
-		if (widget->parent->childs[i] != widget)
+		if (widget->parent->childs[i]->is_visible && widget->parent->childs[i] != widget)
 		{
 			if (SDL_IntersectRect(&widget->parent->childs[i]->rect, &new_rect, &intersection))
 				return ;
@@ -173,6 +173,7 @@ void		ui_widget_drag(t_widget *widget)
 	}
 	widget->rect = new_rect;
 }
+
 
 void		ui_widget_call_onclicked(t_widget *widget)
 {

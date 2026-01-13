@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   guimp.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 10:25:14 by injah             #+#    #+#             */
-/*   Updated: 2026/01/12 18:45:44 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/13 16:45:50 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,11 @@ typedef	struct	s_rgba
 
 typedef struct	s_drawing
 {
-	bool	is_drawing;
-	int		last_x;
-	int		last_y;
-	int		thickness;
+	bool		is_drawing;
+	int			last_x;
+	int			last_y;
+	int			thickness;
+	t_widget	*thickness_slider;
 }				t_drawing;
 
 typedef struct	s_data
@@ -94,5 +95,5 @@ int				lerp(int a, int b, int step, int max);
 
 void			build_tool_buttons(t_data *data);
 void			on_widget_clicked(t_widget *widget, int button, int x, int y, void *param);
-void			set_parameter_tool_visibility(t_data *data, enum e_tool new_tool);
+void			show_parameter(t_data *data, enum e_tool tool);
 #endif

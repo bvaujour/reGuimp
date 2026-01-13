@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_engine.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 16:31:56 by injah             #+#    #+#             */
-/*   Updated: 2026/01/12 17:16:25 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/13 15:48:43 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,12 @@ void	ui_global_build(t_core *core)
 	i = 0;
 	while (core->windows[i])
 	{
+		
 		ui_build_widget(core->windows[i]);
+		ui_clean_widget(core->windows[i]);
+		ui_update_widget(core->windows[i]);
+		ui_render_widget(core->windows[i]);
+		SDL_RenderPresent(core->windows[i]->renderer);
 		i++;
 	}
 }
@@ -136,7 +141,7 @@ static void	ui_global_update(t_core *core)
 	while (core->windows[i])
 	{
 		data = core->windows[i]->data;
-		if (core->event.window.windowID == data->id || (SDL_GetWindowID(SDL_GetMouseFocus()) == data->id && core->event.type == SDL_DROPFILE))
+		if (SDL_GetWindowID(SDL_GetMouseFocus()) == data->id)
 		{
 			ui_clean_widget(core->windows[i]);
 			ui_update_widget(core->windows[i]);
