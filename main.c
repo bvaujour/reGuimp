@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: xacharle <xacharle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/12 19:09:31 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/14 11:41:33 by xacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,14 +98,18 @@ int	main()
 	data.tool_window_box = ui_create_box(data.tool_window, 20, 20, 760, 560);
 	data.tool_buttons_box = ui_create_box(data.tool_window_box, 20, 20, 720, 150);
 	ui_set_box_behavior(data.tool_buttons_box, HORIZONTAL, 5, false, true);
+	// ui_set_box_behavior(data.tool_color_box, HORIZONTAL, 5, false, true);
 	build_tool_buttons(&data);
 	
-	data.tool_parameters_boxes[PENCIL] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
+	data.tool_parameters_boxes[PENCIL] = ui_create_box(data.tool_window_box, 20, 170, 720, 370); // pourquoi parents sonts data.tool_window_box et non tool_buttons_box ? Comment ca peut etre aligné alors que y = 170 ?
 	data.tool_parameters_boxes[DRAW_RECT] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
 	data.tool_parameters_boxes[DRAW_CIRCLE] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
 	data.tool_parameters_boxes[DRAW_BRUSH] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
 	data.tool_parameters_boxes[BUCKET] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
 	data.tool_parameters_boxes[ERASER] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
+	// data.tool_parameters_boxes[COLOR_FRONT] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
+	// data.tool_parameters_boxes[COLOR_BACK] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
+
 
 	data.button = ui_create_button(data.tool_parameters_boxes[PENCIL], 20, 20, 100, 50);
 	data.render_window = ui_create_window(data.core, 900, 0, 1000, 800);

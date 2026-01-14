@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   guimp.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: xacharle <xacharle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 10:25:14 by injah             #+#    #+#             */
-/*   Updated: 2026/01/12 18:45:44 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/14 11:42:06 by xacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,22 @@ enum	e_tool
 	DRAW_BRUSH,
 	BUCKET,
 	ERASER,
+	// COLOR_FRONT,
+	// COLOR_BACK,
 	NUM_TOOL
 };
+
+// // NUM_COLOR
+// enum	e_color
+// {
+// 	RED,
+// 	GREEN,
+// 	BLUE,
+// 	ALPHA,
+// 	NUM_COLOR
+// };
+
+
 
 typedef struct	s_vector2
 {
@@ -72,6 +86,9 @@ typedef struct	s_data
 	t_widget		*canvas;
 	t_widget		*render_window;
 	t_widget		*tool_buttons_box;
+	t_widget 		*tool_color_box;
+	t_widget		*color_sliders[NUM_COLOR];
+	t_widget		*color_boxes[NUM_COLOR];
 	t_widget		*tool_buttons[NUM_TOOL];
 	t_widget		*tool_parameters_boxes[NUM_TOOL];
 	t_widget		*tool_window_box;
