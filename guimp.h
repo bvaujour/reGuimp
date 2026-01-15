@@ -6,7 +6,7 @@
 /*   By: xacharle <xacharle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 10:25:14 by injah             #+#    #+#             */
-/*   Updated: 2026/01/14 11:42:06 by xacharle         ###   ########.fr       */
+/*   Updated: 2026/01/15 17:14:03 by xacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,6 @@ enum	e_tool
 	DRAW_BRUSH,
 	BUCKET,
 	ERASER,
-	// COLOR_FRONT,
-	// COLOR_BACK,
 	NUM_TOOL
 };
 
