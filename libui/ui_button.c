@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_button.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:36:13 by injah             #+#    #+#             */
-/*   Updated: 2026/01/12 14:38:35 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/15 19:10:08 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,12 @@
 
 static void		ui_button_render(t_widget *button)
 {
-	t_button_data	*data;
-	int				padding = 10;
-
-	data = (t_button_data *)button->data;
 	SDL_RenderCopy(button->renderer, button->texture, NULL, &button->absolute);
-	SDL_RenderCopy(button->renderer, data->label, NULL, &(SDL_Rect){button->absolute.x + padding, button->absolute.y + padding, button->rect.w - 2 * padding, button->rect.h - 2 * padding});
 }
 
 static void	ui_button_destroy(t_widget *button)
 {
-	t_button_data	*data;
-
-	data = (t_button_data *)button->data;
-	if (data->label)
-		SDL_DestroyTexture(data->label);
+	(void)button;
 }
 
 t_widget	*ui_create_button(t_widget *parent, int x, int y, int width, int height)

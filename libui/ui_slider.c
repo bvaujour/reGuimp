@@ -6,7 +6,7 @@
 /*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 16:33:33 by injah             #+#    #+#             */
-/*   Updated: 2026/01/15 18:29:28 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/15 19:19:46 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	ui_slider_update(t_widget *slider)
 	{
 		data = (t_slider_data *)slider->data;
 		click_relative.x = core->mouse.position.x - slider->absolute.x;
-		data->value = (float)click_relative.x / slider->absolute.w;
+		data->value = (float)click_relative.x / (slider->absolute.w - 1);
 		if (data->onvaluechange)
 			data->onvaluechange(slider, data->value, data->onvaluechange_param);
 	}
