@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_image.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 10:15:42 by injah             #+#    #+#             */
-/*   Updated: 2026/01/12 15:56:43 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/13 16:54:49 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,6 @@ t_widget	*ui_create_image(t_widget *parent, int x, int y, int width, int height)
 	image->texture = SDL_CreateTexture(image->renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, image->rect.w, image->rect.h);
 	SDL_SetTextureBlendMode(image->texture, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawBlendMode(image->renderer, SDL_BLENDMODE_BLEND);
-	// ui_clear_image(image, 0x00000000);
+	ui_clear_image(image, 0x00000000);
 	return (image);
 }

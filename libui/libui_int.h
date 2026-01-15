@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libui_int.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/12 17:16:33 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/13 18:05:32 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # define	UI_MAX_WINDOWS					5
 # define	UI_MAX_WINDOW_CHILDS			20
 # define	UI_MAX_IMAGE_CHILDS				0
+# define	UI_MAX_TEXT_CHILDS				0
 # define	UI_MAX_DRAGBOX_CHILDS			1
 # define	UI_MAX_BUTTON_CHILDS			1
 # define	UI_MAX_BOX_CHILDS				10
@@ -35,6 +36,7 @@ typedef enum	e_widget_type
 	WINDOW,
 	IMAGE,
 	BUTTON,
+	TEXT,
 	DRAWABLE,
 	DRAGBOX,
 	SLIDER,
@@ -95,6 +97,14 @@ typedef struct	s_window_data
 	unsigned int	id;
 }				t_window_data;
 
+typedef struct	s_text_data
+{
+	int		dummy;
+	// SDL_Texture	*text;
+	// int			width;
+	// int			height;
+}				t_text_data;
+
 typedef struct	s_box_data
 {
 	enum direction	flow_direction;
@@ -106,12 +116,8 @@ typedef struct	s_box_data
 typedef struct	s_slider_data
 {
 	SDL_Texture		*label;
-	SDL_Point		slide_position;
-	SDL_Texture		*slide_texture;
-	SDL_Color		slide_color;
 	SDL_Color		fill_color;
 	float			value;
-	int				slide_factor;
 	void			(*onvaluechange)(struct s_widget *, float, void *);
 	void			*onvaluechange_param;
 }				t_slider_data;

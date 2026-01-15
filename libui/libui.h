@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libui.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/12 17:52:42 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/13 17:36:57 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,4 +103,6 @@ void	ui_draw_filled_circle(t_widget *image, int centreX, int centreY, int radius
 void	ui_bucket_image(t_widget *image, int start_x, int start_y, unsigned color);
 void	ui_clear_image(t_widget *image, unsigned int color);
 void	ui_erase_image(t_widget *image, int x, int y);
+
+t_widget	*ui_create_text(t_widget *parent, int x, int y, int width, int height);
 #endif

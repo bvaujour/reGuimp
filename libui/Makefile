@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: injah <injah@student.42.fr>                +#+  +:+       +#+         #
+#    By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/03 16:48:10 by bvaujour          #+#    #+#              #
-#    Updated: 2026/01/12 17:02:43 by injah            ###   ########.fr        #
+#    Updated: 2026/01/13 17:42:47 by bvaujour         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,7 @@ SRC =	ui_core.c						\
 		ui_box.c						\
 		ui_image.c						\
 		ui_image_user.c					\
+		ui_text.c						\
 
 OBJ = $(SRC:%.c=$(OBJ_DIR)/%.o)
 
