@@ -6,7 +6,7 @@
 /*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/13 18:05:32 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/15 18:24:16 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,10 +99,7 @@ typedef struct	s_window_data
 
 typedef struct	s_text_data
 {
-	int		dummy;
-	// SDL_Texture	*text;
-	// int			width;
-	// int			height;
+	char	*text;
 }				t_text_data;
 
 typedef struct	s_box_data
@@ -115,7 +112,6 @@ typedef struct	s_box_data
 
 typedef struct	s_slider_data
 {
-	SDL_Texture		*label;
 	SDL_Color		fill_color;
 	float			value;
 	void			(*onvaluechange)(struct s_widget *, float, void *);
@@ -131,7 +127,7 @@ typedef struct	s_button_data
 typedef struct	s_core
 {
 	t_widget				**windows;
-	TTF_Font				*font;
+	char					*font_file;
 	void					(*onkeypress)(int, void *);
 	void					*onkeypress_param;
 	void					(*onbuttondown)(int, void *);

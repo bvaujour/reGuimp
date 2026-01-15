@@ -6,7 +6,7 @@
 /*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/13 19:13:19 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/15 17:53:58 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ int	main()
 	ui_bind_onbuttondown(data.core, on_mouse_button_up, &data);
 	data.tool_window = ui_create_window(data.core, 0, 0, 800, 600);
 	data.tool_window_box = ui_create_box(data.tool_window, 20, 20, 760, 560);
-	data.tool_buttons_box = ui_create_box(data.tool_window_box, 20, 20, 720, 150);
+	data.tool_buttons_box = ui_create_box(data.tool_window_box, 20, 20, 200, 150);
 	ui_set_box_behavior(data.tool_buttons_box, HORIZONTAL, 5, false, true);
 	build_tool_buttons(&data);
 	

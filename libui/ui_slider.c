@@ -6,11 +6,23 @@
 /*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 16:33:33 by injah             #+#    #+#             */
-/*   Updated: 2026/01/13 15:57:34 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/15 18:29:28 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libui_int.h"
+
+void	ui_bind_slider_onvaluechanged(t_widget *slider, void (*f)(struct s_widget *, float, void *), void *param)
+{
+	t_slider_data	*data;
+
+	if (slider->type != SLIDER)
+		return ;
+	data = (t_slider_data *)slider->data;
+	data->onvaluechange = f;
+	data->onvaluechange_param = param;
+	f(slider, data->value, param);
+}
 
 void	ui_slider_render(t_widget *slider)
 {
@@ -25,11 +37,7 @@ void	ui_slider_render(t_widget *slider)
 
 void	ui_slider_destroy(t_widget *slider)
 {
-	t_slider_data	*data;
-
-	data = (t_slider_data *)slider->data;
-	if (data->label)
-		SDL_DestroyTexture(data->label);
+	(void)slider;
 }
 
 void	ui_slider_update(t_widget *slider)

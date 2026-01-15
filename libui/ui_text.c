@@ -6,7 +6,7 @@
 /*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:56 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/13 19:21:24 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/15 18:39:00 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,30 +14,33 @@
 
 static void		ui_text_render(t_widget *text)
 {
-	t_text_data			*data;
-	data = (t_text_data *)text->data;
+
 
 	SDL_RenderCopy(text->renderer, text->texture, NULL, &text->absolute);
-	// SDL_RenderCopy(text->renderer, data->text, NULL, &(SDL_Rect){text->absolute.x, text->absolute.y, data->width, data->height});
 }
 
 static void	ui_text_destroy(t_widget *text)
 {
-	(void)text;
+	t_text_data			*data;
+
+	data = (t_text_data *)text->data;
+	free(data->text);
 }
 
 void	ui_text_fill_parent(t_widget *text)
 {
-	TTF_Font			 *font;
+	TTF_Font			*font;
 	SDL_Surface			*surface;
+	t_text_data			*data;
 	int	i;
 	int	w, h;
+
+	data = (t_text_data *)text->data;
 	i = 0;
 	while (1)
 	{
-		font = TTF_OpenFont("libui/assets/fonts/Roboto/Roboto-Black.ttf", i);
-		TTF_SizeUTF8(font, "F", &w, &h);
-		printf("size w = %d\nsize h = %d\n", w, h);
+		font = TTF_OpenFont(text->core->font_file, i);
+		TTF_SizeUTF8(font, data->text, &w, &h);
 		TTF_CloseFont(font);
 		if (w > text->parent->rect.w || h > text->parent->rect.h)
 			break ;
@@ -45,8 +48,8 @@ void	ui_text_fill_parent(t_widget *text)
 	}
 	if (i == 0)
 		i = 1;
-	font = TTF_OpenFont("libui/assets/fonts/Roboto/Roboto-Black.ttf", i);
-	surface = TTF_RenderText_Blended(font, "File", (SDL_Color){255, 255, 255, 255});
+	font = TTF_OpenFont(text->core->font_file, i - 1);
+	surface = TTF_RenderText_Blended(font, data->text, (SDL_Color){255, 255, 255, 255});
 	if (text->texture)
 		SDL_DestroyTexture(text->texture);
 	text->texture = SDL_CreateTextureFromSurface(text->renderer, surface);
@@ -56,7 +59,6 @@ void	ui_text_fill_parent(t_widget *text)
 	text->rect.y = text->parent->rect.h / 2 - text->rect.h / 2;
 	TTF_CloseFont(font);
 	SDL_FreeSurface(surface);
-	
 }
 
 static void	ui_text_build(t_widget *text)
@@ -104,5 +106,6 @@ t_widget	*ui_create_text(t_widget *parent, int x, int y, int width, int height)
 	text->destroy = ui_text_destroy;
 	text->build = ui_text_build;
 	text->texture = ui_new_texture(parent->renderer, width, height, text->colors[text->state]);
+	data->text = ft_strdup("hello world!!");
 	return (text);
 }

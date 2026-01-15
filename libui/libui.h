@@ -6,7 +6,7 @@
 /*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/13 17:36:57 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/15 18:28:45 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void		ui_bind_slider_onvaluechanged(t_widget *slider, void (*f)(struct s_widget 
 //BUTTON
 
 t_widget	*ui_create_button(t_widget *parent, int x, int y, int width, int height);
-void		ui_button_set_label(t_widget *button, char *label);
 
 //WIDGET
 
@@ -75,7 +74,6 @@ void		ui_set_box_behavior(t_widget *box, enum direction flow_direction, int spac
 //SLIDER
 
 t_widget	*ui_create_slider(t_widget *parent, int x, int y, int width, int height);
-void		ui_slider_set_label(t_widget *slider, char *label);
 /*prototype should be:
 void void	on_key_pressed(int key_pressed, void *param(cast to your type))*/
 void		ui_bind_onkeypress(t_core *core, void (*f)(int, void *), void *param);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
+/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 17:57:41 by injah             #+#    #+#             */
-/*   Updated: 2026/01/08 12:53:35 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/15 18:41:43 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,4 +35,27 @@ SDL_Texture	*ui_new_texture(SDL_Renderer *renderer, int width, int height, SDL_C
 	SDL_SetTextureAlphaMod(texture, color_mod.a);
 	SDL_FreeSurface(surface);
 	return (texture);
+}
+
+TTF_Font	*ui_open_font_match_size(const char *font_path, const char *text, int width, int height)
+{
+	TTF_Font	*font;
+	int			i;
+	int			current_width;
+	int			current_height;
+
+	i = 0;
+	while (1)
+	{
+		font = TTF_OpenFont(font_path, i);
+		TTF_SizeUTF8(font, text, &current_width, &current_height);
+		TTF_CloseFont(font);
+		if (current_width > width || current_height > height)
+			break ;
+		i++;
+	}
+	if (i == 0)
+		i = 1;
+	font = TTF_OpenFont(font_path, i - 1);
+	return (font);
 }
