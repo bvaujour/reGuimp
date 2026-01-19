@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libui_int.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/15 19:09:27 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/19 11:55:20 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "SDL_image/include/SDL2/SDL_image.h"
 # include "libft.h"
 
+# define	UI_MAX_TEXT_SIZE				512
 # define	UI_MAX_WINDOWS					5
 # define	UI_MAX_WINDOW_CHILDS			20
 # define	UI_MAX_IMAGE_CHILDS				0
@@ -76,13 +77,14 @@ typedef struct	s_widget
 	SDL_Color			colors[NUM_STATE];
 	bool				is_visible;
 	bool				is_dragable;
+	SDL_Point			drag_offset;
 	SDL_Cursor			*cursor;
 	void				(*event)(struct s_widget *widget);
 	void				(*update)(struct s_widget *widget);
 	void				(*render)(struct s_widget *widget);
 	void				(*destroy)(struct s_widget *widget);
 	void				(*build)(struct s_widget *widget);
-	void				(*onclicked)(struct s_widget *, int, int, int, void *);
+	void				(*onclicked)(struct s_widget *widget, int button, int x, int y, void *param);
 	void				*onclicked_param;
 }				t_widget;
 
@@ -99,8 +101,14 @@ typedef struct	s_window_data
 
 typedef struct	s_text_data
 {
-	char		*text;
+	char		text[UI_MAX_TEXT_SIZE];
+	int			text_index;
 	SDL_Color	text_color;
+	bool		fill;
+	bool		centered;
+	bool		wrap;
+	void		(*onvalidate)(struct s_widget *text, const char *str, void *param);
+	void		*onvalidate_param;
 }				t_text_data;
 
 typedef struct	s_box_data
@@ -165,9 +173,11 @@ void		ui_widget_outline(t_widget *widget, SDL_Color color);
 void		ui_widget_drag(t_widget *widget);
 void		ui_widget_call_onclicked(t_widget *widget);
 void		ui_widget_change_state(t_widget *widget, e_widget_state new_state);
+SDL_Rect	ui_get_render_rect(t_widget *widget);
 
 //UTILS
 TTF_Font	*ui_open_font_match_size(const char *font_path, const char *text, int width, int height);
+TTF_Font	*ui_open_font_match_height(const char *font_path, const char *text, int height);
 SDL_Color	ui_unpack_color(unsigned int color);
 
 

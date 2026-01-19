@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_button.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:36:13 by injah             #+#    #+#             */
-/*   Updated: 2026/01/15 19:10:08 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/18 15:50:59 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,16 @@
 
 static void		ui_button_render(t_widget *button)
 {
-	SDL_RenderCopy(button->renderer, button->texture, NULL, &button->absolute);
+	SDL_Rect	render_rect;
+
+	render_rect = ui_get_render_rect(button);
+	SDL_RenderSetClipRect(button->renderer, &button->parent->absolute);
+	SDL_RenderCopy(button->renderer, button->texture, NULL, &render_rect);
+	if (button == button->core->focused_widget)
+		ui_widget_outline(button, (SDL_Color){127, 127, 127, 255});
+	else
+		ui_widget_outline(button, (SDL_Color){0, 0, 0, 255});
+	SDL_RenderSetClipRect(button->renderer, NULL);
 }
 
 static void	ui_button_destroy(t_widget *button)

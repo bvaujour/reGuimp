@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libui.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/15 18:28:45 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/19 11:54:22 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void		ui_run(t_core *core);
 void		ui_quit(t_core *core);
 /*prototype should be:
 void on_slider_value_change(t_widget *changed_slider, float value, void *param(cast to your type))*/
-void		ui_bind_slider_onvaluechanged(t_widget *slider, void (*f)(struct s_widget *, float, void *), void *param);
+void		ui_bind_slider_onvaluechanged(t_widget *slider, void (*f)(struct s_widget *widget, float value, void *param), void *param);
 
 //BUTTON
 
@@ -76,7 +76,7 @@ void		ui_set_box_behavior(t_widget *box, enum direction flow_direction, int spac
 t_widget	*ui_create_slider(t_widget *parent, int x, int y, int width, int height);
 /*prototype should be:
 void void	on_key_pressed(int key_pressed, void *param(cast to your type))*/
-void		ui_bind_onkeypress(t_core *core, void (*f)(int, void *), void *param);
+void		ui_bind_onkeypress(t_core *core, void (*f)(int key, void *param), void *param);
 
 t_img		ui_image_get_img(t_widget *image);
 void		ui_image_set_img(t_widget *image, t_img img);
@@ -84,13 +84,13 @@ t_widget	*ui_create_image(t_widget *parent, int x, int y, int width, int height)
 
 /*prototype should be:
 void	function(t_widget *widget, int button, int x, int y, void *param)*/
-void	ui_widget_bind_onclicked(t_widget *widget, void (*f)(struct s_widget *, int, int, int, void *), void *param);
+void	ui_widget_bind_onclicked(t_widget *widget, void (*f)(struct s_widget *widget, int button, int x, int y, void *param), void *param);
 /*prototype should be:
 void	function(t_widget *widget, int button, void *param)*/
-void	ui_bind_onbuttondown(t_core *core, void (*f)(int, void *), void *param);
+void	ui_bind_onbuttondown(t_core *core, void (*f)(int button, void *param), void *param);
 /*prototype should be:
 void	function(t_widget *widget, int button, void *param)*/
-void	ui_bind_onbuttonup(t_core *core, void (*f)(int, void *), void *param);
+void	ui_bind_onbuttonup(t_core *core, void (*f)(int button, void *param), void *param);
 
 void	ui_draw_rect(t_widget *image, int x, int y, int width, int height, unsigned int color);
 void	ui_draw_point(t_widget *image, int x, int y, unsigned int color);
@@ -103,4 +103,7 @@ void	ui_clear_image(t_widget *image, unsigned int color);
 void	ui_erase_image(t_widget *image, int x, int y);
 
 t_widget	*ui_create_text(t_widget *parent, int x, int y, int width, int height);
+void	ui_bind_text_onvalidate(t_widget *text, void (*f)(t_widget *text, const char *str, void *param), void *param);
+void	ui_text_set_text(t_widget *text, const char *str);
+
 #endif

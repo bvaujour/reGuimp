@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_widget.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
-/*   Updated: 2026/01/13 15:54:19 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/19 11:24:08 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,21 @@
 SDL_Rect	ui_get_absolute_rect(t_widget *widget)
 {
 	t_widget 	*reference;
-	SDL_Point	position;
+	SDL_Rect	absolute;
 
-	position.x = widget->rect.x;
-	position.y = widget->rect.y;
+	absolute = widget->rect;
 	reference = widget->parent;
 	while (reference != NULL)
 	{
-		position.x += reference->rect.x;
-		position.y += reference->rect.y;
+		absolute.x += reference->rect.x;
+		absolute.y += reference->rect.y;
+		if (reference->rect.w < absolute.w)
+			absolute.w = reference->rect.w;
+		if (reference->rect.h < absolute.h)
+			absolute.h = reference->rect.h;
 		reference = reference->parent;
 	}
-	return ((SDL_Rect){position.x, position.y, widget->rect.w, widget->rect.h});
+	return (absolute);
 }
 
 void	ui_widget_change_state(t_widget *widget, e_widget_state new_state)
@@ -53,8 +56,6 @@ void	ui_widget_manage_state(t_widget *widget)
 		{
 			ui_widget_change_state(widget, CLICKED);
 			widget->core->focused_widget = widget;
-			if (widget->is_dragable && (core->mouse.position.x == widget->absolute.x || core->mouse.position.y == widget->absolute.y || core->mouse.position.x == widget->absolute.x + widget->absolute.w - 1 ||  core->mouse.position.y == widget->absolute.y + widget->absolute.h - 1))
-				widget->core->dragged_widget = widget;
 		}
 		else
 		{
@@ -155,19 +156,27 @@ void		ui_widget_drag(t_widget *widget)
 
 
 	i = 0;
-	if (widget ->parent == NULL)
+	if (widget->parent == NULL)
 		return ;
 	new_rect = widget->rect;
-	new_rect.x = widget->core->mouse.position.x - widget->parent->absolute.x;
-	new_rect.y = widget->core->mouse.position.y - widget->parent->absolute.y;
+	new_rect.x = widget->core->mouse.position.x - widget->parent->absolute.x - widget->drag_offset.x;
+	new_rect.y = widget->core->mouse.position.y - widget->parent->absolute.y - widget->drag_offset.y;
 	if (new_rect.x < 0 || new_rect.y < 0 || new_rect.x > widget->parent->rect.w - new_rect.w || new_rect.y > widget->parent->rect.h - new_rect.h)
+	{
+		widget->drag_offset.x = widget->core->mouse.position.x - widget->absolute.x;
+		widget->drag_offset.y = widget->core->mouse.position.y - widget->absolute.y;
 		return ;
+	}
 	while (widget->parent->childs[i])
 	{
 		if (widget->parent->childs[i]->is_visible && widget->parent->childs[i] != widget)
 		{
 			if (SDL_IntersectRect(&widget->parent->childs[i]->rect, &new_rect, &intersection))
+			{
+				widget->drag_offset.x = widget->core->mouse.position.x - widget->absolute.x;
+				widget->drag_offset.y = widget->core->mouse.position.y - widget->absolute.y;
 				return ;
+			}
 		}
 		i++;
 	}
@@ -183,5 +192,16 @@ void		ui_widget_call_onclicked(t_widget *widget)
 	relative_mouse_position.y = widget->core->mouse.position.y - widget->rect.y;
 	if (widget->onclicked)
 		widget->onclicked(widget, SDL_BUTTON_LEFT, relative_mouse_position.x, relative_mouse_position.y, widget->onclicked_param);
+}
+
+SDL_Rect	ui_get_render_rect(t_widget *widget)
+{
+	SDL_Rect	render_rect;
+
+	render_rect.x = widget->absolute.x;
+	render_rect.y = widget->absolute.y;
+	render_rect.w = widget->rect.w;
+	render_rect.h = widget->rect.h;
+	return (render_rect);
 }
 

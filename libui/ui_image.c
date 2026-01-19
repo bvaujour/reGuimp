@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_image.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 10:15:42 by injah             #+#    #+#             */
-/*   Updated: 2026/01/13 16:54:49 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/18 15:51:22 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,16 @@ void		ui_image_event(t_widget *image)
 }
 void		ui_image_render(t_widget *image)
 {
-	SDL_RenderCopy(image->renderer, image->texture, NULL, &image->absolute);
+	SDL_Rect	render_rect;
+
+	render_rect = ui_get_render_rect(image);
+	SDL_RenderSetClipRect(image->renderer, &image->parent->absolute);
+	SDL_RenderCopy(image->renderer, image->texture, NULL, &render_rect);
+	if (image == image->core->focused_widget)
+		ui_widget_outline(image, (SDL_Color){127, 127, 127, 255});
+	else
+		ui_widget_outline(image, (SDL_Color){0, 0, 0, 255});
+	SDL_RenderSetClipRect(image->renderer, NULL);
 }
 
 void		ui_image_destroy(t_widget *image)

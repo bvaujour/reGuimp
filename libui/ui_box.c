@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 21:09:13 by injah             #+#    #+#             */
-/*   Updated: 2026/01/12 18:31:25 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/19 10:56:44 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,16 @@
 
 void	ui_box_render(t_widget *box)
 {
-	SDL_RenderCopy(box->renderer, box->texture, NULL, &box->absolute);
+	SDL_Rect	render_rect;
+
+	render_rect = ui_get_render_rect(box);
+	SDL_RenderSetClipRect(box->renderer, &box->parent->absolute);
+	SDL_RenderCopy(box->renderer, box->texture, NULL, &render_rect);
+	if (box == box->core->focused_widget)
+		ui_widget_outline(box, (SDL_Color){127, 127, 127, 255});
+	else
+		ui_widget_outline(box, (SDL_Color){0, 0, 0, 255});
+	SDL_RenderSetClipRect(box->renderer, NULL);
 }
 
 void	ui_place_childs_vertical(t_widget *box, int space, bool wrap, bool size_to_content)
