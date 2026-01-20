@@ -6,7 +6,7 @@
 /*   By: xacharle <xacharle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/15 17:54:39 by xacharle         ###   ########.fr       */
+/*   Updated: 2026/01/20 16:24:46 by xacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,8 @@ void	on_widget_clicked(t_widget *widget, int button, int x, int y, void *param)
 		data->active_tool = BUCKET;
 		show_parameter(data, BUCKET);
 	}
-	else if (widget == data->button)
-		;
+	// else if (widget == data->button)
+	// 	;
 }
 
 void	on_slider_change_value(t_widget *slider, float value, void *param)
@@ -94,6 +94,15 @@ void	on_slider_change_value(t_widget *slider, float value, void *param)
 	(void)slider;
 	data->drawing.thickness = value * 50;
 	printf("slider value: %f\n", value);
+}
+
+void	on_text_validate(t_widget *text, const char *str, void *param)
+{
+	t_data *data;
+	
+	data = (t_data *)param;
+	if (text == data->text)
+		printf("text = %s\n", str);
 }
 
 
@@ -109,13 +118,12 @@ int	main()
 	ui_bind_onbuttondown(data.core, on_mouse_button_up, &data);
 	data.tool_window = ui_create_window(data.core, 0, 0, 800, 600);
 	data.tool_window_box = ui_create_box(data.tool_window, 20, 20, 760, 560);
-	data.tool_buttons_box = ui_create_box(data.tool_window_box, 20, 20, 720, 150);
+	data.tool_buttons_box = ui_create_box(data.tool_window_box, 20, 20, 500, 150);
 	// data.tool_color_box = ui_create_box(data.tool_window_box, 340, 20, 720, 150);
 	data.tool_color_box = ui_create_button(data.tool_window_box, 380, 25, 50, 50);
 	ui_set_widget_colors(data.tool_color_box, 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
 	
-	ui_set_box_behavior(data.tool_buttons_box, HORIZONTAL, 5, false, true);
-	// ui_set_box_behavior(data.tool_color_box, HORIZONTAL, 5, false, true);
+	ui_set_box_behavior(data.tool_buttons_box, HORIZONTAL, 5, true, true);
 	build_tool_buttons(&data);
 	
 	data.tool_parameters_boxes[PENCIL] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
@@ -140,8 +148,14 @@ int	main()
 	show_parameter(&data, PENCIL);
 
 	t_widget *text;
-
-	text = ui_create_text(data.button, 0, 0, 200, 200);
+	text = ui_create_text(data.button, 0, 0, 100, 50);
+	(void)text;
+	ui_text_set_text(text, "File");
+	
+	data.text_box = ui_create_box(data.tool_parameters_boxes[DRAW_RECT], 10, 10, 700, 50);
+	ui_set_widget_colors(data.text_box, 0x7f000000, 0x7f000000, 0x7f000000);
+	data.text = ui_create_text(data.text_box, 0, 0, 50, 50);
+	ui_bind_text_onvalidate(data.text, on_text_validate, &data);
 	ui_run(data.core);
 	return (0);
 }

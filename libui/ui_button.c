@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 18:36:13 by injah             #+#    #+#             */
-/*   Updated: 2026/01/12 14:38:35 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/18 15:50:59 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,21 @@
 
 static void		ui_button_render(t_widget *button)
 {
-	t_button_data	*data;
-	int				padding = 10;
+	SDL_Rect	render_rect;
 
-	data = (t_button_data *)button->data;
-	SDL_RenderCopy(button->renderer, button->texture, NULL, &button->absolute);
-	SDL_RenderCopy(button->renderer, data->label, NULL, &(SDL_Rect){button->absolute.x + padding, button->absolute.y + padding, button->rect.w - 2 * padding, button->rect.h - 2 * padding});
+	render_rect = ui_get_render_rect(button);
+	SDL_RenderSetClipRect(button->renderer, &button->parent->absolute);
+	SDL_RenderCopy(button->renderer, button->texture, NULL, &render_rect);
+	if (button == button->core->focused_widget)
+		ui_widget_outline(button, (SDL_Color){127, 127, 127, 255});
+	else
+		ui_widget_outline(button, (SDL_Color){0, 0, 0, 255});
+	SDL_RenderSetClipRect(button->renderer, NULL);
 }
 
 static void	ui_button_destroy(t_widget *button)
 {
-	t_button_data	*data;
-
-	data = (t_button_data *)button->data;
-	if (data->label)
-		SDL_DestroyTexture(data->label);
+	(void)button;
 }
 
 t_widget	*ui_create_button(t_widget *parent, int x, int y, int width, int height)

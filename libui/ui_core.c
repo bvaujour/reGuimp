@@ -6,7 +6,7 @@
 /*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 18:23:08 by injah             #+#    #+#             */
-/*   Updated: 2026/01/13 17:50:42 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/15 18:23:11 by bvaujour         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ t_core	*ui_init()
 		return (NULL);
 	}
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-	core->font = TTF_OpenFont("libui/assets/fonts/Roboto/Roboto-Black.ttf", 150);
-	if (!core->font)
-		printf("font not open\n");
+	core->font_file = ft_strdup("libui/assets/fonts/Roboto/Roboto-Black.ttf");
+	if (!core->font_file)
+		return (NULL);
 	return (core);
 }
 
@@ -62,7 +62,7 @@ void	ui_destroy(t_core *core)
 		i++;
 	}
 	free(core->windows);
-	TTF_CloseFont(core->font);
+	free(core->font_file);
 	free(core);
 	IMG_Quit();
 	TTF_Quit();
@@ -86,3 +86,4 @@ void	ui_bind_onbuttonup(t_core *core, void (*f)(int, void *), void *param)
 	core->onbuttonup = f;
 	core->onbuttonup_param = param;
 }
+
