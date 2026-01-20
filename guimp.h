@@ -6,7 +6,7 @@
 /*   By: xacharle <xacharle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 10:25:14 by injah             #+#    #+#             */
-/*   Updated: 2026/01/20 16:24:46 by xacharle         ###   ########.fr       */
+/*   Updated: 2026/01/20 21:15:00 by xacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,18 +39,6 @@ enum	e_tool
 	ERASER,
 	NUM_TOOL
 };
-
-// // NUM_COLOR
-// enum	e_color
-// {
-// 	RED,
-// 	GREEN,
-// 	BLUE,
-// 	ALPHA,
-// 	NUM_COLOR
-// };
-
-
 
 typedef struct	s_vector2
 {
@@ -86,8 +74,8 @@ typedef struct	s_data
 	t_widget		*render_window;
 	t_widget		*tool_buttons_box;
 	t_widget 		*tool_color_box;
+	t_widget		*tool_color_parameter_box;
 	t_widget		*color_sliders[NUM_COLOR];
-	t_widget		*color_boxes[NUM_COLOR];
 	t_widget		*tool_buttons[NUM_TOOL];
 	t_widget		*tool_parameters_boxes[NUM_TOOL];
 	t_widget		*tool_window_box;
@@ -113,4 +101,5 @@ int				lerp(int a, int b, int step, int max);
 void			build_tool_buttons(t_data *data);
 void			on_widget_clicked(t_widget *widget, int button, int x, int y, void *param);
 void			show_parameter(t_data *data, enum e_tool tool);
+void			toggle_color_parameters_box(t_data *data);
 #endif

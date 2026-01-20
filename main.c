@@ -6,7 +6,7 @@
 /*   By: xacharle <xacharle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/20 16:24:46 by xacharle         ###   ########.fr       */
+/*   Updated: 2026/01/20 21:18:51 by xacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,10 @@ void	on_widget_clicked(t_widget *widget, int button, int x, int y, void *param)
 			draw_with_libui(data, data->canvas, button, x, y);
 		else
 			draw_with_guimp(data, data->canvas, button, x, y);
+	}
+	else if (widget == data->tool_color_box)
+	{
+		toggle_color_parameters_box(data);
 	}
 	else if (widget == data->tool_buttons[PENCIL])
 	{
@@ -90,10 +94,28 @@ void	on_slider_change_value(t_widget *slider, float value, void *param)
 	t_data *data;
 	
 	data = (t_data *)param;
-	(void)data;
-	(void)slider;
-	data->drawing.thickness = value * 50;
-	printf("slider value: %f\n", value);
+	// (void)data;
+	// (void)slider;
+	if (slider == data->color_sliders[RED])
+	{
+		data->color.r = (unsigned char)(value * 255);
+		ui_set_widget_colors(data->tool_color_box, pack_color(data->color), pack_color(data->color), pack_color(data->color));
+	}
+	else if (slider == data->color_sliders[GREEN])
+	{	
+		data->color.g = (unsigned char)(value * 255);
+		ui_set_widget_colors(data->tool_color_box, pack_color(data->color), pack_color(data->color), pack_color(data->color));
+	}
+	else if (slider == data->color_sliders[BLUE])
+	{
+		data->color.b = (unsigned char)(value * 255);
+		ui_set_widget_colors(data->tool_color_box, pack_color(data->color), pack_color(data->color), pack_color(data->color));
+	}
+	else if (slider == data->drawing.thickness_slider)
+	{
+		data->drawing.thickness = value * 50;
+		printf("slider value: %f\n", value);
+	}
 }
 
 void	on_text_validate(t_widget *text, const char *str, void *param)
@@ -119,10 +141,19 @@ int	main()
 	data.tool_window = ui_create_window(data.core, 0, 0, 800, 600);
 	data.tool_window_box = ui_create_box(data.tool_window, 20, 20, 760, 560);
 	data.tool_buttons_box = ui_create_box(data.tool_window_box, 20, 20, 500, 150);
-	// data.tool_color_box = ui_create_box(data.tool_window_box, 340, 20, 720, 150);
-	data.tool_color_box = ui_create_button(data.tool_window_box, 380, 25, 50, 50);
-	ui_set_widget_colors(data.tool_color_box, 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
 	
+	data.tool_color_box = ui_create_button(data.tool_window_box, 380, 25, 50, 50);
+	data.tool_color_parameter_box = ui_create_box(data.tool_window_box, 440, 20, 300, 130);
+	// ui_set_widget_colors(data.tool_color_box, 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
+	ui_widget_bind_onclicked(data.tool_color_box, on_widget_clicked, &data);
+	data.color_sliders[RED] = ui_create_slider(data.tool_color_parameter_box, 20, 20, 200, 20);
+	data.color_sliders[GREEN] = ui_create_slider(data.tool_color_parameter_box, 20, 60, 200, 20);
+	data.color_sliders[BLUE] = ui_create_slider(data.tool_color_parameter_box, 20, 100, 200, 20);
+	ui_bind_slider_onvaluechanged(data.color_sliders[RED], on_slider_change_value, &data);
+	ui_bind_slider_onvaluechanged(data.color_sliders[GREEN], on_slider_change_value, &data);
+	ui_bind_slider_onvaluechanged(data.color_sliders[BLUE], on_slider_change_value, &data);
+
+
 	ui_set_box_behavior(data.tool_buttons_box, HORIZONTAL, 5, true, true);
 	build_tool_buttons(&data);
 	

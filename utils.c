@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: xacharle <xacharle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 13:02:42 by injah             #+#    #+#             */
-/*   Updated: 2026/01/13 16:45:32 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/20 21:15:05 by xacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,4 +69,11 @@ void	show_parameter(t_data *data, enum e_tool tool)
 		i++;
 	}
 	ui_set_widget_visibility(data->tool_parameters_boxes[tool], true);
+}
+
+void	toggle_color_parameters_box(t_data *data)
+{
+	ui_toggle_widget_visibility(data->tool_color_parameter_box);
+	// ui_set_widget_visibility(data->color_sliders[i], true);
+	// i++;
 }
