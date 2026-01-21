@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:24:56 by injah             #+#    #+#             */
-/*   Updated: 2026/01/12 15:32:47 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/21 12:22:54 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 void	ui_set_widget_position(t_widget *widget, int x, int y)
 {
-	widget->rect.x = x;
-	widget->rect.y = y;
+	widget->relative.x = x;
+	widget->relative.y = y;
 }
 
 void	ui_set_widget_size(t_widget *widget, int width, int height)
 {
-	widget->rect.w = width;
-	widget->rect.h = height;
+	widget->absolute.w = width;
+	widget->absolute.h = height;
 }
 
 void	ui_set_widget_position_and_size(t_widget *widget, int x, int y, int width, int height)
@@ -46,6 +46,9 @@ int	ui_set_widget_texture(t_widget *widget, const char *path)
 {
 	SDL_Surface	*surface;
 	SDL_Color	color;
+
+	if (!widget)
+		return (-1);
 	surface = IMG_Load(path);
 	if (!surface)
 	{
@@ -65,6 +68,16 @@ int	ui_set_widget_texture(t_widget *widget, const char *path)
 void	ui_set_widget_visibility(t_widget *widget, int new_visibility)
 {
 	widget->is_visible = new_visibility;
+}
+
+void	ui_set_widget_resizable(t_widget *widget, int new_resizable)
+{
+	widget->is_resizable = new_resizable;
+}
+
+void	ui_set_widget_dragable(t_widget *widget, int new_dragable)
+{
+	widget->is_dragable = new_dragable;
 }
 
 int	ui_get_widget_visibility(t_widget *widget)
@@ -90,6 +103,8 @@ void	ui_get_screen_size(int *screen_width, int *screen_height)
 
 void	ui_widget_bind_onclicked(t_widget *widget, void (*f)(struct s_widget *, int, int, int, void *), void *param)
 {
+	if (!widget)
+		return ;
 	widget->onclicked = f;
 	widget->onclicked_param = param;
 }

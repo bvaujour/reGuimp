@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 04:12:23 by injah             #+#    #+#             */
-/*   Updated: 2026/01/19 11:55:20 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/20 10:58:48 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,10 @@ typedef enum	e_widget_state
 typedef struct	s_mouse_infos
 {
 	SDL_Point	position;
+	SDL_Point	motion;
 	bool		buttons[3];
 	SDL_Cursor	*current_cursor;
 }				t_mouse_infos;
-
 
 typedef struct	s_widget
 {
@@ -70,14 +70,15 @@ typedef struct	s_widget
 	struct s_widget		*parent;
 	void				*data;
 	e_widget_type		type;
-	SDL_Rect			rect;
+	SDL_Point			relative;
 	SDL_Rect			absolute;
+	SDL_Rect			clip;
 	SDL_Texture			*texture;
 	e_widget_state		state;
 	SDL_Color			colors[NUM_STATE];
 	bool				is_visible;
+	bool				is_resizable;
 	bool				is_dragable;
-	SDL_Point			drag_offset;
 	SDL_Cursor			*cursor;
 	void				(*event)(struct s_widget *widget);
 	void				(*update)(struct s_widget *widget);
@@ -102,22 +103,19 @@ typedef struct	s_window_data
 typedef struct	s_text_data
 {
 	char		text[UI_MAX_TEXT_SIZE];
+	e_text_mode	mode;
 	int			text_index;
 	SDL_Color	text_color;
-	bool		fill;
-	bool		centered;
-	bool		wrap;
 	void		(*onvalidate)(struct s_widget *text, const char *str, void *param);
 	void		*onvalidate_param;
 }				t_text_data;
 
 typedef struct	s_box_data
 {
-	enum direction	flow_direction;
-	int				space_between_childs;
-	bool			wrap;
-	bool			size_to_content;
+	e_direction	flow_direction;
+	e_box_mode	mode;
 }				t_box_data;
+
 
 typedef struct	s_slider_data
 {
@@ -146,6 +144,7 @@ typedef struct	s_core
 	t_mouse_infos			mouse;
 	SDL_Event				event;
 	t_widget				*dragged_widget;
+	t_widget				*resizing_widget;
 	t_widget 				*focused_widget;
 	t_widget 				*hovered_widget;
 	bool					is_running;
@@ -159,7 +158,7 @@ void		ui_set_cursor(t_core *core, SDL_Cursor *cursor);
 
 int			ui_core_add_window(t_core *core, t_widget *window);
 
-
+void		ui_build_widget(t_widget *widget);
 //WIDGET
 
 SDL_Rect	ui_get_absolute_rect(t_widget *widget);
@@ -171,9 +170,10 @@ int			ui_add_child(t_widget *parent, t_widget *child);
 t_widget	*ui_new_widget(SDL_Rect rect, e_widget_type type, int max_child);
 void		ui_widget_outline(t_widget *widget, SDL_Color color);
 void		ui_widget_drag(t_widget *widget);
+void		ui_widget_resize(t_widget *widget);
 void		ui_widget_call_onclicked(t_widget *widget);
 void		ui_widget_change_state(t_widget *widget, e_widget_state new_state);
-SDL_Rect	ui_get_render_rect(t_widget *widget);
+SDL_Rect	ui_get_clip_rect(t_widget *widget);
 
 //UTILS
 TTF_Font	*ui_open_font_match_size(const char *font_path, const char *text, int width, int height);

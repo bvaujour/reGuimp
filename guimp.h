@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 10:25:14 by injah             #+#    #+#             */
-/*   Updated: 2026/01/16 16:11:21 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/20 10:55:10 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ typedef struct	s_data
 	t_drawing		drawing;
 	t_widget 		*text_box;
 	t_widget 		*text;
+	t_widget 		*tool_parameters_stacking_box;
+	t_widget 		*size_box;
 }				t_data;
 
 void			draw_rect_on_image(t_img img, int start_x, int start_y, int width, int height, unsigned int color);

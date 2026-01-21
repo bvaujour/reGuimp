@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/19 12:33:02 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/21 12:26:21 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,18 +116,26 @@ int	main()
 	data.drawing.thickness = 1;
 	ui_bind_onkeypress(data.core, on_key_pressed, &data);
 	ui_bind_onbuttondown(data.core, on_mouse_button_up, &data);
+
 	data.tool_window = ui_create_window(data.core, 0, 0, 800, 600);
 	data.tool_window_box = ui_create_box(data.tool_window, 20, 20, 760, 560);
-	data.tool_buttons_box = ui_create_box(data.tool_window_box, 20, 20, 500, 150);
-	ui_set_box_behavior(data.tool_buttons_box, HORIZONTAL, 5, true, true);
+	ui_set_widget_resizable(data.tool_window_box, true);
+	ui_set_widget_dragable(data.tool_window_box, true);
+	ui_set_box_behavior(data.tool_window_box, VERTICAL, EVEN_CHILDS);
+
+	data.tool_buttons_box = ui_create_box(data.tool_window_box, 0, 0, 500, 150);
+	ui_set_box_behavior(data.tool_buttons_box, HORIZONTAL, WRAP_CHILDS);
+
+	data.tool_parameters_stacking_box = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
+	ui_set_box_behavior(data.tool_parameters_stacking_box, VERTICAL, STACKING_CHILDS);
 	build_tool_buttons(&data);
 	
-	data.tool_parameters_boxes[PENCIL] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
-	data.tool_parameters_boxes[DRAW_RECT] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
-	data.tool_parameters_boxes[DRAW_CIRCLE] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
-	data.tool_parameters_boxes[DRAW_BRUSH] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
-	data.tool_parameters_boxes[BUCKET] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
-	data.tool_parameters_boxes[ERASER] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
+	data.tool_parameters_boxes[PENCIL] = ui_create_box(data.tool_parameters_stacking_box, 0, 0, 720, 370);
+	data.tool_parameters_boxes[DRAW_RECT] = ui_create_box(data.tool_parameters_stacking_box, 0, 0, 720, 370);
+	data.tool_parameters_boxes[DRAW_CIRCLE] = ui_create_box(data.tool_parameters_stacking_box, 0, 0, 720, 370);
+	data.tool_parameters_boxes[DRAW_BRUSH] = ui_create_box(data.tool_parameters_stacking_box, 0, 0, 720, 370);
+	data.tool_parameters_boxes[BUCKET] = ui_create_box(data.tool_parameters_stacking_box, 0, 0, 720, 370);
+	data.tool_parameters_boxes[ERASER] = ui_create_box(data.tool_parameters_stacking_box, 0, 0, 720, 370);
 
 	
 	data.button = ui_create_button(data.tool_parameters_boxes[PENCIL], 20, 20, 100, 50);

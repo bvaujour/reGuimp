@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 16:31:56 by injah             #+#    #+#             */
-/*   Updated: 2026/01/19 12:26:14 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/21 11:46:13 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,9 @@ static void ui_render_widget(t_widget *widget)
 
 	if (widget->is_visible == false)
 		return ;
+	SDL_RenderSetClipRect(widget->renderer, &widget->clip);
 	widget->render(widget);
+	SDL_RenderSetClipRect(widget->renderer, NULL);
 	if (widget->childs)
 	{
 		i = 0;
@@ -52,25 +54,38 @@ static void ui_render_widget(t_widget *widget)
 			i++;
 		}
 	}
+	SDL_RenderSetClipRect(widget->renderer, &widget->clip);
+	if (widget->is_resizable)
+	{
+		SDL_SetRenderDrawColor(widget->renderer, 100, 100, 100, 255);
+		SDL_RenderDrawRect(widget->renderer, &(SDL_Rect){widget->absolute.x + widget->absolute.w - 10, widget->absolute.y, 10, widget->absolute.h});
+		SDL_RenderDrawRect(widget->renderer, &(SDL_Rect){widget->absolute.x, widget->absolute.y + widget->absolute.h - 10, widget->absolute.w, 10});
+	}
 	SDL_RenderSetClipRect(widget->renderer, NULL);
 }
 
-static void ui_update_widget_state(t_widget *widget)
+static void ui_find_hovered_widget(t_widget *widget)
 {
 	int	i;
+	t_core	*core;
 
+	core = widget->core;
 	if (widget->is_visible == false)
 		return ;
-	ui_widget_manage_state(widget);
-	if (widget->childs && widget->state != NORMAL)
+	if (SDL_PointInRect(&core->mouse.position, &widget->absolute))
 	{
-		i = 0;
-		while (widget->childs[i])
+		core->hovered_widget = widget;
+		if (widget->childs)
 		{
-			ui_update_widget_state(widget->childs[i]);
-			i++;
+			i = 0;
+			while (widget->childs[i])
+			{
+				ui_find_hovered_widget(widget->childs[i]);
+				i++;
+			}
 		}
 	}
+		
 }
 
 
@@ -95,6 +110,7 @@ void	ui_init_widget(t_widget *widget)
 	int	i;
 
 	widget->absolute = ui_get_absolute_rect(widget);
+	widget->clip = ui_get_clip_rect(widget);
 	ui_widget_change_state(widget, NORMAL);
 	if (widget->childs)
 	{
@@ -116,7 +132,6 @@ void	ui_global_build(t_core *core)
 	{
 		ui_init_widget(core->windows[i]);
 		ui_build_widget(core->windows[i]);
-		ui_update_widget_state(core->windows[i]);
 		ui_render_widget(core->windows[i]);
 		SDL_RenderPresent(core->windows[i]->renderer);
 		i++;
@@ -151,11 +166,25 @@ static void	ui_global_update(t_core *core)
 		data = core->windows[i]->data;
 		if (SDL_GetWindowID(SDL_GetMouseFocus()) == data->id || core->event.window.windowID == data->id)
 		{
+			if (core->dragged_widget)
+				ui_widget_drag(core->dragged_widget);
+			if (core->resizing_widget)
+				ui_widget_resize(core->resizing_widget);
 			ui_init_widget(core->windows[i]);
-			ui_update_widget_state(core->windows[i]);
-			ui_event_widget(core->windows[i]);
+			ui_find_hovered_widget(core->windows[i]);
 			if (core->hovered_widget)
+			{
 				ui_set_cursor(core, core->hovered_widget->cursor);
+				if (core->mouse.buttons[SDL_BUTTON_LEFT] == true)
+				{
+					core->focused_widget = core->hovered_widget;
+					ui_widget_change_state(core->hovered_widget, CLICKED);
+				}
+				else
+					ui_widget_change_state(core->hovered_widget, HOVERED);
+				
+			}
+			ui_event_widget(core->windows[i]);
 			if (core->focused_widget)
 			{
 				if (core->focused_widget->update)
@@ -163,15 +192,14 @@ static void	ui_global_update(t_core *core)
 				if (core->focused_widget->state == CLICKED)
 				{
 					ui_widget_call_onclicked(core->focused_widget);
-					if (core->dragged_widget == NULL && core->focused_widget->is_dragable && core->event.type == SDL_MOUSEMOTION)
+					if (core->dragged_widget == NULL && core->resizing_widget == NULL)
 					{
-						core->dragged_widget = core->focused_widget;
-						core->dragged_widget->drag_offset.x = core->mouse.position.x - core->dragged_widget->absolute.x;
-						core->dragged_widget->drag_offset.y = core->mouse.position.y - core->dragged_widget->absolute.y;
+						if (core->focused_widget->is_resizable && core->event.type == SDL_MOUSEMOTION && !SDL_PointInRect(&core->mouse.position, &(SDL_Rect){core->focused_widget->absolute.x, core->focused_widget->absolute.y, core->focused_widget->absolute.w - 10, core->focused_widget->absolute.h - 10}))
+							core->resizing_widget = core->focused_widget;
+						else if (core->focused_widget->is_dragable && core->event.type == SDL_MOUSEMOTION)
+							core->dragged_widget = core->focused_widget;
 					}
 				}
-				if (core->dragged_widget)
-					ui_widget_drag(core->dragged_widget);
 			}
 			ui_render_widget(core->windows[i]);
 			SDL_RenderPresent(core->windows[i]->renderer);
@@ -183,6 +211,7 @@ static void	ui_global_update(t_core *core)
 
 static void	ui_global_event(t_core *core)
 {
+	SDL_Point	new_mouse_position;
 	if (SDL_WaitEvent(&core->event))
 	{
 		if (core->event.type == SDL_KEYDOWN && core->onkeypress != NULL)
@@ -201,9 +230,15 @@ static void	ui_global_event(t_core *core)
 				core->onbuttonup(core->event.button.button, core->onbuttondown_param);
 			core->mouse.buttons[core->event.button.button] = false;
 			if (core->event.button.button == SDL_BUTTON_LEFT)
+			{
 				core->dragged_widget = NULL;
+				core->resizing_widget = NULL;
+			}
 		}
-		SDL_GetMouseState(&core->mouse.position.x, &core->mouse.position.y);
+		SDL_GetMouseState(&new_mouse_position.x, &new_mouse_position.y);
+		core->mouse.motion.x = new_mouse_position.x - core->mouse.position.x;
+		core->mouse.motion.y = new_mouse_position.y - core->mouse.position.y;
+		core->mouse.position = new_mouse_position;
 	}
 }
 
