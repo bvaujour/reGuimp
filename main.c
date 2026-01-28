@@ -6,7 +6,7 @@
 /*   By: xacharle <xacharle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/28 19:15:32 by xacharle         ###   ########.fr       */
+/*   Updated: 2026/01/28 21:47:29 by xacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,13 +153,14 @@ int	main()
 	ui_set_widget_dragable(data.tool_window_box, true);
 	ui_set_box_behavior(data.tool_window_box, VERTICAL, WRAP_CHILDS);
 
-	data.tool_buttons_box = ui_create_box(data.tool_window_box, 0, 0, 335, 60);
+	data.tool_buttons_box = ui_create_box(data.tool_window_box, 0, 0, 345, 60);
 	ui_set_box_behavior(data.tool_buttons_box, HORIZONTAL, WRAP_CHILDS);
 
-	data.tool_parameters_stacking_box = ui_create_box(data.tool_window_box, 0, 170, 720, 370);
+	data.tool_parameters_stacking_box = ui_create_box(data.tool_window_box, 0, 170, 345, 150);
 
 	data.tool_color_box = ui_create_button(data.tool_window_box, 380, 25, 50, 50);
 	data.tool_color_parameter_box = ui_create_box(data.tool_window_box, 440, 20, 300, 170);
+	ui_toggle_widget_visibility(data.tool_color_parameter_box);
 	// ui_set_widget_colors(data.tool_color_box, 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
 	ui_widget_bind_onclicked(data.tool_color_box, on_widget_clicked, &data);
 	t_widget *textR, *textG, *textB, *textA;
