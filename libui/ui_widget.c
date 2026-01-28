@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 16:12:45 by injah             #+#    #+#             */
-/*   Updated: 2026/01/19 11:24:08 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/21 11:40:37 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,28 @@
 
 SDL_Rect	ui_get_absolute_rect(t_widget *widget)
 {
-	t_widget 	*reference;
 	SDL_Rect	absolute;
 
-	absolute = widget->rect;
-	reference = widget->parent;
-	while (reference != NULL)
-	{
-		absolute.x += reference->rect.x;
-		absolute.y += reference->rect.y;
-		if (reference->rect.w < absolute.w)
-			absolute.w = reference->rect.w;
-		if (reference->rect.h < absolute.h)
-			absolute.h = reference->rect.h;
-		reference = reference->parent;
-	}
+	absolute = widget->absolute;
+	if (widget->parent == NULL)
+		return ((SDL_Rect){widget->relative.x, widget->relative.y, widget->absolute.w, widget->absolute.h});
+	absolute.x = widget->parent->absolute.x + widget->relative.x;
+	absolute.y = widget->parent->absolute.y + widget->relative.y;
 	return (absolute);
 }
+
+SDL_Rect ui_get_clip_rect(t_widget *widget)
+{
+	SDL_Rect clip;
+
+	clip = (SDL_Rect){widget->absolute.x, widget->absolute.y, widget->absolute.w, widget->absolute.h};
+	if (widget->parent == NULL)
+		return (clip);
+	if (!SDL_IntersectRect(&clip, &widget->parent->clip, &clip))
+		return (SDL_Rect){0, 0, 0, 0};
+	return (clip);
+}
+
 
 void	ui_widget_change_state(t_widget *widget, e_widget_state new_state)
 {
@@ -50,7 +55,7 @@ void	ui_widget_manage_state(t_widget *widget)
 	t_core			*core;
 
 	core = widget->core;
-	if (SDL_PointInRect(&core->mouse.position, &widget->absolute))
+	if (SDL_PointInRect(&core->mouse.position, &(SDL_Rect){widget->absolute.x, widget->absolute.y, widget->absolute.w, widget->absolute.h}))
 	{
 		if (core->mouse.buttons[SDL_BUTTON_LEFT] == true)
 		{
@@ -82,7 +87,9 @@ t_widget *ui_new_widget(SDL_Rect rect, e_widget_type type, int max_child)
 			return (free(widget), NULL);
 	}
 	widget->max_child = max_child;
-	widget->rect = rect;
+	widget->relative.x = rect.x;
+	widget->relative.y = rect.y;
+	widget->absolute = rect;
 	widget->type = type;
 	widget->is_visible = true;
 	return (widget);
@@ -145,42 +152,26 @@ int	ui_core_add_window(t_core *core, t_widget *window)
 void	ui_widget_outline(t_widget *widget, SDL_Color color)
 {
 	SDL_SetRenderDrawColor(widget->renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderDrawRect(widget->renderer, &widget->absolute);
+	SDL_RenderDrawRect(widget->renderer, &(SDL_Rect){widget->absolute.x, widget->absolute.y, widget->absolute.w, widget->absolute.h});
 }
 
 void		ui_widget_drag(t_widget *widget)
 {
-	SDL_Rect	intersection;
-	SDL_Rect	new_rect;
-	int			i;
-
-
-	i = 0;
 	if (widget->parent == NULL)
 		return ;
-	new_rect = widget->rect;
-	new_rect.x = widget->core->mouse.position.x - widget->parent->absolute.x - widget->drag_offset.x;
-	new_rect.y = widget->core->mouse.position.y - widget->parent->absolute.y - widget->drag_offset.y;
-	if (new_rect.x < 0 || new_rect.y < 0 || new_rect.x > widget->parent->rect.w - new_rect.w || new_rect.y > widget->parent->rect.h - new_rect.h)
-	{
-		widget->drag_offset.x = widget->core->mouse.position.x - widget->absolute.x;
-		widget->drag_offset.y = widget->core->mouse.position.y - widget->absolute.y;
-		return ;
-	}
-	while (widget->parent->childs[i])
-	{
-		if (widget->parent->childs[i]->is_visible && widget->parent->childs[i] != widget)
-		{
-			if (SDL_IntersectRect(&widget->parent->childs[i]->rect, &new_rect, &intersection))
-			{
-				widget->drag_offset.x = widget->core->mouse.position.x - widget->absolute.x;
-				widget->drag_offset.y = widget->core->mouse.position.y - widget->absolute.y;
-				return ;
-			}
-		}
-		i++;
-	}
-	widget->rect = new_rect;
+	widget->relative.x += widget->core->mouse.motion.x;
+	widget->relative.y += widget->core->mouse.motion.y;
+}
+
+void		ui_widget_resize(t_widget *widget)
+{
+	if (widget->core->mouse.position.y - widget->core->mouse.motion.y > widget->absolute.y + widget->absolute.h - 10)
+		widget->absolute.h += widget->core->mouse.motion.y;
+
+	if (widget->core->mouse.position.x - widget->core->mouse.motion.x > widget->absolute.x + widget->absolute.w - 10)
+		widget->absolute.w += widget->core->mouse.motion.x;
+
+	ui_build_widget(widget);
 }
 
 
@@ -188,20 +179,9 @@ void		ui_widget_call_onclicked(t_widget *widget)
 {
 	SDL_Point	relative_mouse_position;
 
-	relative_mouse_position.x = widget->core->mouse.position.x - widget->rect.x;
-	relative_mouse_position.y = widget->core->mouse.position.y - widget->rect.y;
+	relative_mouse_position.y = widget->core->mouse.position.y - widget->relative.y;
+	relative_mouse_position.x = widget->core->mouse.position.x - widget->relative.x;
 	if (widget->onclicked)
 		widget->onclicked(widget, SDL_BUTTON_LEFT, relative_mouse_position.x, relative_mouse_position.y, widget->onclicked_param);
-}
-
-SDL_Rect	ui_get_render_rect(t_widget *widget)
-{
-	SDL_Rect	render_rect;
-
-	render_rect.x = widget->absolute.x;
-	render_rect.y = widget->absolute.y;
-	render_rect.w = widget->rect.w;
-	render_rect.h = widget->rect.h;
-	return (render_rect);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ui_image_user.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvaujour <bvaujour@student.42.fr>          +#+  +:+       +#+        */
+/*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 18:55:09 by injah             #+#    #+#             */
-/*   Updated: 2026/01/13 17:04:31 by bvaujour         ###   ########.fr       */
+/*   Updated: 2026/01/19 16:46:54 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ t_img	ui_image_get_img(t_widget *image)
 	SDL_SetRenderTarget(image->renderer, image->texture);
 	SDL_RenderReadPixels(image->renderer, NULL, SDL_PIXELFORMAT_ARGB8888, data->surface->pixels, data->surface->pitch);
 	SDL_SetRenderTarget(image->renderer, NULL);
-	img.width = image->rect.w;
-	img.height = image->rect.h;
+	img.width = image->absolute.w;
+	img.height = image->absolute.h;
 	img.pixels = data->surface->pixels;
 	img.pitch = data->surface->pitch;
 	return (img);

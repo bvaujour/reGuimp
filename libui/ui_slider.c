@@ -6,13 +6,13 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 16:33:33 by injah             #+#    #+#             */
-/*   Updated: 2026/01/18 15:51:37 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/19 18:26:04 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libui_int.h"
 
-void	ui_bind_slider_onvaluechanged(t_widget *slider, void (*f)(struct s_widget *, float, void *), void *param)
+void	ui_bind_slider_onvaluechanged(t_widget *slider, void (*f)(struct s_widget *slider, float value, void *param), void *param)
 {
 	t_slider_data	*data;
 
@@ -27,20 +27,17 @@ void	ui_bind_slider_onvaluechanged(t_widget *slider, void (*f)(struct s_widget *
 void	ui_slider_render(t_widget *slider)
 {
 	t_slider_data	*data;
-	SDL_Rect		render_rect;
-
 	data = (t_slider_data *)slider->data;
-	render_rect = ui_get_render_rect(slider);
-	SDL_RenderSetClipRect(slider->renderer, &slider->parent->absolute);
+	// SDL_RenderSetClipRect(slider->renderer, &slider->clip);
 
-	SDL_RenderCopy(slider->renderer, slider->texture, NULL, &render_rect); // le slider background
+	SDL_RenderCopy(slider->renderer, slider->texture, NULL, &slider->absolute); // le slider background
 	SDL_SetRenderDrawColor(slider->renderer, data->fill_color.r, data->fill_color.g, data->fill_color.b, data->fill_color.a);
-	SDL_RenderFillRect(slider->renderer, &(SDL_Rect){render_rect.x, render_rect.y, render_rect.w * data->value, render_rect.h}); // la partie du slider remplie
+	SDL_RenderFillRect(slider->renderer, &(SDL_Rect){slider->absolute.x, slider->absolute.y, slider->absolute.w * data->value, slider->absolute.h}); // la partie du slider remplie
 	if (slider == slider->core->focused_widget)
 		ui_widget_outline(slider, (SDL_Color){127, 127, 127, 255});
 	else
 		ui_widget_outline(slider, (SDL_Color){0, 0, 0, 255});
-	SDL_RenderSetClipRect(slider->renderer, NULL);
+	// SDL_RenderSetClipRect(slider->renderer, NULL);
 }
 
 void	ui_slider_destroy(t_widget *slider)

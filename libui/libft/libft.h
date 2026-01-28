@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/08 14:54:59 by bvaujour          #+#    #+#             */
-/*   Updated: 2025/05/15 09:44:50 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/19 12:40:42 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ size_t		ft_strlcat(char *dst, const char *src, size_t size);
 int			ft_toupper(int c);
 int			ft_tolower(int c);
 char		*ft_strchr(const char *s, int c);
+char		*ft_strcpy(char *dst, const char *src);
 char		*ft_strrchr(const char *s, int c);
 int			ft_strncmp(const char *s1, const char *s2, size_t n);
 void		*ft_memchr(const void *s, int c, size_t n);

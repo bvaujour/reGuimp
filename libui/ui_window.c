@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 12:53:46 by injah             #+#    #+#             */
-/*   Updated: 2026/01/12 14:39:24 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/19 16:43:16 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ static void	ui_window_event(t_widget *window)
 	{
 		if (window->core->event.window.event == SDL_WINDOWEVENT_RESIZED)
 		{
-			window->rect.w = window->core->event.window.data1;
-			window->rect.h = window->core->event.window.data2;
+			window->absolute.w = window->core->event.window.data1;
+			window->absolute.h = window->core->event.window.data2;
 		}
 	}
 }

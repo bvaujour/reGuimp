@@ -6,7 +6,7 @@
 /*   By: xacharle <xacharle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/20 21:18:51 by xacharle         ###   ########.fr       */
+/*   Updated: 2026/01/28 17:47:53 by xacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,10 +138,18 @@ int	main()
 	data.drawing.thickness = 1;
 	ui_bind_onkeypress(data.core, on_key_pressed, &data);
 	ui_bind_onbuttondown(data.core, on_mouse_button_up, &data);
+
 	data.tool_window = ui_create_window(data.core, 0, 0, 800, 600);
 	data.tool_window_box = ui_create_box(data.tool_window, 20, 20, 760, 560);
-	data.tool_buttons_box = ui_create_box(data.tool_window_box, 20, 20, 500, 150);
-	
+	ui_set_widget_resizable(data.tool_window_box, true);
+	ui_set_widget_dragable(data.tool_window_box, true);
+	ui_set_box_behavior(data.tool_window_box, VERTICAL, EVEN_CHILDS);
+
+	data.tool_buttons_box = ui_create_box(data.tool_window_box, 0, 0, 500, 150);
+	ui_set_box_behavior(data.tool_buttons_box, HORIZONTAL, WRAP_CHILDS);
+
+	data.tool_parameters_stacking_box = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
+
 	data.tool_color_box = ui_create_button(data.tool_window_box, 380, 25, 50, 50);
 	data.tool_color_parameter_box = ui_create_box(data.tool_window_box, 440, 20, 300, 130);
 	// ui_set_widget_colors(data.tool_color_box, 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
@@ -153,16 +161,15 @@ int	main()
 	ui_bind_slider_onvaluechanged(data.color_sliders[GREEN], on_slider_change_value, &data);
 	ui_bind_slider_onvaluechanged(data.color_sliders[BLUE], on_slider_change_value, &data);
 
-
-	ui_set_box_behavior(data.tool_buttons_box, HORIZONTAL, 5, true, true);
+	ui_set_box_behavior(data.tool_parameters_stacking_box, VERTICAL, STACKING_CHILDS);
 	build_tool_buttons(&data);
 	
-	data.tool_parameters_boxes[PENCIL] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
-	data.tool_parameters_boxes[DRAW_RECT] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
-	data.tool_parameters_boxes[DRAW_CIRCLE] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
-	data.tool_parameters_boxes[DRAW_BRUSH] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
-	data.tool_parameters_boxes[BUCKET] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
-	data.tool_parameters_boxes[ERASER] = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
+	data.tool_parameters_boxes[PENCIL] = ui_create_box(data.tool_parameters_stacking_box, 0, 0, 720, 370);
+	data.tool_parameters_boxes[DRAW_RECT] = ui_create_box(data.tool_parameters_stacking_box, 0, 0, 720, 370);
+	data.tool_parameters_boxes[DRAW_CIRCLE] = ui_create_box(data.tool_parameters_stacking_box, 0, 0, 720, 370);
+	data.tool_parameters_boxes[DRAW_BRUSH] = ui_create_box(data.tool_parameters_stacking_box, 0, 0, 720, 370);
+	data.tool_parameters_boxes[BUCKET] = ui_create_box(data.tool_parameters_stacking_box, 0, 0, 720, 370);
+	data.tool_parameters_boxes[ERASER] = ui_create_box(data.tool_parameters_stacking_box, 0, 0, 720, 370);
 
 	
 	data.button = ui_create_button(data.tool_parameters_boxes[PENCIL], 20, 20, 100, 50);

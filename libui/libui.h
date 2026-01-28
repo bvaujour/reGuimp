@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:57 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/19 11:54:22 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/21 12:23:30 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,28 @@ typedef struct	s_img
 	int				height;
 }				t_img;
 
-enum	direction
+typedef enum	text_mode
+{
+	SINGLE_LINE,
+	WRAP,
+	FILL,
+	CENTERED,
+}			e_text_mode;
+
+typedef enum	direction
 {
 	DEFAULT,
-	VERTICAL,
 	HORIZONTAL,
-};
+	VERTICAL,
+}				e_direction;
+
+typedef enum box_mode
+{
+	FREE_CHILDS,
+	STACKING_CHILDS,
+	WRAP_CHILDS,
+	EVEN_CHILDS,
+}			e_box_mode;
 
 //CORE
 
@@ -43,7 +59,7 @@ void		ui_run(t_core *core);
 void		ui_quit(t_core *core);
 /*prototype should be:
 void on_slider_value_change(t_widget *changed_slider, float value, void *param(cast to your type))*/
-void		ui_bind_slider_onvaluechanged(t_widget *slider, void (*f)(struct s_widget *widget, float value, void *param), void *param);
+void		ui_bind_slider_onvaluechanged(t_widget *slider, void (*f)(struct s_widget *slider, float value, void *param), void *param);
 
 //BUTTON
 
@@ -61,6 +77,9 @@ int			ui_get_widget_visibility(t_widget *widget);
 void		ui_toggle_widget_visibility(t_widget *widget);
 void		ui_get_screen_size(int *screen_width, int *screen_height);
 void		ui_set_widget_cursor(t_widget *widget, const char *path);
+void		ui_set_widget_resizable(t_widget *widget, int new_resizable);
+
+void		ui_set_widget_dragable(t_widget *widget, int new_dragable);
 
 
 //WINDOW
@@ -70,7 +89,8 @@ t_widget 	*ui_create_window(t_core *core, int x, int y, int width, int height);
 //BOX
 
 t_widget	*ui_create_box(t_widget *parent, int x, int y, int width, int height);
-void		ui_set_box_behavior(t_widget *box, enum direction flow_direction, int space_between_childs, bool wrap_childs, bool size_to_content);
+void		ui_set_box_behavior(t_widget *box, e_direction flow_direction, e_box_mode mode);
+
 //SLIDER
 
 t_widget	*ui_create_slider(t_widget *parent, int x, int y, int width, int height);

@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:04:56 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/19 12:35:25 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/19 17:35:56 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,9 @@
 
 static void		ui_text_render(t_widget *text)
 {
-	SDL_Rect	render_rect;
-
-	render_rect = ui_get_render_rect(text);
-	SDL_RenderSetClipRect(text->renderer, &text->parent->absolute);
-	SDL_RenderCopy(text->renderer, text->texture, NULL, &render_rect);
-	SDL_SetRenderDrawColor(text->renderer, 255, 255, 255, 255);
-	SDL_RenderFillRect(text->renderer, &(SDL_Rect){render_rect.x + text->rect.w, render_rect.y, 1, render_rect.h});
-	SDL_RenderSetClipRect(text->renderer, NULL);
+	// SDL_RenderSetClipRect(text->renderer, &text->clip);
+	SDL_RenderCopy(text->renderer, text->texture, NULL, &text->absolute);
+	// SDL_RenderSetClipRect(text->renderer, NULL);
 }
 
 static void		ui_text_event(t_widget *text)
@@ -106,13 +101,11 @@ static void	ui_text_build(t_widget *text)
 	{
 		if (text->texture)
 			SDL_DestroyTexture(text->texture);
-		text->texture = ui_new_texture(text->renderer, text->rect.w, text->rect.h, text->colors[text->state]);
+		text->texture = ui_new_texture(text->renderer, text->absolute.w, text->absolute.h, text->colors[text->state]);
 		return ;
 	}
-	if (data->fill)
-		font = ui_open_font_match_size(text->core->font_file, data->text, text->parent->rect.w, text->parent->rect.h);
-	if (!data->wrap)
-		font = ui_open_font_match_height(text->core->font_file, data->text, text->parent->rect.h);
+	if (data->mode == FILL)
+		font = ui_open_font_match_size(text->core->font_file, data->text, text->parent->absolute.w, text->parent->absolute.h);
 	else
 		font = TTF_OpenFont(text->core->font_file, 25);
 	if (!font)
@@ -120,8 +113,8 @@ static void	ui_text_build(t_widget *text)
 		printf("font invalid\n");
 		return ;
 	}
-	if (data->wrap)
-		surface = TTF_RenderText_Blended_Wrapped(font, data->text, data->text_color, text->parent->rect.w);
+	if (data->mode == WRAP)
+		surface = TTF_RenderText_Blended_Wrapped(font, data->text, data->text_color, text->parent->absolute.w);
 	else
 		surface = TTF_RenderText_Blended(font, data->text, data->text_color);
 	if (!surface)
@@ -138,24 +131,23 @@ static void	ui_text_build(t_widget *text)
 		SDL_FreeSurface(surface);
 		return (TTF_CloseFont(font));
 	}
-	text->rect.w = surface->w;
-	text->rect.h = surface->h;
-	if (data->centered)
+	text->absolute.w = surface->w;
+	text->absolute.h = surface->h;
+	if (data->mode == CENTERED || data->mode == FILL)
 	{
-		text->rect.x = text->parent->rect.w / 2 - text->rect.w / 2;
-		text->rect.y = text->parent->rect.h / 2 - text->rect.h / 2;
+		text->relative.x = text->parent->absolute.w / 2 - text->absolute.w / 2;
+		text->relative.y = text->parent->absolute.h / 2 - text->absolute.h / 2;
 	}
-	if (!data->wrap)
+	else if (data->mode == SINGLE_LINE)
 	{
-		if (text->rect.w > text->parent->absolute.w)
-			text->rect.x = text->parent->absolute.w - text->rect.w;
+		if (text->absolute.w > text->parent->absolute.w)
+			text->relative.x = text->parent->absolute.w - text->absolute.w;
 		else
-			text->rect.x = 0;
+			text->relative.x = 0;
 	}
 	SDL_FreeSurface(surface);
 	TTF_CloseFont(font);
 	printf("build success\n");
-	printf("text x = %d\n, text y = %d\n", text->rect.x, text->rect.y);
 }
 
 
@@ -186,8 +178,6 @@ t_widget	*ui_create_text(t_widget *parent, int x, int y, int width, int height)
 	text->event = ui_text_event;
 	// text->update = ui_text_update;
 	
-	data->fill = true;
-	data->centered = false;
-	data->wrap = false;
+	data->mode = WRAP;
 	return (text);
 }

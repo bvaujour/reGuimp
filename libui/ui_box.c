@@ -6,7 +6,7 @@
 /*   By: injah <injah@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/19 21:09:13 by injah             #+#    #+#             */
-/*   Updated: 2026/01/19 10:56:44 by injah            ###   ########.fr       */
+/*   Updated: 2026/01/21 12:23:09 by injah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,14 @@
 
 void	ui_box_render(t_widget *box)
 {
-	SDL_Rect	render_rect;
-
-	render_rect = ui_get_render_rect(box);
-	SDL_RenderSetClipRect(box->renderer, &box->parent->absolute);
-	SDL_RenderCopy(box->renderer, box->texture, NULL, &render_rect);
+	SDL_RenderCopy(box->renderer, box->texture, NULL, &box->absolute);
 	if (box == box->core->focused_widget)
 		ui_widget_outline(box, (SDL_Color){127, 127, 127, 255});
 	else
 		ui_widget_outline(box, (SDL_Color){0, 0, 0, 255});
-	SDL_RenderSetClipRect(box->renderer, NULL);
 }
 
-void	ui_place_childs_vertical(t_widget *box, int space, bool wrap, bool size_to_content)
+void	ui_build_vertical_wrap_box(t_widget *box, int space)
 {
 	int			i;
 	SDL_Rect	measures;
@@ -38,30 +33,25 @@ void	ui_place_childs_vertical(t_widget *box, int space, bool wrap, bool size_to_
 	measures.h = 0;
 	while (box->childs[i])
 	{
-		if (wrap && measures.y + box->childs[i]->rect.h + space > box->rect.h)
+		if (measures.y + box->childs[i]->absolute.h + space > box->absolute.h - 10)
 		{
 			measures.x = measures.w;
 			measures.y = space;
 		}
-		box->childs[i]->rect.x = measures.x;
-		box->childs[i]->rect.y = measures.y;
-		measures.y += box->childs[i]->rect.h + space;
-		if (size_to_content && measures.y > box->rect.h)
-			box->rect.h = measures.y;
+		box->childs[i]->relative.x = measures.x;
+		box->childs[i]->relative.y = measures.y;
+		measures.y += box->childs[i]->absolute.h + space;
+		if (measures.y > box->absolute.h)
+			box->absolute.h = measures.y;
 		if (measures.y > measures.h)
 			measures.h = measures.y;
-		if (measures.x + box->childs[i]->rect.w + space > measures.w)
-			measures.w = measures.x + box->childs[i]->rect.w + space;
+		if (measures.x + box->childs[i]->absolute.w + space > measures.w)
+			measures.w = measures.x + box->childs[i]->absolute.w + space;
 		i++;
-	}
-	if (size_to_content)
-	{
-		box->rect.w = measures.w;
-		box->rect.h = measures.h;
 	}
 }
 
-void	ui_place_childs_horizontal(t_widget *box, int space, bool wrap, bool size_to_content)
+void	ui_build_horizontal_wrap_box(t_widget *box, int space)
 {
 	int			i;
 	SDL_Rect	measures;
@@ -73,26 +63,72 @@ void	ui_place_childs_horizontal(t_widget *box, int space, bool wrap, bool size_t
 	measures.h = 0;
 	while (box->childs[i])
 	{
-		if (wrap && measures.x + box->childs[i]->rect.w + space > box->rect.w)
+		if (measures.x + box->childs[i]->absolute.w + space > box->absolute.w - 10)
 		{
 			measures.y = measures.h;
 			measures.x = space;
 		}
-		box->childs[i]->rect.x = measures.x;
-		box->childs[i]->rect.y = measures.y;
-		measures.x += box->childs[i]->rect.w + space;
-		if (size_to_content && measures.x > box->rect.w)
-			box->rect.w = measures.x;
+		box->childs[i]->relative.x = measures.x;
+		box->childs[i]->relative.y = measures.y;
+		measures.x += box->childs[i]->absolute.w + space;
+		if (measures.x > box->absolute.w)
+			box->absolute.w = measures.x;
 		if (measures.x > measures.w)
 			measures.w = measures.x;
-		if (measures.y + box->childs[i]->rect.h + space > measures.h)
-			measures.h = measures.y + box->childs[i]->rect.h + space;
+		if (measures.y + box->childs[i]->absolute.h + space > measures.h)
+			measures.h = measures.y + box->childs[i]->absolute.h + space;
 		i++;
 	}
-	if (size_to_content)
+}
+
+void	ui_build_vertical_box(t_widget *box)
+{
+	SDL_Rect	child_rect;
+	int			i;
+
+	child_rect.w = box->absolute.w - 10;
+	child_rect.h = (box->absolute.h - 10) / box->nb_child;
+	i = 0;
+	while (box->childs[i])
 	{
-		box->rect.w = measures.w;
-		box->rect.h = measures.h;
+		box->childs[i]->absolute.w = child_rect.w;
+		box->childs[i]->absolute.h = child_rect.h;
+		box->childs[i]->relative.x = 0;
+		box->childs[i]->relative.y = child_rect.h * i;
+		i++;
+	}
+}
+
+void	ui_build_horizontal_box(t_widget *box)
+{
+	SDL_Rect	child_rect;
+	int			i;
+
+	child_rect.w = (box->absolute.w - 10) / box->nb_child;
+	child_rect.h = box->absolute.h - 10;
+	i = 0;
+	while (box->childs[i])
+	{
+		box->childs[i]->absolute.w = child_rect.w;
+		box->childs[i]->absolute.h = child_rect.h;
+		box->childs[i]->relative.x = child_rect.w * i;
+		box->childs[i]->relative.y = 0;
+		i++;
+	}
+}
+
+void	ui_build_stacking_box(t_widget *box)
+{
+	int			i;
+
+	i = 0;
+	while (box->childs[i])
+	{
+		box->childs[i]->relative.x = 0;
+		box->childs[i]->relative.y = 0;
+		box->childs[i]->absolute.w = box->absolute.w - 10;
+		box->childs[i]->absolute.h = box->absolute.h - 10;
+		i++;
 	}
 }
 void	ui_box_build(t_widget *box)
@@ -100,13 +136,19 @@ void	ui_box_build(t_widget *box)
 	t_box_data	*data;
 
 	data = (t_box_data *)box->data;
-	if (data->flow_direction == VERTICAL)
-		ui_place_childs_vertical(box, data->space_between_childs, data->wrap, data->size_to_content);
-	else if (data->flow_direction == HORIZONTAL)
-		ui_place_childs_horizontal(box, data->space_between_childs, data->wrap, data->size_to_content);
+	if (data->mode == STACKING_CHILDS)
+		ui_build_stacking_box(box);
+	else if (data->flow_direction == VERTICAL && data->mode == EVEN_CHILDS)
+		ui_build_vertical_box(box);
+	else if (data->flow_direction == HORIZONTAL && data->mode == EVEN_CHILDS)
+		ui_build_horizontal_box(box);
+	if (data->flow_direction == VERTICAL && data->mode == WRAP_CHILDS)
+		ui_build_vertical_wrap_box(box, 5);	
+	else if (data->flow_direction == HORIZONTAL && data->mode == WRAP_CHILDS)
+		ui_build_horizontal_wrap_box(box, 5);
 }
 
-void	ui_set_box_behavior(t_widget *box, enum direction flow_direction, int space_between_childs, bool wrap_childs, bool size_to_content)
+void	ui_set_box_behavior(t_widget *box, e_direction flow_direction, e_box_mode mode)
 {
 	t_box_data	*data;
 
@@ -114,9 +156,7 @@ void	ui_set_box_behavior(t_widget *box, enum direction flow_direction, int space
 		return ;
 	data = (t_box_data *)box->data;
 	data->flow_direction = flow_direction;
-	data->size_to_content = size_to_content;
-	data->space_between_childs = space_between_childs;
-	data->wrap = wrap_childs;
+	data->mode = mode;
 }
 
 t_widget	*ui_create_box(t_widget *parent, int x, int y, int width, int height)
@@ -138,7 +178,6 @@ t_widget	*ui_create_box(t_widget *parent, int x, int y, int width, int height)
 	*data = (t_box_data){0};
 	ui_set_widget_colors(box, 0x7F5F5F5F, 0x7F5F5F5F, 0x7F5F5F5F);
 	box->cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-	box->is_dragable = true;
 	box->render = ui_box_render;
 	box->build = ui_box_build;
 	box->texture = ui_new_texture(parent->renderer, width, height, box->colors[box->state]);
