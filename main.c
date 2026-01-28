@@ -6,7 +6,7 @@
 /*   By: xacharle <xacharle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 16:53:38 by bvaujour          #+#    #+#             */
-/*   Updated: 2026/01/28 17:47:53 by xacharle         ###   ########.fr       */
+/*   Updated: 2026/01/28 18:50:23 by xacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,18 +48,21 @@ void	on_widget_clicked(t_widget *widget, int button, int x, int y, void *param)
 	else if (widget == data->tool_color_box)
 	{
 		toggle_color_parameters_box(data);
+		printf("Color box clicked\n");
 	}
 	else if (widget == data->tool_buttons[PENCIL])
 	{
 		ui_set_widget_cursor(data->canvas, "assets/cursors/pencil0.png");
 		data->active_tool = PENCIL;
 		show_parameter(data, PENCIL);
+		printf("PENCIL selected\n");
 	}
 	else if (widget == data->tool_buttons[DRAW_RECT])
 	{
 		ui_set_widget_cursor(data->canvas, "assets/cursors/rectangle0.png");
 		data->active_tool = DRAW_RECT;
 		show_parameter(data, DRAW_RECT);
+		printf("DRAW_RECT selected\n");
 	}
 	else if (widget == data->tool_buttons[DRAW_CIRCLE])
 	{
@@ -111,6 +114,11 @@ void	on_slider_change_value(t_widget *slider, float value, void *param)
 		data->color.b = (unsigned char)(value * 255);
 		ui_set_widget_colors(data->tool_color_box, pack_color(data->color), pack_color(data->color), pack_color(data->color));
 	}
+	else if (slider == data->color_sliders[ALPHA])
+	{
+		data->color.a = (unsigned char)(value * 255);
+		ui_set_widget_colors(data->tool_color_box, pack_color(data->color), pack_color(data->color), pack_color(data->color));
+	}
 	else if (slider == data->drawing.thickness_slider)
 	{
 		data->drawing.thickness = value * 50;
@@ -145,22 +153,32 @@ int	main()
 	ui_set_widget_dragable(data.tool_window_box, true);
 	ui_set_box_behavior(data.tool_window_box, VERTICAL, EVEN_CHILDS);
 
-	data.tool_buttons_box = ui_create_box(data.tool_window_box, 0, 0, 500, 150);
+	data.tool_buttons_box = ui_create_box(data.tool_window_box, 0, 0, 335, 60);
 	ui_set_box_behavior(data.tool_buttons_box, HORIZONTAL, WRAP_CHILDS);
 
 	data.tool_parameters_stacking_box = ui_create_box(data.tool_window_box, 20, 170, 720, 370);
 
 	data.tool_color_box = ui_create_button(data.tool_window_box, 380, 25, 50, 50);
-	data.tool_color_parameter_box = ui_create_box(data.tool_window_box, 440, 20, 300, 130);
+	data.tool_color_parameter_box = ui_create_box(data.tool_window_box, 440, 20, 300, 170);
 	// ui_set_widget_colors(data.tool_color_box, 0xFFFF0000, 0xFF00FF00, 0xFF0000FF);
 	ui_widget_bind_onclicked(data.tool_color_box, on_widget_clicked, &data);
-	data.color_sliders[RED] = ui_create_slider(data.tool_color_parameter_box, 20, 20, 200, 20);
-	data.color_sliders[GREEN] = ui_create_slider(data.tool_color_parameter_box, 20, 60, 200, 20);
-	data.color_sliders[BLUE] = ui_create_slider(data.tool_color_parameter_box, 20, 100, 200, 20);
+	t_widget *textR, *textG, *textB, *textA;
+	textR = ui_create_text(data.tool_color_parameter_box, 20, 15, 100, 50);
+	ui_text_set_text(textR, "R");
+	data.color_sliders[RED] = ui_create_slider(data.tool_color_parameter_box, 50, 20, 200, 20);
+	textG = ui_create_text(data.tool_color_parameter_box, 20, 55, 100, 50);
+	ui_text_set_text(textG, "G");
+	data.color_sliders[GREEN] = ui_create_slider(data.tool_color_parameter_box, 50, 60, 200, 20);
+	textB = ui_create_text(data.tool_color_parameter_box, 20, 95, 100, 50);
+	ui_text_set_text(textB, "B");
+	data.color_sliders[BLUE] = ui_create_slider(data.tool_color_parameter_box, 50, 100, 200, 20);
+	textA = ui_create_text(data.tool_color_parameter_box, 20, 135, 100, 50);
+	ui_text_set_text(textA, "A");
+	data.color_sliders[ALPHA] = ui_create_slider(data.tool_color_parameter_box, 50, 140, 200, 20);
 	ui_bind_slider_onvaluechanged(data.color_sliders[RED], on_slider_change_value, &data);
 	ui_bind_slider_onvaluechanged(data.color_sliders[GREEN], on_slider_change_value, &data);
 	ui_bind_slider_onvaluechanged(data.color_sliders[BLUE], on_slider_change_value, &data);
-
+	ui_bind_slider_onvaluechanged(data.color_sliders[ALPHA], on_slider_change_value, &data);
 	ui_set_box_behavior(data.tool_parameters_stacking_box, VERTICAL, STACKING_CHILDS);
 	build_tool_buttons(&data);
 	

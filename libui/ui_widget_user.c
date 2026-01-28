@@ -6,7 +6,7 @@
 /*   By: xacharle <xacharle@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:24:56 by injah             #+#    #+#             */
-/*   Updated: 2026/01/28 17:42:53 by xacharle         ###   ########.fr       */
+/*   Updated: 2026/01/28 18:37:45 by xacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ int	ui_get_widget_visibility(t_widget *widget)
 void	ui_toggle_widget_visibility(t_widget *widget)
 {
 	widget->is_visible = !widget->is_visible;
+	printf("Widget visibility toggled to %d\n", widget->is_visible);
 }
 
 void	ui_get_screen_size(int *screen_width, int *screen_height)
